@@ -1,0 +1,37 @@
+{
+    "model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+    "accuracy_score": 60.0,
+    "details": [
+        {
+            "question": "If I have 5 apples and buy 3 more, then give 2 to a friend, how many do I have?",
+            "expected": "6",
+            "received": "6",
+            "correct": true
+        },
+        {
+            "question": "What is the square root of 144?",
+            "expected": "12",
+            "received": "144",
+            "correct": false
+        },
+        {
+            "question": "If a train travels at 60mph for 3 hours, how far does it go?",
+            "expected": "180",
+            "received": "180",
+            "correct": true
+        },
+        {
+            "question": "Solve for x: 2x + 10 = 20",
+            "expected": "5",
+            "received": "2",
+            "correct": false
+        },
+        {
+            "question": "A shirt costs $20 and is on sale for 25% off. What is the final price?",
+            "expected": "15",
+            "received": "15",
+            "correct": true
+        }
+    ],
+    "timestamp": "2026-02-03 10:36:13"
+}
