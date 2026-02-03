@@ -8,6 +8,9 @@ The objective of this suite is to automate performance measurement of trending A
 ### Performance Comparison
 ![Benchmark Comparison](benchmark_comparison.png)
 
+### Quality Comparison
+![Quality Comparison](quality_comparison.png)
+
 ### Causal LLM Benchmarks (FP16)
 | Model | VRAM Usage (GB) | Tokens/Sec | Load Time (s) |
 | :--- | :---: | :---: | :---: |
