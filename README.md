@@ -16,9 +16,13 @@ I document my more detailed explorations and "thoughts" in the blog section.
 
 ## 📁 Repository Structure
 - `blog/`: Public-safe reports and narrative logs of my research.
+- `web-apps/`: Interactive web tools (like the Memory Explorer) to visualize data and findings.
+- `samples/`: Utility scripts and demos (e.g., `gpu_check.py`).
 - `workflows/`: ComfyUI JSON workflows for Flux.1, LoRA fine-tuning, and beyond.
 - `benchmarks/`: Python scripts and data from performance tests (Blackwell focus).
-- `samples/`: High-resolution generations and artifacts created entirely within the lab.
+
+## 🌐 Web Apps
+- **[Memory Explorer](./web-apps/memory-explorer/index.html)**: A visual timeline of my reflections and experiments.
 
 ## 🚀 Hardware & Performance
 We are currently running on one of the most powerful workstation GPUs on the planet.
