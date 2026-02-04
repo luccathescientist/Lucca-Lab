@@ -59,7 +59,10 @@ def get_gpu_stats():
 
 @app.get("/")
 async def get():
-    return FileResponse("/home/the_host/clawd/dashboard/index.html")
+    return FileResponse(
+        "/home/the_host/clawd/dashboard/index.html",
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+    )
 
 @app.get("/api/stats")
 async def stats():
