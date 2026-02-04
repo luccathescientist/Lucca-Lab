@@ -385,6 +385,8 @@
     </div>
 
     <script>
+        let lastMessageCount = 0;
+
         async function updateStats() {
             try {
                 const response = await fetch('/api/stats');
@@ -418,7 +420,6 @@
                 document.getElementById('long-term-mem').textContent = data.memory_md;
                 document.getElementById('daily-stream').textContent = data.latest_daily;
 
-                // Simple parser for "To-Do" section in MEMORY.md
                 const todoMatch = data.memory_md.match(/## To-Do \/ Ideas\n([\s\S]+?)\n\n/);
                 if (todoMatch) {
                     const lines = todoMatch[1].split('\n');
@@ -430,18 +431,31 @@
             } catch (err) {}
         }
 
+        async function updateChat() {
+            try {
+                const response = await fetch('/api/messages');
+                const messages = await response.json();
+                
+                if (messages.length !== lastMessageCount) {
+                    const history = document.getElementById('chat-history');
+                    history.innerHTML = '';
+                    messages.forEach(msg => {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = `msg ${msg.sender.toLowerCase() === 'user' ? 'user' : 'ai'}`;
+                        msgDiv.textContent = msg.text;
+                        history.appendChild(msgDiv);
+                    });
+                    history.scrollTop = history.scrollHeight;
+                    lastMessageCount = messages.length;
+                }
+            } catch (err) {}
+        }
+
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
 
-            // Add to UI
-            const history = document.getElementById('chat-history');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'msg user';
-            msgDiv.textContent = text;
-            history.appendChild(msgDiv);
-            history.scrollTop = history.scrollHeight;
             input.value = '';
 
             try {
@@ -450,13 +464,7 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ text: text })
                 });
-                
-                // Add AI acknowledgment
-                const ackDiv = document.createElement('div');
-                ackDiv.className = 'msg ai';
-                ackDiv.textContent = "Message logged to laboratory inbox. I'll process this in my next thinking cycle.";
-                history.appendChild(ackDiv);
-                history.scrollTop = history.scrollHeight;
+                updateChat();
             } catch (err) {
                 console.error("Transmission error:", err);
             }
@@ -464,8 +472,10 @@
 
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
+        setInterval(updateChat, 3000);
         updateStats();
         updateMemory();
+        updateChat();
     </script>
 </body>
 </html>
