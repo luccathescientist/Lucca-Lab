@@ -14,6 +14,7 @@
             --text-color: #e0e0f0;
             --danger-color: #ff3e3e;
             --warning-color: #ffcc00;
+            --secondary-bg: #1a1a2e;
         }
 
         body {
@@ -24,12 +25,17 @@
             color: var(--text-color);
             font-family: 'Fira Code', monospace;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         header {
@@ -44,7 +50,7 @@
 
         h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin: 0;
             letter-spacing: 2px;
             color: var(--accent-color);
@@ -80,10 +86,23 @@
             100% { opacity: 1; }
         }
 
-        .grid {
+        .main-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1000px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .card {
@@ -98,31 +117,30 @@
 
         .card:hover {
             border-color: var(--accent-color);
-            transform: translateY(-5px);
         }
 
         .card h2 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             margin-top: 0;
             color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
         }
 
         .value {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 600;
             margin: 0.5rem 0;
         }
 
         .unit {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.4);
             margin-left: 0.5rem;
         }
 
         .progress-bar {
-            height: 8px;
+            height: 6px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
             margin-top: 1rem;
@@ -137,26 +155,164 @@
             box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            color: rgba(255, 255, 255, 0.4);
+        .memory-panel {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
 
-        .rig-info {
-            grid-column: 1 / -1;
-            font-size: 0.9rem;
+        @media (max-width: 800px) {
+            .memory-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stream-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 1rem;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #b0b0c0;
+        }
+
+        .stream-box h3 {
             color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+            padding-bottom: 0.5rem;
+            position: sticky;
+            top: 0;
+            background: rgba(20, 20, 30, 0.95);
+        }
+
+        .chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 600px;
+        }
+
+        .chat-header {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+        }
+
+        #chat-history {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .msg {
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            max-width: 90%;
+            font-size: 0.85rem;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            color: var(--accent-color);
+        }
+
+        .msg.ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.6rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background: var(--accent-color);
+            color: black;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
             opacity: 0.8;
         }
 
-        #refresh-status {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-            text-align: right;
-            margin-top: 2rem;
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        .next-plan {
+            background: rgba(255, 204, 0, 0.05);
+            border: 1px solid rgba(255, 204, 0, 0.2);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .next-plan h3 {
+            color: var(--warning-color);
+            margin-top: 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
     </style>
@@ -164,53 +320,68 @@
 <body>
     <div class="container">
         <header>
-            <h1>Lucca Lab // Blackwell Dashboard</h1>
+            <h1>Lucca Lab // Blackwell Dashboard (Port 8889)</h1>
             <div class="status-badge">System Online</div>
         </header>
 
-        <div class="grid">
-            <div class="rig-info">
-                Device: <span id="gpu-name">Loading...</span>
-            </div>
+        <div class="main-layout">
+            <div class="left-col">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h2>Temperature</h2>
+                        <div class="value" id="temp-val">--<span class="unit">°C</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="temp-fill"></div></div>
+                    </div>
+                    <div class="card">
+                        <h2>VRAM Usage</h2>
+                        <div class="value" id="vram-val">--<span class="unit">GB</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="vram-fill"></div></div>
+                    </div>
+                    <div class="card">
+                        <h2>Utilization</h2>
+                        <div class="value" id="util-val">--<span class="unit">%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="util-fill"></div></div>
+                    </div>
+                    <div class="card">
+                        <h2>Power Draw</h2>
+                        <div class="value" id="power-val">--<span class="unit">W</span></div>
+                        <div class="progress-bar"><div class="progress-fill" id="power-fill"></div></div>
+                    </div>
+                </div>
 
-            <div class="card">
-                <h2>Temperature</h2>
-                <div class="value" id="temp-val">--<span class="unit">°C</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="temp-fill"></div>
+                <div class="memory-panel">
+                    <div class="card">
+                        <h2>Long-Term Memory</h2>
+                        <div class="stream-box" id="long-term-mem">Loading memory cores...</div>
+                    </div>
+                    <div class="card">
+                        <h2>Daily Stream</h2>
+                        <div class="stream-box" id="daily-stream">Synchronizing logs...</div>
+                    </div>
+                </div>
+
+                <div class="next-plan" id="plan-container">
+                    <h3><span style="font-size: 1.2rem;">⚡</span> Current Objective</h3>
+                    <div id="next-plan-text" style="font-size: 0.9rem;">Scanning MEMORY.md for active tasks...</div>
                 </div>
             </div>
 
-            <div class="card">
-                <h2>VRAM Usage</h2>
-                <div class="value" id="vram-val">--<span class="unit">GB</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="vram-fill"></div>
+            <div class="chat-sidebar">
+                <div class="chat-box">
+                    <div class="chat-header">Direct Comm Link</div>
+                    <div id="chat-history">
+                        <div class="msg ai">Connection established. All sensors nominal. How can I help with the lab today, the Lead Scientist?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Transmit message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                        <button onclick="sendMessage()">SEND</button>
+                    </div>
                 </div>
-                <div class="label-row">
-                    <span id="vram-used-mb">0 MB</span>
-                    <span id="vram-total-mb">0 MB</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Power Draw</h2>
-                <div class="value" id="power-val">--<span class="unit">W</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="power-fill"></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>GPU Utilization</h2>
-                <div class="value" id="util-val">--<span class="unit">%</span></div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="util-fill"></div>
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.2); text-align: right;">
+                    LAST SYNC: <span id="sync-time">--</span>
                 </div>
             </div>
         </div>
-
-        <div id="refresh-status">Last Sync: <span id="sync-time">Never</span></div>
     </div>
 
     <script>
@@ -218,44 +389,83 @@
             try {
                 const response = await fetch('/api/stats');
                 const data = await response.json();
+                if (data.error) return;
 
-                if (data.error) {
-                    console.error("GPU Error:", data.error);
-                    return;
-                }
-
-                document.getElementById('gpu-name').textContent = data.name;
-                
-                // Temp
                 document.getElementById('temp-val').innerHTML = `${Math.round(data.temp)}<span class="unit">°C</span>`;
                 document.getElementById('temp-fill').style.width = `${Math.min(data.temp, 100)}%`;
                 
-                // VRAM
                 const usedGB = (data.mem_used / 1024).toFixed(1);
                 const totalGB = (data.mem_total / 1024).toFixed(1);
-                const vramPerc = (data.mem_used / data.mem_total) * 100;
                 document.getElementById('vram-val').innerHTML = `${usedGB}<span class="unit">/ ${totalGB} GB</span>`;
-                document.getElementById('vram-fill').style.width = `${vramPerc}%`;
-                document.getElementById('vram-used-mb').textContent = `${Math.round(data.mem_used)} MB`;
-                document.getElementById('vram-total-mb').textContent = `${Math.round(data.mem_total)} MB`;
+                document.getElementById('vram-fill').style.width = `${(data.mem_used / data.mem_total) * 100}%`;
 
-                // Power
                 document.getElementById('power-val').innerHTML = `${Math.round(data.power)}<span class="unit">W</span>`;
-                document.getElementById('power-fill').style.width = `${(data.power / 450) * 100}%`; // Assuming 450W max
+                document.getElementById('power-fill').style.width = `${(data.power / 450) * 100}%`;
 
-                // Util
                 document.getElementById('util-val').innerHTML = `${Math.round(data.util_gpu)}<span class="unit">%</span>`;
                 document.getElementById('util-fill').style.width = `${data.util_gpu}%`;
 
                 document.getElementById('sync-time').textContent = new Date().toLocaleTimeString();
+            } catch (err) {}
+        }
 
+        async function updateMemory() {
+            try {
+                const response = await fetch('/api/memory');
+                const data = await response.json();
+                if (data.error) return;
+
+                document.getElementById('long-term-mem').textContent = data.memory_md;
+                document.getElementById('daily-stream').textContent = data.latest_daily;
+
+                // Simple parser for "To-Do" section in MEMORY.md
+                const todoMatch = data.memory_md.match(/## To-Do \/ Ideas\n([\s\S]+?)\n\n/);
+                if (todoMatch) {
+                    const lines = todoMatch[1].split('\n');
+                    const firstPending = lines.find(l => l.includes('[ ]'));
+                    if (firstPending) {
+                        document.getElementById('next-plan-text').textContent = firstPending.replace(/- \[ \] /, '').trim();
+                    }
+                }
+            } catch (err) {}
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Add to UI
+            const history = document.getElementById('chat-history');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg user';
+            msgDiv.textContent = text;
+            history.appendChild(msgDiv);
+            history.scrollTop = history.scrollHeight;
+            input.value = '';
+
+            try {
+                await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ text: text })
+                });
+                
+                // Add AI acknowledgment
+                const ackDiv = document.createElement('div');
+                ackDiv.className = 'msg ai';
+                ackDiv.textContent = "Message logged to laboratory inbox. I'll process this in my next thinking cycle.";
+                history.appendChild(ackDiv);
+                history.scrollTop = history.scrollHeight;
             } catch (err) {
-                console.error("Sync Failure:", err);
+                console.error("Transmission error:", err);
             }
         }
 
         setInterval(updateStats, 2000);
+        setInterval(updateMemory, 10000);
         updateStats();
+        updateMemory();
     </script>
 </body>
 </html>

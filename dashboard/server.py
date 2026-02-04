@@ -5,8 +5,10 @@ import subprocess
 import threading
 import time
 import os
+import glob
+from datetime import datetime
 
-PORT = 8888
+PORT = 8889
 
 def get_gpu_stats():
     try:
@@ -25,7 +27,56 @@ def get_gpu_stats():
     except Exception as e:
         return {"error": str(e)}
 
+def get_memory_stream():
+    try:
+        # Get MEMORY.md content
+        with open("/home/the_host/clawd/MEMORY.md", "r") as f:
+            memory_md = f.read()
+        
+        # Get latest daily memory
+        daily_files = sorted(glob.glob("/home/the_host/clawd/memory/2026-*.md"))
+        latest_daily = ""
+        if daily_files:
+            with open(daily_files[-1], "r") as f:
+                latest_daily = f.read()
+        
+        return {
+            "memory_md": memory_md,
+            "latest_daily": latest_daily
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 class DashboardHandler(http.server.SimpleHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+
+    def do_POST(self):
+        if self.path == '/api/chat':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            message = json.loads(post_data)
+            
+            # Save message to inbox
+            inbox_path = "/home/the_host/clawd/dashboard/inbox.jsonl"
+            with open(inbox_path, "a") as f:
+                entry = {
+                    "timestamp": datetime.now().isoformat(),
+                    "sender": "Dashboard User",
+                    "message": message.get("text", "")
+                }
+                f.write(json.dumps(entry) + "\n")
+            
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "received"}).encode())
+
     def do_GET(self):
         if self.path == '/api/stats':
             self.send_response(200)
@@ -34,14 +85,22 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             stats = get_gpu_stats()
             self.wfile.write(json.dumps(stats).encode())
+        elif self.path == '/api/memory':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            mem = get_memory_stream()
+            self.wfile.write(json.dumps(mem).encode())
         else:
-            # Serve index.html for root, or static files
             if self.path == '/' or self.path == '':
                 self.path = '/index.html'
             return super().do_GET()
 
 def run_server():
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    # Change to the dashboard directory to serve files correctly
+    os.chdir("/home/the_host/clawd/dashboard")
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
         print(f"Lucca Lab Dashboard running at http://localhost:{PORT}")
         httpd.serve_forever()
