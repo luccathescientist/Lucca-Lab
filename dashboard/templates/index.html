@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucca Assistant Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.5rem; }
+        .status-badge { background-color: #10b981; color: #064e3b; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-white">🔧 Lucca Dashboard</h1>
+                <p class="text-slate-400">Personal Assistant Status & Memory</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="status-badge">ONLINE</span>
+                <span class="text-sm text-slate-500">Updated: {{ last_update }}</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card">
+                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">CPU Usage</h2>
+                <p class="text-4xl font-bold text-white">{{ stats.cpu_percent }}%</p>
+            </div>
+            <div class="card">
+                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">System RAM</h2>
+                <p class="text-4xl font-bold text-white">{{ stats.memory_used_gb }} / {{ stats.memory_total_gb }} GB</p>
+            </div>
+            <div class="card">
+                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Current Task</h2>
+                <p class="text-xl font-medium text-emerald-400">Deploying Dashboard V1</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card overflow-hidden">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    🧠 Long-Term Memory
+                </h2>
+                <div class="bg-slate-900 p-4 rounded-md h-[400px] overflow-y-auto font-mono text-sm border border-slate-700">
+                    <pre class="whitespace-pre-wrap">{{ memory }}</pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4">📜 Recent History</h2>
+                <ul class="space-y-4">
+                    <li class="flex gap-4">
+                        <span class="text-emerald-500 font-bold">14:54</span>
+                        <span>Generated "Flux_Dragon_STACKED_00001_.png"</span>
+                    </li>
+                    <li class="flex gap-4">
+                        <span class="text-emerald-500 font-bold">14:50</span>
+                        <span>Applied Realism + Detail LoRA Stack</span>
+                    </li>
+                    <li class="flex gap-4">
+                        <span class="text-emerald-500 font-bold">14:43</span>
+                        <span>Upscaled Crystal Dragon to 2048x2048</span>
+                    </li>
+                    <li class="flex gap-4">
+                        <span class="text-emerald-500 font-bold">14:38</span>
+                        <span>Generated Crystal Dragon (Flux)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
