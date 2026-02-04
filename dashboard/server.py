@@ -38,6 +38,9 @@ class ConnectionManager:
         self.is_responding = status
         await self.broadcast({"type": "status", "is_responding": status})
 
+    async def log(self, content: str):
+        await self.broadcast({"type": "log", "content": content})
+
 manager = ConnectionManager()
 
 def get_gpu_stats():
@@ -171,6 +174,12 @@ async def ai_message(msg: ChatMessage):
         f.write(json.dumps(entry) + "\n")
     await manager.broadcast({"type": "message", "msg": entry})
     return {"status": "sent"}
+
+# Helper to inject external logs
+@app.post("/api/log")
+async def inject_log(msg: ChatMessage):
+    await manager.log(msg.text)
+    return {"status": "logged"}
 
 if __name__ == "__main__":
     import uvicorn

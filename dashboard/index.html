@@ -429,6 +429,14 @@
                     </div>
                 </div>
 
+                <!-- LIVE LAB LOGS -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h2>Live Lab Logs</h2>
+                    <div id="log-container" class="stream-box" style="height: 150px; font-size: 0.75rem; background: rgba(0,0,0,0.8); border: 1px solid rgba(209, 120, 255, 0.2);">
+                        <div style="color: var(--accent-color);">[SYSTEM] Log stream initialized. Waiting for events...</div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -495,15 +503,35 @@
                 const data = JSON.parse(event.data);
                 if (data.type === 'message') {
                     addMessageToUI(data.msg);
+                    addLog(`[CHAT] ${data.msg.sender}: ${data.msg.text}`);
                 } else if (data.type === 'status') {
                     document.getElementById('responding-indicator').style.display = data.is_responding ? 'block' : 'none';
+                    addLog(`[STATUS] AI Responding: ${data.is_responding}`);
+                } else if (data.type === 'log') {
+                    addLog(data.content);
                 }
             };
 
             socket.onclose = () => {
+                addLog(`[SYSTEM] WS Disconnected. Retrying...`);
                 console.log('WS disconnected. Retrying in 2s...');
                 setTimeout(connectWS, 2000);
             };
+        }
+
+        function addLog(text) {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            const now = new Date().toLocaleTimeString();
+            entry.style.marginBottom = '4px';
+            entry.innerHTML = `<span style="color: rgba(255,255,255,0.3); font-size: 0.7rem;">[${now}]</span> ${text}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+            
+            // Limit logs to last 50 entries
+            while (container.childNodes.length > 50) {
+                container.removeChild(container.firstChild);
+            }
         }
 
         function addMessageToUI(msg) {
