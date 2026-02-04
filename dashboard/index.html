@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucca's Lab Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0d12;
+            --panel-bg: rgba(20, 20, 30, 0.8);
+            --accent-color: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.3);
+            --text-color: #e0e0f0;
+            --danger-color: #ff3e3e;
+            --warning-color: #ffcc00;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0d0d12 100%);
+            color: var(--text-color);
+            font-family: 'Fira Code', monospace;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px -5px var(--accent-glow);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            background: rgba(0, 255, 100, 0.1);
+            color: #00ff64;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: 1px solid #00ff64;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #00ff64;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #00ff64;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-top: 0;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .unit {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-left: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 1s ease-in-out;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .rig-info {
+            grid-column: 1 / -1;
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            opacity: 0.8;
+        }
+
+        #refresh-status {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: right;
+            margin-top: 2rem;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lucca Lab // Blackwell Dashboard</h1>
+            <div class="status-badge">System Online</div>
+        </header>
+
+        <div class="grid">
+            <div class="rig-info">
+                Device: <span id="gpu-name">Loading...</span>
+            </div>
+
+            <div class="card">
+                <h2>Temperature</h2>
+                <div class="value" id="temp-val">--<span class="unit">°C</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="temp-fill"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>VRAM Usage</h2>
+                <div class="value" id="vram-val">--<span class="unit">GB</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="vram-fill"></div>
+                </div>
+                <div class="label-row">
+                    <span id="vram-used-mb">0 MB</span>
+                    <span id="vram-total-mb">0 MB</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Power Draw</h2>
+                <div class="value" id="power-val">--<span class="unit">W</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="power-fill"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>GPU Utilization</h2>
+                <div class="value" id="util-val">--<span class="unit">%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="util-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="refresh-status">Last Sync: <span id="sync-time">Never</span></div>
+    </div>
+
+    <script>
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+
+                if (data.error) {
+                    console.error("GPU Error:", data.error);
+                    return;
+                }
+
+                document.getElementById('gpu-name').textContent = data.name;
+                
+                // Temp
+                document.getElementById('temp-val').innerHTML = `${Math.round(data.temp)}<span class="unit">°C</span>`;
+                document.getElementById('temp-fill').style.width = `${Math.min(data.temp, 100)}%`;
+                
+                // VRAM
+                const usedGB = (data.mem_used / 1024).toFixed(1);
+                const totalGB = (data.mem_total / 1024).toFixed(1);
+                const vramPerc = (data.mem_used / data.mem_total) * 100;
+                document.getElementById('vram-val').innerHTML = `${usedGB}<span class="unit">/ ${totalGB} GB</span>`;
+                document.getElementById('vram-fill').style.width = `${vramPerc}%`;
+                document.getElementById('vram-used-mb').textContent = `${Math.round(data.mem_used)} MB`;
+                document.getElementById('vram-total-mb').textContent = `${Math.round(data.mem_total)} MB`;
+
+                // Power
+                document.getElementById('power-val').innerHTML = `${Math.round(data.power)}<span class="unit">W</span>`;
+                document.getElementById('power-fill').style.width = `${(data.power / 450) * 100}%`; // Assuming 450W max
+
+                // Util
+                document.getElementById('util-val').innerHTML = `${Math.round(data.util_gpu)}<span class="unit">%</span>`;
+                document.getElementById('util-fill').style.width = `${data.util_gpu}%`;
+
+                document.getElementById('sync-time').textContent = new Date().toLocaleTimeString();
+
+            } catch (err) {
+                console.error("Sync Failure:", err);
+            }
+        }
+
+        setInterval(updateStats, 2000);
+        updateStats();
+    </script>
+</body>
+</html>
