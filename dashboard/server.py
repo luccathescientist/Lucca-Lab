@@ -57,6 +57,38 @@ def get_gpu_stats():
     except Exception as e:
         return {"error": str(e)}
 
+from langchain_community.vectorstores import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+
+CHROMA_PATH = "/home/the_host/clawd/deep-wisdom/db"
+MODEL_NAME = "all-MiniLM-L6-v2"
+
+# Global embedding model (lazy load later if needed, but for responsiveness let's keep it here)
+_embeddings = None
+
+def get_embeddings():
+    global _embeddings
+    if _embeddings is None:
+        _embeddings = HuggingFaceEmbeddings(model_name=MODEL_NAME)
+    return _embeddings
+
+@app.get("/api/search")
+async def search(q: str):
+    try:
+        embeddings = get_embeddings()
+        vector_db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+        results = vector_db.similarity_search(q, k=5)
+        
+        serialized_results = []
+        for r in results:
+            serialized_results.append({
+                "content": r.page_content,
+                "metadata": r.metadata
+            })
+        return serialized_results
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/")
 async def get():
     return FileResponse(
