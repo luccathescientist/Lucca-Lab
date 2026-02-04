@@ -61,13 +61,13 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             message = json.loads(post_data)
             
-            # Save message to inbox
-            inbox_path = "/home/the_host/clawd/dashboard/inbox.jsonl"
-            with open(inbox_path, "a") as f:
+            # Save message to conversation
+            conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
+            with open(conv_path, "a") as f:
                 entry = {
                     "timestamp": datetime.now().isoformat(),
-                    "sender": "Dashboard User",
-                    "message": message.get("text", "")
+                    "sender": "User",
+                    "text": message.get("text", "")
                 }
                 f.write(json.dumps(entry) + "\n")
             
@@ -92,6 +92,19 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             mem = get_memory_stream()
             self.wfile.write(json.dumps(mem).encode())
+        elif self.path == '/api/messages':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            messages = []
+            conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
+            if os.path.exists(conv_path):
+                with open(conv_path, "r") as f:
+                    for line in f:
+                        if line.strip():
+                            messages.append(json.loads(line))
+            self.wfile.write(json.dumps(messages).encode())
         else:
             if self.path == '/' or self.path == '':
                 self.path = '/index.html'
