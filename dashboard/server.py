@@ -62,11 +62,13 @@ def get_gpu_stats():
 
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
+import threading
+import queue
 
 CHROMA_PATH = "/home/the_host/clawd/deep-wisdom/db"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
-# Global embedding model (lazy load later if needed, but for responsiveness let's keep it here)
+# Global embedding model
 _embeddings = None
 
 def get_embeddings():
@@ -74,6 +76,63 @@ def get_embeddings():
     if _embeddings is None:
         _embeddings = HuggingFaceEmbeddings(model_name=MODEL_NAME)
     return _embeddings
+
+# Inference process management
+class InferenceManager:
+    def __init__(self):
+        self.active_process = None
+        self.output_queue = queue.Queue()
+
+manager = ConnectionManager()
+inf_manager = InferenceManager()
+
+@app.get("/api/models")
+async def list_models():
+    return [
+        {"id": "deepseek-70b", "name": "DeepSeek-R1-Distill-Llama-70B (4-bit)", "description": "High reasoning depth, 15 TPS"},
+        {"id": "qwen-1.5b", "name": "Qwen2.5-1.5B-Instruct", "description": "Lightning fast, 110 TPS"},
+        {"id": "deepseek-8b", "name": "DeepSeek-R1-Distill-Qwen-8B", "description": "Balanced speed/reasoning, 45 TPS"}
+    ]
+
+@app.websocket("/ws/inference")
+async def inference_websocket(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            req = json.loads(data)
+            model_id = req.get("model")
+            prompt = req.get("prompt")
+            
+            # Start inference script in subprocess
+            # We'll use a helper script dashboard/run_inf.py
+            process = subprocess.Popen(
+                [
+                    "/home/the_host/workspace/pytorch_cuda/.venv/bin/python3",
+                    "/home/the_host/clawd/dashboard/run_inf.py",
+                    model_id,
+                    prompt
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
+            
+            await manager.set_responding(True)
+            
+            for line in iter(process.stdout.readline, ''):
+                if line:
+                    await websocket.send_json({"type": "token", "text": line})
+            
+            process.stdout.close()
+            process.wait()
+            
+            await manager.set_responding(False)
+            await websocket.send_json({"type": "done"})
+            
+    except WebSocketDisconnect:
+        pass
 
 @app.get("/api/search")
 async def search(q: str):
