@@ -1,14 +1,44 @@
-import http.server
-import socketserver
 import json
-import subprocess
-import threading
-import time
 import os
-import glob
+import subprocess
+import asyncio
 from datetime import datetime
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+import glob
 
-PORT = 8889
+app = FastAPI()
+
+# Mount assets
+os.makedirs("/home/the_host/clawd/dashboard/assets", exist_ok=True)
+app.mount("/assets", StaticFiles(directory="/home/the_host/clawd/dashboard/assets"), name="assets")
+
+class ChatMessage(BaseModel):
+    text: str
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+        self.is_responding = False
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in self.active_connections:
+            await connection.send_json(message)
+
+    async def set_responding(self, status: bool):
+        self.is_responding = status
+        await self.broadcast({"type": "status", "is_responding": status})
+
+manager = ConnectionManager()
 
 def get_gpu_stats():
     try:
@@ -27,96 +57,86 @@ def get_gpu_stats():
     except Exception as e:
         return {"error": str(e)}
 
-def get_memory_stream():
+@app.get("/")
+async def get():
+    return FileResponse("/home/the_host/clawd/dashboard/index.html")
+
+@app.get("/api/stats")
+async def stats():
+    return get_gpu_stats()
+
+@app.get("/api/memory")
+async def memory():
     try:
-        # Get MEMORY.md content
         with open("/home/the_host/clawd/MEMORY.md", "r") as f:
             memory_md = f.read()
-        
-        # Get latest daily memory
         daily_files = sorted(glob.glob("/home/the_host/clawd/memory/2026-*.md"))
         latest_daily = ""
         if daily_files:
             with open(daily_files[-1], "r") as f:
                 latest_daily = f.read()
-        
-        return {
-            "memory_md": memory_md,
-            "latest_daily": latest_daily
-        }
+        return {"memory_md": memory_md, "latest_daily": latest_daily}
     except Exception as e:
         return {"error": str(e)}
 
-class DashboardHandler(http.server.SimpleHTTPRequestHandler):
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
+@app.get("/api/messages")
+async def messages():
+    conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
+    msgs = []
+    if os.path.exists(conv_path):
+        with open(conv_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    msgs.append(json.loads(line))
+    return msgs
 
-    def do_POST(self):
-        if self.path == '/api/chat':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            message = json.loads(post_data)
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    manager.active_connections.append(websocket)
+    # Send initial status
+    await websocket.send_json({"type": "status", "is_responding": manager.is_responding})
+    try:
+        while True:
+            data = await websocket.receive_text()
+            message = json.loads(data)
             
-            # Save message to conversation
+            # Save message
             conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
+            entry = {
+                "timestamp": datetime.now().isoformat(),
+                "sender": "User",
+                "text": message.get("text", "")
+            }
             with open(conv_path, "a") as f:
-                entry = {
-                    "timestamp": datetime.now().isoformat(),
-                    "sender": "User",
-                    "text": message.get("text", "")
-                }
                 f.write(json.dumps(entry) + "\n")
             
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps({"status": "received"}).encode())
+            # Broadcast to everyone
+            await manager.broadcast({"type": "message", "msg": entry})
+            
+    except WebSocketDisconnect:
+        manager.active_connections.remove(websocket)
 
-    def do_GET(self):
-        if self.path == '/api/stats':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            stats = get_gpu_stats()
-            self.wfile.write(json.dumps(stats).encode())
-        elif self.path == '/api/memory':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            mem = get_memory_stream()
-            self.wfile.write(json.dumps(mem).encode())
-        elif self.path == '/api/messages':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            messages = []
-            conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
-            if os.path.exists(conv_path):
-                with open(conv_path, "r") as f:
-                    for line in f:
-                        if line.strip():
-                            messages.append(json.loads(line))
-            self.wfile.write(json.dumps(messages).encode())
-        else:
-            if self.path == '/' or self.path == '':
-                self.path = '/index.html'
-            return super().do_GET()
+# Helper to trigger responding state
+@app.post("/api/status/responding")
+async def set_responding(status: bool):
+    await manager.set_responding(status)
+    return {"status": "ok"}
 
-def run_server():
-    # Change to the dashboard directory to serve files correctly
-    os.chdir("/home/the_host/clawd/dashboard")
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
-        print(f"Lucca Lab Dashboard running at http://localhost:{PORT}")
-        httpd.serve_forever()
+# Helper to send AI message
+@app.post("/api/chat/ai")
+async def ai_message(msg: ChatMessage):
+    conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "sender": "AI",
+        "text": msg.text
+    }
+    with open(conv_path, "a") as f:
+        f.write(json.dumps(entry) + "\n")
+    await manager.broadcast({"type": "message", "msg": entry})
+    return {"status": "sent"}
 
 if __name__ == "__main__":
-    run_server()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8889)

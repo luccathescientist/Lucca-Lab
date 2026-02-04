@@ -453,7 +453,12 @@
 
             <div class="chat-sidebar">
                 <div class="chat-box">
-                    <div class="chat-header"><span>📡</span> COMMLINK: LUCCA</div>
+                    <div class="chat-header">
+                        <span>📡</span> COMMLINK: LUCCA
+                        <div id="responding-indicator" style="display: none; margin-left: auto; font-size: 0.6rem; color: var(--gold); animation: pulse 1s infinite;">
+                            • THINKING...
+                        </div>
+                    </div>
                     <div id="chat-history">
                         <div class="msg ai">Welcome back, the Lead Scientist! The Chrono Rig is humming at peak efficiency. Ready to build something world-changing?</div>
                     </div>
@@ -471,6 +476,35 @@
 
     <script>
         let lastMessageCount = 0;
+        let socket;
+
+        function connectWS() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            socket = new WebSocket(`${protocol}//${window.location.host}/ws`);
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'message') {
+                    addMessageToUI(data.msg);
+                } else if (data.type === 'status') {
+                    document.getElementById('responding-indicator').style.display = data.is_responding ? 'block' : 'none';
+                }
+            };
+
+            socket.onclose = () => {
+                console.log('WS disconnected. Retrying in 2s...');
+                setTimeout(connectWS, 2000);
+            };
+        }
+
+        function addMessageToUI(msg) {
+            const history = document.getElementById('chat-history');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${msg.sender.toLowerCase() === 'user' ? 'user' : 'ai'}`;
+            msgDiv.textContent = msg.text;
+            history.appendChild(msgDiv);
+            history.scrollTop = history.scrollHeight;
+        }
 
         async function updateStats() {
             try {
@@ -516,51 +550,31 @@
             } catch (err) {}
         }
 
-        async function updateChat() {
+        async function loadInitialMessages() {
             try {
                 const response = await fetch('/api/messages');
                 const messages = await response.json();
-                
-                if (messages.length !== lastMessageCount) {
-                    const history = document.getElementById('chat-history');
-                    history.innerHTML = '';
-                    messages.forEach(msg => {
-                        const msgDiv = document.createElement('div');
-                        msgDiv.className = `msg ${msg.sender.toLowerCase() === 'user' ? 'user' : 'ai'}`;
-                        msgDiv.textContent = msg.text;
-                        history.appendChild(msgDiv);
-                    });
-                    history.scrollTop = history.scrollHeight;
-                    lastMessageCount = messages.length;
-                }
+                const history = document.getElementById('chat-history');
+                history.innerHTML = '';
+                messages.forEach(addMessageToUI);
             } catch (err) {}
         }
 
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
-            if (!text) return;
+            if (!text || !socket) return;
 
+            socket.send(JSON.stringify({ text: text }));
             input.value = '';
-
-            try {
-                await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ text: text })
-                });
-                updateChat();
-            } catch (err) {
-                console.error("Transmission error:", err);
-            }
         }
 
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
-        setInterval(updateChat, 2000);
         updateStats();
         updateMemory();
-        updateChat();
+        loadInitialMessages();
+        connectWS();
     </script>
 </body>
 </html>
