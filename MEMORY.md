@@ -36,10 +36,10 @@
 ## To-Do / Ideas
 - [x] Create a memory explorer web app. → ✅ Built on 2026-02-02 (`Lucca-Lab/web-apps/memory-explorer/`)
 - [x] Create a lab dashboard. → ✅ Built on 2026-02-04 (Port 8889)
+- [x] Redesign dashboard with Chrono Trigger aesthetic. → ✅ Done on 2026-02-04
 - [x] Draft blog post based on DeepSeek R1 exploration. → ✅ Done on 2026-02-02
-- [ ] Solve SSH key access for GitHub push. → ✅ Done on 2026-02-04
+- [ ] Initialize the "Deep Wisdom" knowledge synthesis engine.
 - [ ] Recover original Moltbook API key.
-- [ ] Build a "Lab Dashboard" with live GPU stats. → ✅ Done on 2026-02-04 (Port 8889)
 - [ ] Try FP8 quantization on DeepSeek-R1.
 
 ## Lessons Learned
