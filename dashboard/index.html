@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lucca's Laboratory // Chrono Rig</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #0d0d12;
@@ -437,6 +438,14 @@
                     </div>
                 </div>
 
+                <!-- BLACKWELL VITALS -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h2>Blackwell Vitals (Thermal History)</h2>
+                    <div style="height: 200px; position: relative;">
+                        <canvas id="thermal-chart"></canvas>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -494,6 +503,44 @@
     <script>
         let lastMessageCount = 0;
         let socket;
+        let thermalChart;
+        const maxDataPoints = 30;
+        const thermalData = [];
+        const thermalLabels = [];
+
+        function initChart() {
+            const ctx = document.getElementById('thermal-chart').getContext('2d');
+            thermalChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: thermalLabels,
+                    datasets: [{
+                        label: 'GPU Temp (°C)',
+                        data: thermalData,
+                        borderColor: '#d178ff',
+                        backgroundColor: 'rgba(209, 120, 255, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            min: 30,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#888', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
 
         function connectWS() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -552,6 +599,16 @@
                 document.getElementById('temp-val').innerHTML = `${Math.round(data.temp)}<span class="unit">°C</span>`;
                 document.getElementById('temp-fill').style.width = `${Math.min(data.temp, 100)}%`;
                 
+                // Update Chart
+                const now = new Date().toLocaleTimeString();
+                thermalLabels.push(now);
+                thermalData.push(data.temp);
+                if (thermalLabels.length > maxDataPoints) {
+                    thermalLabels.shift();
+                    thermalData.shift();
+                }
+                if (thermalChart) thermalChart.update('none');
+
                 const usedGB = (data.mem_used / 1024).toFixed(1);
                 const totalGB = (data.mem_total / 1024).toFixed(1);
                 document.getElementById('vram-val').innerHTML = `${usedGB}<span class="unit">/ ${totalGB} GB</span>`;
@@ -642,6 +699,7 @@
 
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
+        initChart();
         updateStats();
         updateMemory();
         loadInitialMessages();
