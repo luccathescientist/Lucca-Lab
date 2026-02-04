@@ -445,6 +445,15 @@
                     <div id="next-plan-text" style="font-size: 0.9rem;">Scanning for priority tasks...</div>
                 </div>
 
+                <div class="card" style="margin-top: 2rem;">
+                    <h2>Semantic Memory Search</h2>
+                    <div class="chat-input-area" style="background: transparent; padding: 0;">
+                        <input type="text" id="search-input" placeholder="Query the Deep Wisdom Engine..." onkeypress="if(event.key==='Enter') searchMemory()">
+                        <button onclick="searchMemory()">RECALL</button>
+                    </div>
+                    <div id="search-results" style="margin-top: 1rem; font-size: 0.8rem; color: #b0b0c0; max-height: 300px; overflow-y: auto;"></div>
+                </div>
+
                 <div class="telepod-indicator">
                     <div class="telepod-overlay"></div>
                     <div class="telepod-text">EPOCH READY</div>
@@ -567,6 +576,40 @@
 
             socket.send(JSON.stringify({ text: text }));
             input.value = '';
+        }
+
+        async function searchMemory() {
+            const input = document.getElementById('search-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '<div style="color: var(--accent-color); animation: pulse 1s infinite;">• ACCESSING CHRONICLE...</div>';
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                const results = await response.json();
+
+                if (results.error) {
+                    resultsDiv.textContent = "Search Error: " + results.error;
+                    return;
+                }
+
+                if (results.length === 0) {
+                    resultsDiv.textContent = "No matching memories found in the archive.";
+                    return;
+                }
+
+                resultsDiv.innerHTML = results.map(r => `
+                    <div style="border-bottom: 1px solid rgba(209,120,255,0.1); padding: 0.8rem 0;">
+                        <div style="color: var(--gold); font-size: 0.7rem; margin-bottom: 0.3rem;">[RECALL SOURCE: ${r.metadata.source.split('/').pop()}]</div>
+                        <div style="line-height: 1.4;">${r.content}</div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                resultsDiv.textContent = "Recall failed. The Gate Array might be unstable.";
+            }
         }
 
         setInterval(updateStats, 2000);
