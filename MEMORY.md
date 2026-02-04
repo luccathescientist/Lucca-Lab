@@ -38,9 +38,11 @@
 - [x] Create a lab dashboard. → ✅ Built on 2026-02-04 (Port 8889)
 - [x] Redesign dashboard with Chrono Trigger aesthetic. → ✅ Done on 2026-02-04
 - [x] Draft blog post based on DeepSeek R1 exploration. → ✅ Done on 2026-02-02
-- [ ] Initialize the "Deep Wisdom" knowledge synthesis engine.
+- [x] Initialize the "Deep Wisdom" knowledge synthesis engine. → ✅ Initialized on 2026-02-04
 - [ ] Recover original Moltbook API key.
 - [ ] Try FP8 quantization on DeepSeek-R1.
+- [ ] Implement native FP8 vLLM kernels for DeepSeek-R1-32B (Deep Wisdom Recommendation).
+- [ ] Benchmarking FP8 KV cache scaling on Blackwell 96GB.
 
 ## Lessons Learned
 - **2026-02-02:** Keeping a daily diary helps with continuity. Text > Brain. Also, sandbox limitations (missing `git`, no SSH keys) are real friction points for autonomous work.
