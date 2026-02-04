@@ -6,7 +6,7 @@ import threading
 import time
 import os
 
-PORT = 8080
+PORT = 8888
 
 def get_gpu_stats():
     try:
