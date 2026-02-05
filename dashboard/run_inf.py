@@ -1,46 +1,42 @@
 import sys
 import torch
+import json
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer
 from threading import Thread
 
 def run_inference(model_id, prompt):
-    if model_id == "deepseek-70b-fp8":
-        # Use persistent vLLM server on port 8001
-        import requests
-        url = "http://localhost:8001/v1/completions"
-        payload = {
-            "model": "neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic",
-            "prompt": prompt,
-            "max_tokens": 512,
-            "stream": True
-        }
-        response = requests.post(url, json=payload, stream=True)
-        for line in response.iter_lines():
-            if line:
-                chunk = json.loads(line.decode('utf-8').replace('data: ', ''))
-                if 'choices' in chunk and len(chunk['choices']) > 0:
-                    text = chunk['choices'][0].get('text', '')
-                    sys.stdout.write(text)
-                    sys.stdout.flush()
-        return
-
-    if model_id == "deepseek-70b":
-        model_name = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
-        load_args = {"device_map": "auto", "load_in_4bit": True}
-    elif model_id == "deepseek-8b":
-        model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-8B"
-        load_args = {"device_map": "auto", "torch_dtype": torch.float16}
+    # Map friendly ID to HF repo
+    model_map = {
+        "deepseek-70b": "deepseek-ai/DeepSeek-R1-Distill-Llama-70B",
+        "deepseek-70b-fp8": "neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic",
+        "deepseek-8b": "deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
+        "qwen-1.5b": "Qwen/Qwen2.5-1.5B-Instruct"
+    }
+    
+    model_name = model_map.get(model_id, "Qwen/Qwen2.5-1.5B-Instruct")
+    
+    # Quantization logic
+    load_args = {"device_map": "auto"}
+    if "70B" in model_name:
+        if "FP8" in model_name:
+            # Native FP8 handles itself in newer transformers/vLLM but here we use transformers fallback
+            load_args["torch_dtype"] = torch.float16 # transformers doesn't have native fp8 dynamic load like vllm
+        else:
+            load_args["load_in_4bit"] = True
     else:
-        model_name = "Qwen/Qwen2.5-1.5B-Instruct"
-        load_args = {"device_map": "auto", "torch_dtype": torch.float16}
+        load_args["torch_dtype"] = torch.float16
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, **load_args)
 
-    inputs = tokenizer([prompt], return_tensors="pt").to(model.device)
+    # APPLY CHAT TEMPLATE to prevent "decoupling"
+    messages = [{"role": "user", "content": prompt}]
+    formatted_prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+    inputs = tokenizer([formatted_prompt], return_tensors="pt").to(model.device)
     streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
-    generation_kwargs = dict(inputs, streamer=streamer, max_new_tokens=512, do_sample=True, temperature=0.7)
+    generation_kwargs = dict(inputs, streamer=streamer, max_new_tokens=1024, do_sample=True, temperature=0.7)
     
     thread = Thread(target=model.generate, kwargs=generation_kwargs)
     thread.start()
