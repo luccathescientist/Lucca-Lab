@@ -5,7 +5,15 @@ import os
 import sys
 
 def send_email(to_email, subject, body):
-    # This is a stub for the autonomous pipeline to use.
+    # Load .env if it exists
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r") as f:
+            for line in f:
+                if "=" in line and not line.startswith("#"):
+                    key, value = line.strip().split("=", 1)
+                    os.environ[key] = value.strip('"').strip("'")
+
     # In a real environment, we'd use environment variables for SMTP credentials.
     # For now, I'll log the intent to the laboratory console.
     print(f"--- EMAIL TRANSMISSION INITIATED ---")
