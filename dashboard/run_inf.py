@@ -4,6 +4,26 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStream
 from threading import Thread
 
 def run_inference(model_id, prompt):
+    if model_id == "deepseek-70b-fp8":
+        # Use persistent vLLM server on port 8001
+        import requests
+        url = "http://localhost:8001/v1/completions"
+        payload = {
+            "model": "neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic",
+            "prompt": prompt,
+            "max_tokens": 512,
+            "stream": True
+        }
+        response = requests.post(url, json=payload, stream=True)
+        for line in response.iter_lines():
+            if line:
+                chunk = json.loads(line.decode('utf-8').replace('data: ', ''))
+                if 'choices' in chunk and len(chunk['choices']) > 0:
+                    text = chunk['choices'][0].get('text', '')
+                    sys.stdout.write(text)
+                    sys.stdout.flush()
+        return
+
     if model_id == "deepseek-70b":
         model_name = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
         load_args = {"device_map": "auto", "load_in_4bit": True}
