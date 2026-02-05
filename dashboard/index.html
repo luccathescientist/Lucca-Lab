@@ -458,7 +458,7 @@
                 <div class="lucca-avatar"></div>
                 <h1>Lucca's Lab // Chrono Rig v4</h1>
             </div>
-            <div class="status-badge">GATE ARRAY ONLINE</div>
+            <div class="status-badge" id="weather-badge">GATE ARRAY ONLINE</div>
         </header>
 
         <div class="main-layout">
@@ -882,6 +882,16 @@
             }
         }
 
+        async function updateWeather() {
+            try {
+                const response = await fetch('/api/weather');
+                const data = await response.json();
+                if (data.data) {
+                    document.getElementById('weather-badge').textContent = `TAIPEI: ${data.data}`;
+                }
+            } catch (err) {}
+        }
+
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
         setInterval(updateModelLoadout, 15000);
@@ -890,6 +900,7 @@
         updateStats();
         updateMemory();
         updateModelLoadout();
+        updateWeather();
         checkNightMode();
         loadInitialMessages();
         connectWS();
