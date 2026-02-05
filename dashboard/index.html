@@ -515,11 +515,11 @@
                     <h2 style="color: var(--gold);">Model Laboratory</h2>
                     <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                         <select id="model-select" style="flex: 1;">
-                            <option value="qwen-1.5b">Qwen2.5-1.5B (Fastest)</option>
+                            <option value="deepseek-70b-fp8">DeepSeek-R1-70B (FP8 - Auto-Load)</option>
                             <option value="deepseek-8b">DeepSeek-R1-8B (Balanced)</option>
-                            <option value="deepseek-70b">DeepSeek-R1-70B (High Reasoning)</option>
-                            <option value="deepseek-70b-fp8">DeepSeek-R1-70B (Native FP8 - NEW)</option>
+                            <option value="qwen-1.5b">Qwen2.5-1.5B (Fastest)</option>
                         </select>
+                        <button onclick="unloadModel()" style="background: var(--danger-color); font-size: 0.6rem;">UNLOAD</button>
                     </div>
                     <div class="chat-input-area" style="background: transparent; padding: 0; display: block;">
                         <textarea id="prompt-input" placeholder="Enter test prompt for the local model..." style="width: 100%; height: 80px; margin-bottom: 0.5rem; resize: none;"></textarea>
@@ -680,6 +680,17 @@
             addLog(`[INF] Running ${model}...`);
 
             infSocket.send(JSON.stringify({ model: model, prompt: prompt }));
+        }
+
+        async function unloadModel() {
+            try {
+                addLog("[SYSTEM] Requesting VRAM purge...");
+                const response = await fetch('/api/model/unload', { method: 'POST' });
+                const data = await response.json();
+                addLog("[SYSTEM] Model unloaded successfully.");
+            } catch (err) {
+                addLog("[ERROR] Purge failed.");
+            }
         }
 
         function addLog(text) {

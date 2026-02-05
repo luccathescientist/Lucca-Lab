@@ -3,8 +3,9 @@ import os
 import subprocess
 import asyncio
 import glob
-from datetime import datetime
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+import time
+from datetime import datetime, timedelta
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, BackgroundTasks
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -25,6 +26,87 @@ PORT = 8889
 CHROMA_PATH = "/home/the_host/clawd/deep-wisdom/db"
 MODEL_NAME = "all-MiniLM-L6-v2"
 VLLM_URL = "http://localhost:8001/v1"
+INACTIVITY_LIMIT = 300 # 5 minutes
+
+# State Management
+class LabState:
+    def __init__(self):
+        self.vllm_process = None
+        self.last_activity = datetime.now()
+        self.is_loading = False
+
+state = LabState()
+
+async def start_vllm():
+    if state.vllm_process or state.is_loading:
+        return True
+    
+    state.is_loading = True
+    print("Initializing R1-70B FP8 Core...")
+    
+    env = os.environ.copy()
+    env["PYTHONPATH"] = env.get("PYTHONPATH", "") + ":/home/the_host/workspace/pytorch_cuda/.venv/lib/python3.12/site-packages"
+    
+    state.vllm_process = subprocess.Popen(
+        [
+            "/home/the_host/workspace/pytorch_cuda/.venv/bin/python3",
+            "-m", "vllm.entrypoints.openai.api_server",
+            "--model", "neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic",
+            "--port", "8001",
+            "--gpu-memory-utilization", "0.9",
+            "--max-model-len", "8192",
+            "--served-model-name", "r1-70b-fp8"
+        ],
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    
+    # Wait for ready
+    retries = 0
+    while retries < 20:
+        try:
+            res = requests.get(f"{VLLM_URL}/models")
+            if res.status_code == 200:
+                print("R1-70B FP8 Core Online.")
+                state.is_loading = False
+                state.last_activity = datetime.now()
+                return True
+        except:
+            pass
+        await asyncio.sleep(5)
+        retries += 1
+    
+    state.is_loading = False
+    return False
+
+def stop_vllm():
+    if state.vllm_process:
+        print("Unloading R1-70B FP8 Core (Inactivity/Manual)...")
+        state.vllm_process.terminate()
+        try:
+            state.vllm_process.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            state.vllm_process.kill()
+        state.vllm_process = None
+        print("VRAM Purge Complete.")
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(inactivity_monitor())
+
+async def inactivity_monitor():
+    while True:
+        await asyncio.sleep(60)
+        if state.vllm_process and not state.is_loading:
+            idle_time = (datetime.now() - state.last_activity).total_seconds()
+            if idle_time > INACTIVITY_LIMIT:
+                stop_vllm()
+
+@app.post("/api/model/unload")
+async def manual_unload():
+    stop_vllm()
+    return {"status": "unloaded"}
 
 # Mount assets
 os.makedirs("/home/the_host/clawd/dashboard/assets", exist_ok=True)
@@ -155,35 +237,41 @@ async def inference_websocket(websocket: WebSocket):
             prompt = req.get("prompt")
             
             await manager.set_responding(True)
-            
-            # Check if persistent vLLM is up
-            try:
-                vllm_alive = requests.get(f"{VLLM_URL}/models").status_code == 200
-            except:
-                vllm_alive = False
+            state.last_activity = datetime.now()
 
-            if vllm_alive and (model_id == "deepseek-70b-fp8" or model_id == "deepseek-70b"):
+            # Ensure model is loaded if it's the 70B
+            if model_id == "deepseek-70b-fp8" or model_id == "deepseek-70b":
+                if not state.vllm_process:
+                    await websocket.send_json({"type": "token", "text": "[SYSTEM] Re-handshaking with 70B FP8 Core... (Estimated 30-60s)\n"})
+                    success = await start_vllm()
+                    if not success:
+                        await websocket.send_json({"type": "token", "text": "[ERROR] Neural Handshake Failed.\n"})
+                        await manager.set_responding(False)
+                        continue
+
                 # Use persistent vLLM
-                # R1 models need chat template. For simplicity, we use chat endpoint.
                 payload = {
                     "model": "r1-70b-fp8",
                     "messages": [{"role": "user", "content": prompt}],
                     "stream": True,
                     "max_tokens": 1024
                 }
-                response = requests.post(f"{VLLM_URL}/chat/completions", json=payload, stream=True)
-                for line in response.iter_lines():
-                    if line:
-                        line_text = line.decode('utf-8')
-                        if line_text.startswith("data: "):
-                            if "[DONE]" in line_text: break
-                            try:
-                                chunk = json.loads(line_text[6:])
-                                if chunk['choices'][0]['delta'].get('content'):
-                                    await websocket.send_json({"type": "token", "text": chunk['choices'][0]['delta']['content']})
-                            except: pass
+                try:
+                    response = requests.post(f"{VLLM_URL}/chat/completions", json=payload, stream=True)
+                    for line in response.iter_lines():
+                        if line:
+                            line_text = line.decode('utf-8')
+                            if line_text.startswith("data: "):
+                                if "[DONE]" in line_text: break
+                                try:
+                                    chunk = json.loads(line_text[6:])
+                                    if chunk['choices'][0]['delta'].get('content'):
+                                        await websocket.send_json({"type": "token", "text": chunk['choices'][0]['delta']['content']})
+                                except: pass
+                except Exception as e:
+                    await websocket.send_json({"type": "token", "text": f"[ERROR] Transmission Failure: {str(e)}\n"})
             else:
-                # Fallback to subprocess for other models or if vLLM is down
+                # Fallback to subprocess for other models
                 process = subprocess.Popen(
                     ["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/run_inf.py", model_id, prompt],
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1
@@ -193,6 +281,7 @@ async def inference_websocket(websocket: WebSocket):
                 process.stdout.close()
                 process.wait()
             
+            state.last_activity = datetime.now()
             await manager.set_responding(False)
             await websocket.send_json({"type": "done"})
     except WebSocketDisconnect:
@@ -205,6 +294,10 @@ async def ai_message(msg: ChatMessage):
         f.write(json.dumps(entry) + "\n")
     await manager.broadcast({"type": "message", "msg": entry})
     return {"status": "sent"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
 
 @app.get("/api/weather")
 async def weather():
