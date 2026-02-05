@@ -21,6 +21,46 @@
             --night-panel: rgba(15, 10, 25, 0.95);
         }
 
+        /* Gate Travel Animation Overlay */
+        #gate-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, #d178ff 0%, #0d0d12 70%);
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            mix-blend-mode: screen;
+        }
+
+        .gate-spark {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: spark-fly 0.8s ease-out forwards;
+        }
+
+        @keyframes spark-fly {
+            0% { transform: scale(1) translate(0, 0); opacity: 1; }
+            100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+
+        @keyframes gate-ripple {
+            0% { transform: scale(0.1); opacity: 1; border: 20px solid var(--accent-color); }
+            100% { transform: scale(2); opacity: 0; border: 0px solid white; }
+        }
+
+        .gate-ripple {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100vw; height: 100vw;
+            margin-left: -50vw; margin-top: -50vw;
+            border-radius: 50%;
+            animation: gate-ripple 0.6s ease-out forwards;
+        }
+
         body.night-mode {
             --bg-color: var(--night-bg);
             --panel-bg: var(--night-panel);
@@ -411,6 +451,7 @@
     </style>
 </head>
 <body>
+    <div id="gate-overlay"></div>
     <div class="container">
         <header>
             <div class="header-left">
@@ -477,6 +518,7 @@
                             <option value="qwen-1.5b">Qwen2.5-1.5B (Fastest)</option>
                             <option value="deepseek-8b">DeepSeek-R1-8B (Balanced)</option>
                             <option value="deepseek-70b">DeepSeek-R1-70B (High Reasoning)</option>
+                            <option value="deepseek-70b-fp8">DeepSeek-R1-70B (Native FP8 - NEW)</option>
                         </select>
                     </div>
                     <div class="chat-input-area" style="background: transparent; padding: 0; display: block;">
@@ -729,14 +771,58 @@
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text || !socket) return;
+            
+            if (text.toLowerCase().startsWith('/gate')) {
+                triggerGateEffect();
+            }
+            
             socket.send(JSON.stringify({ text: text }));
             input.value = '';
+        }
+
+        function triggerGateEffect() {
+            const overlay = document.getElementById('gate-overlay');
+            overlay.style.display = 'block';
+            overlay.style.opacity = '1';
+            
+            // Create ripple
+            const ripple = document.createElement('div');
+            ripple.className = 'gate-ripple';
+            overlay.appendChild(ripple);
+            
+            // Create sparks
+            for (let i = 0; i < 40; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'gate-spark';
+                const size = Math.random() * 5 + 2;
+                spark.style.width = `${size}px`;
+                spark.style.height = `${size}px`;
+                spark.style.left = '50%';
+                spark.style.top = '50%';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 500 + 100;
+                spark.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+                spark.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+                
+                overlay.appendChild(spark);
+            }
+            
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    overlay.innerHTML = '';
+                }, 500);
+            }, 600);
         }
 
         async function searchMemory() {
             const input = document.getElementById('search-input');
             const query = input.value.trim();
             if (!query) return;
+
+            triggerGateEffect();
 
             const resultsDiv = document.getElementById('search-results');
             resultsDiv.innerHTML = '<div style="color: var(--accent-color); animation: pulse 1s infinite;">• ACCESSING CHRONICLE...</div>';
