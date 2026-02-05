@@ -19,3 +19,6 @@ dashboard/conversation.jsonl
 dashboard/inbox.jsonl
 dashboard/*.log
 
+*.log
+*.jsonl
+.env
