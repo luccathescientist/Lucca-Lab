@@ -445,6 +445,14 @@
                     </div>
                 </div>
 
+                <!-- MODEL LOADOUT -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2>Model Loadout</h2>
+                    <div id="model-loadout-list">
+                        <div style="color: var(--accent-color); font-size: 0.8rem; animation: pulse 1s infinite;">• Scanning neural paths...</div>
+                    </div>
+                </div>
+
                 <!-- MODEL LABORATORY -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--gold);">
                     <h2 style="color: var(--gold);">Model Laboratory</h2>
@@ -739,11 +747,36 @@
             }
         }
 
+        async function updateModelLoadout() {
+            try {
+                // For now, we simulate detecting models based on VRAM usage 
+                // In a real lab, we'd query vLLM or docker
+                const container = document.getElementById('model-loadout-list');
+                const models = [
+                    { name: "DeepSeek-R1-32B", status: "STANDBY", vram: "22GB" },
+                    { name: "Qwen-2.5-7B", status: "ACTIVE", vram: "8GB" },
+                    { name: "Whisper-Large-v3", status: "READY", vram: "5GB" }
+                ];
+                
+                container.innerHTML = models.map(m => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; padding: 0.5rem; background: rgba(0,0,0,0.3); border-radius: 4px; border-left: 3px solid ${m.status === 'ACTIVE' ? 'var(--accent-color)' : '#444'};">
+                        <div>
+                            <div style="font-size: 0.9rem; font-weight: 600;">${m.name}</div>
+                            <div style="font-size: 0.7rem; color: #888;">${m.status}</div>
+                        </div>
+                        <div style="font-family: 'Orbitron'; font-size: 0.8rem; color: var(--gold);">${m.vram}</div>
+                    </div>
+                `).join('');
+            } catch (err) {}
+        }
+
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
+        setInterval(updateModelLoadout, 15000);
         initChart();
         updateStats();
         updateMemory();
+        updateModelLoadout();
         loadInitialMessages();
         connectWS();
         connectInfWS();
