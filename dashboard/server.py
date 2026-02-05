@@ -206,6 +206,17 @@ async def ai_message(msg: ChatMessage):
     await manager.broadcast({"type": "message", "msg": entry})
     return {"status": "sent"}
 
+@app.get("/api/weather")
+async def weather():
+    try:
+        # Get weather for the laboratory base using wttr.in
+        res = requests.get("https://wttr.in/the laboratory base?format=%c+%t+%h+%w")
+        if res.status_code == 200:
+            return {"data": res.text.strip()}
+        return {"error": "Failed to fetch weather"}
+    except Exception as e:
+        return {"error": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
