@@ -513,6 +513,7 @@
                 <!-- MODEL LABORATORY -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--gold);">
                     <h2 style="color: var(--gold);">Model Laboratory</h2>
+                    <div id="inf-model-status" style="font-size: 0.6rem; color: var(--gold); margin-bottom: 0.5rem;">STATUS: STASIS (VRAM CLEAR)</div>
                     <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                         <select id="model-select" style="flex: 1;">
                             <option value="deepseek-70b-fp8">DeepSeek-R1-70B (FP8 - Auto-Load)</option>
@@ -553,9 +554,50 @@
                     <div id="search-results" style="margin-top: 1rem; font-size: 0.8rem; color: #b0b0c0; max-height: 300px; overflow-y: auto;"></div>
                 </div>
 
+                <!-- CREATIVE LABORATORY -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color);">Creative Laboratory</h2>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <select id="lora-select" style="flex: 1; border-color: var(--accent-color);">
+                            <option value="flux/detail_ultimator.safetensors">Detail Ultimator</option>
+                            <option value="flux/realism.safetensors">Realism Core</option>
+                            <option value="flux/mythic_fantasy.safetensors">Mythic Fantasy</option>
+                        </select>
+                        <button onclick="loadLoras()" style="background: var(--accent-color); font-size: 0.6rem;">REFRESH</button>
+                    </div>
+                    <div class="chat-input-area" style="background: transparent; padding: 0; display: block;">
+                        <textarea id="creative-prompt" placeholder="Describe your masterpiece..." style="width: 100%; height: 60px; margin-bottom: 0.5rem; resize: none; border-color: var(--accent-glow);"></textarea>
+                        <button id="creative-btn" onclick="runCreative()" style="width: 100%; background: var(--accent-color); color: white;">FORGE IMAGE</button>
+                    </div>
+                    <div id="creative-status" style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--gold);"></div>
+                    <div id="creative-output" style="margin-top: 1rem; text-align: center;">
+                        <img id="generated-img" style="max-width: 100%; border-radius: 8px; box-shadow: 0 0 20px var(--accent-glow); display: none;">
+                    </div>
+                </div>
+
                 <div class="telepod-indicator">
                     <div class="telepod-overlay"></div>
                     <div class="telepod-text">EPOCH READY</div>
+                </div>
+
+                <!-- TECH SPECS MODAL -->
+                <div id="tech-specs-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+                    <div class="card" style="width: 90%; max-width: 600px; border: 2px solid var(--accent-color); box-shadow: 0 0 50px var(--accent-glow);">
+                        <h2 style="color: var(--accent-color); font-size: 1.2rem; border-bottom: 1px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">[HARDWARE CONFIGURATION]</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                            <div style="color: var(--gold);">GPU:</div><div>NVIDIA RTX 6000 (Blackwell)</div>
+                            <div style="color: var(--gold);">VRAM:</div><div>96GB GDDR6 (FP8 Ready)</div>
+                            <div style="color: var(--gold);">DRIVERS:</div><div>CUDA 12.4 / Driver 550.x</div>
+                            <div style="color: var(--gold);">HOST:</div><div>the_host-mlrig</div>
+                            <div style="color: var(--gold);">OS:</div><div>Ubuntu 22.04 LTS</div>
+                            <div style="color: var(--gold);">ARCH:</div><div>x86_64 / Linux 6.8.0</div>
+                        </div>
+                        <button onclick="toggleTechSpecs()" style="width: 100%; margin-top: 2rem; background: var(--accent-color); color: white;">CLOSE ACCESS</button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1rem; text-align: center; cursor: pointer; border-style: dashed; opacity: 0.7;" onclick="toggleTechSpecs()">
+                    <span style="font-size: 0.8rem; color: var(--accent-color);">📡 VIEW CHRONO RIG TECH SPECS</span>
                 </div>
             </div>
 
@@ -660,6 +702,7 @@
                 } else if (data.type === 'done') {
                     document.getElementById('run-btn').disabled = false;
                     document.getElementById('run-btn').textContent = "EXECUTE CORE";
+                    document.getElementById('inf-model-status').textContent = "STATUS: ACTIVE / RESIDENT";
                     addLog(`[INF] Generation complete.`);
                 }
             };
@@ -677,6 +720,7 @@
             document.getElementById('inference-stream').textContent = '';
             document.getElementById('run-btn').disabled = true;
             document.getElementById('run-btn').textContent = "SYNTHESIZING...";
+            document.getElementById('inf-model-status').textContent = "STATUS: HANDSHAKING / ACTIVE";
             addLog(`[INF] Running ${model}...`);
 
             infSocket.send(JSON.stringify({ model: model, prompt: prompt }));
@@ -687,10 +731,64 @@
                 addLog("[SYSTEM] Requesting VRAM purge...");
                 const response = await fetch('/api/model/unload', { method: 'POST' });
                 const data = await response.json();
+                document.getElementById('inf-model-status').textContent = "STATUS: STASIS (VRAM CLEAR)";
                 addLog("[SYSTEM] Model unloaded successfully.");
             } catch (err) {
                 addLog("[ERROR] Purge failed.");
             }
+        }
+
+        let creativeSocket;
+
+        function connectCreativeWS() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            creativeSocket = new WebSocket(`${protocol}//${window.location.host}/ws/creative`);
+
+            creativeSocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                const statusDiv = document.getElementById('creative-status');
+                if (data.type === 'log') {
+                    statusDiv.textContent = data.text;
+                } else if (data.type === 'image') {
+                    const img = document.getElementById('generated-img');
+                    img.src = data.url + '?t=' + new Date().getTime();
+                    img.style.display = 'block';
+                    document.getElementById('creative-btn').disabled = false;
+                    document.getElementById('creative-btn').textContent = "FORGE IMAGE";
+                    statusDiv.textContent = "Epoch finalized. Image forged.";
+                    addLog("[CREATIVE] Image generation complete.");
+                } else if (data.type === 'error') {
+                    statusDiv.textContent = "[ERROR] " + data.text;
+                    document.getElementById('creative-btn').disabled = false;
+                    document.getElementById('creative-btn').textContent = "FORGE IMAGE";
+                }
+            };
+
+            creativeSocket.onclose = () => {
+                setTimeout(connectCreativeWS, 2000);
+            };
+        }
+
+        async function loadLoras() {
+            try {
+                const response = await fetch('/api/creative/loras');
+                const loras = await response.json();
+                const select = document.getElementById('lora-select');
+                select.innerHTML = loras.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+            } catch (err) {}
+        }
+
+        function runCreative() {
+            const lora = document.getElementById('lora-select').value;
+            const prompt = document.getElementById('creative-prompt').value.trim();
+            if (!prompt || !creativeSocket) return;
+
+            document.getElementById('creative-btn').disabled = true;
+            document.getElementById('creative-btn').textContent = "FORGING...";
+            document.getElementById('creative-status').textContent = "Calibrating neural arrays...";
+            addLog(`[CREATIVE] Forging image with style: ${lora}`);
+
+            creativeSocket.send(JSON.stringify({ lora: lora, prompt: prompt }));
         }
 
         function addLog(text) {
@@ -893,6 +991,11 @@
             }
         }
 
+        function toggleTechSpecs() {
+            const modal = document.getElementById('tech-specs-modal');
+            modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+        }
+
         async function updateWeather() {
             try {
                 const response = await fetch('/api/weather');
@@ -916,6 +1019,8 @@
         loadInitialMessages();
         connectWS();
         connectInfWS();
+        connectCreativeWS();
+        loadLoras();
     </script>
 </body>
 </html>

@@ -43,6 +43,7 @@ async def start_vllm():
     
     state.is_loading = True
     print("Initializing R1-70B FP8 Core...")
+    await manager.broadcast({"type": "log", "content": "[SYSTEM] Neural Handshake Initiated: Loading R1-70B FP8 Core..."})
     
     env = os.environ.copy()
     env["PYTHONPATH"] = env.get("PYTHONPATH", "") + ":/home/the_host/workspace/pytorch_cuda/.venv/lib/python3.12/site-packages"
@@ -69,6 +70,7 @@ async def start_vllm():
             res = requests.get(f"{VLLM_URL}/models")
             if res.status_code == 200:
                 print("R1-70B FP8 Core Online.")
+                await manager.broadcast({"type": "log", "content": "[SYSTEM] Handshake Success: R1-70B FP8 Core is now RESIDENT."})
                 state.is_loading = False
                 state.last_activity = datetime.now()
                 return True
@@ -78,11 +80,13 @@ async def start_vllm():
         retries += 1
     
     state.is_loading = False
+    await manager.broadcast({"type": "log", "content": "[ERROR] Neural Handshake Failed."})
     return False
 
 def stop_vllm():
     if state.vllm_process:
         print("Unloading R1-70B FP8 Core (Inactivity/Manual)...")
+        asyncio.create_task(manager.broadcast({"type": "log", "content": "[SYSTEM] Inactivity Timeout: Unloading R1-70B FP8 Core..."}))
         state.vllm_process.terminate()
         try:
             state.vllm_process.wait(timeout=10)
@@ -90,6 +94,7 @@ def stop_vllm():
             state.vllm_process.kill()
         state.vllm_process = None
         print("VRAM Purge Complete.")
+        asyncio.create_task(manager.broadcast({"type": "log", "content": "[SYSTEM] VRAM Purge Complete."}))
 
 @app.on_event("startup")
 async def startup_event():
@@ -188,6 +193,62 @@ async def memory():
         return {"memory_md": memory_md, "latest_daily": latest_daily}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/api/creative/loras")
+async def list_loras():
+    lora_dir = "/home/the_host/clawd/ComfyUI/models/loras/flux"
+    loras = []
+    if os.path.exists(lora_dir):
+        files = glob.glob(os.path.join(lora_dir, "*.safetensors"))
+        for f in files:
+            name = os.path.basename(f)
+            loras.append({"id": f"flux/{name}", "name": name.replace(".safetensors", "").replace("_", " ").title()})
+    return loras
+
+@app.websocket("/ws/creative")
+async def creative_websocket(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            req = json.loads(data)
+            lora_name = req.get("lora")
+            prompt = req.get("prompt")
+            
+            # Use a specialized script for image generation
+            filename = f"dashboard/assets/gen_{int(time.time())}.png"
+            
+            process = subprocess.Popen(
+                [
+                    "/home/the_host/workspace/pytorch_cuda/.venv/bin/python3",
+                    "/home/the_host/clawd/dashboard/gen_creative.py",
+                    lora_name,
+                    prompt,
+                    filename
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
+            
+            await manager.set_responding(True)
+            
+            for line in iter(process.stdout.readline, ''):
+                if line:
+                    await websocket.send_json({"type": "log", "text": line})
+            
+            process.stdout.close()
+            process.wait()
+            
+            await manager.set_responding(False)
+            if os.path.exists(filename):
+                await websocket.send_json({"type": "image", "url": filename.replace("dashboard/", "")})
+            else:
+                await websocket.send_json({"type": "error", "text": "Generation failed."})
+            
+    except WebSocketDisconnect:
+        pass
 
 @app.get("/api/search")
 async def search(q: str):
