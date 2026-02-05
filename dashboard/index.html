@@ -17,12 +17,28 @@
             --warning-color: #ffcc00;
             --secondary-bg: #1a1a2e;
             --gold: #ffd700;
+            --night-bg: #050508;
+            --night-panel: rgba(15, 10, 25, 0.95);
+        }
+
+        body.night-mode {
+            --bg-color: var(--night-bg);
+            --panel-bg: var(--night-panel);
+            background-image: 
+                linear-gradient(rgba(5, 5, 8, 0.9), rgba(5, 5, 8, 0.9)),
+                url('assets/lab_interior.png');
+        }
+
+        body.night-mode .card {
+            border-color: rgba(209, 120, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
         body {
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
+            transition: background-color 2s ease, background-image 2s ease;
             background-image: 
                 linear-gradient(rgba(13, 13, 18, 0.8), rgba(13, 13, 18, 0.8)),
                 url('assets/lab_interior.png');
@@ -770,13 +786,25 @@
             } catch (err) {}
         }
 
+        function checkNightMode() {
+            const hour = new Date().getHours();
+            const isNight = hour >= 19 || hour < 7;
+            if (isNight) {
+                document.body.classList.add('night-mode');
+            } else {
+                document.body.classList.remove('night-mode');
+            }
+        }
+
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
         setInterval(updateModelLoadout, 15000);
+        setInterval(checkNightMode, 60000);
         initChart();
         updateStats();
         updateMemory();
         updateModelLoadout();
+        checkNightMode();
         loadInitialMessages();
         connectWS();
         connectInfWS();
