@@ -22,3 +22,5 @@ dashboard/*.log
 *.log
 *.jsonl
 .env
+__pycache__/
+last_seen_msg.json
