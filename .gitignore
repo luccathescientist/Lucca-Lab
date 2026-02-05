@@ -15,4 +15,7 @@ TOOLS.md
 .nv/
 ComfyUI/
 media/
+dashboard/conversation.jsonl
+dashboard/inbox.jsonl
+dashboard/*.log
 
