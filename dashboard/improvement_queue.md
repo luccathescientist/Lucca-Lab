@@ -8,3 +8,7 @@
 - [x] Add a "Lab Temperature" sensor feed (if available) or a simulated ambient weather overlay for Asia/the laboratory base.
 - [x] Create a "Tech Specs" modal that displays the detailed hardware configuration of the Chrono Rig.
 - [x] Add a "Voice Command" visualizer that reacts to audio input (requires browser mic permission).
+- [x] Implement a "Neural Fabric" background effect using a subtle canvas-based particle network that reacts to mouse movement.
+- [ ] Add a "Quick Macro" panel for one-click lab tasks (e.g., "Clear Cache", "Refresh Models", "Start Benchmark").
+- [ ] Integrate a "Lab Status Hologram" using CSS 3D transforms to create a pulsing wireframe core.
+- [ ] Add a "Model Performance Monitor" to track tokens-per-second (TPS) and latency during live inference.
