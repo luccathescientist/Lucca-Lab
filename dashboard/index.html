@@ -513,6 +513,16 @@
                     </div>
                 </div>
 
+                <!-- QUICK MACROS -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2>Quick Macros</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <button onclick="runMacro('clear-cache')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">PURGE CACHE</button>
+                        <button onclick="runMacro('refresh-models')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">SYNC MODELS</button>
+                        <button onclick="runMacro('benchmark')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">STRESS TEST</button>
+                    </div>
+                </div>
+
                 <!-- MODEL LOADOUT -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2>Model Loadout</h2>
@@ -845,6 +855,22 @@
                 addLog("[SYSTEM] Model unloaded successfully.");
             } catch (err) {
                 addLog("[ERROR] Purge failed.");
+            }
+        }
+
+        async function runMacro(type) {
+            try {
+                addLog(`[SYSTEM] Triggering macro: ${type}...`);
+                const response = await fetch(`/api/macro/${type}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    if (type === 'refresh-models') {
+                        updateModelLoadout();
+                        loadLoras();
+                    }
+                }
+            } catch (err) {
+                addLog(`[ERROR] Macro ${type} failed.`);
             }
         }
 
