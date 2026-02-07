@@ -444,6 +444,16 @@
             50% { opacity: 0.8; }
         }
 
+        @keyframes holo-rotate {
+            from { transform: rotateX(0deg) rotateY(0deg); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        @keyframes holo-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.5); opacity: 0.8; }
+        }
+
         .telepod-text {
             position: relative;
             z-index: 5;
@@ -521,6 +531,25 @@
                         <button onclick="runMacro('refresh-models')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">SYNC MODELS</button>
                         <button onclick="runMacro('benchmark')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">STRESS TEST</button>
                     </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2>Lab Status Hologram</h2>
+                    <div id="hologram-container" style="height: 200px; display: flex; justify-content: center; align-items: center; perspective: 1000px; background: radial-gradient(circle, rgba(209,120,255,0.1) 0%, transparent 70%);">
+                        <div id="hologram-core" style="width: 80px; height: 80px; position: relative; transform-style: preserve-3d; animation: holo-rotate 10s infinite linear;">
+                            <!-- Cube faces for a 3D wireframe effect -->
+                            <div style="position: absolute; width: 80px; height: 80px; border: 1px solid var(--accent-color); transform: translateZ(40px); box-shadow: inset 0 0 15px var(--accent-glow);"></div>
+                            <div style="position: absolute; width: 80px; height: 80px; border: 1px solid var(--accent-color); transform: rotateY(180deg) translateZ(40px); box-shadow: inset 0 0 15px var(--accent-glow);"></div>
+                            <div style="position: absolute; width: 80px; height: 80px; border: 1px solid var(--accent-color); transform: rotateY(90deg) translateZ(40px); box-shadow: inset 0 0 15px var(--accent-glow);"></div>
+                            <div style="position: absolute; width: 80px; height: 80px; border: 1px solid var(--accent-color); transform: rotateY(-90deg) translateZ(40px); box-shadow: inset 0 0 15px var(--accent-glow);"></div>
+                            <div style="position: absolute; width: 80px; height: 80px; border: 1px solid var(--accent-color); transform: rotateX(90deg) translateZ(40px); box-shadow: inset 0 0 15px var(--accent-glow);"></div>
+                            <div style="position: absolute; width: 80px; height: 80px; border: 1px solid var(--accent-color); transform: rotateX(-90deg) translateZ(40px); box-shadow: inset 0 0 15px var(--accent-glow);"></div>
+                            
+                            <!-- Inner pulsing core -->
+                            <div id="hologram-pulse" style="position: absolute; top: 20px; left: 20px; width: 40px; height: 40px; background: var(--accent-color); border-radius: 50%; filter: blur(10px); animation: holo-pulse 2s infinite ease-in-out; opacity: 0.6;"></div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; font-size: 0.6rem; color: var(--accent-color); letter-spacing: 2px; margin-top: 0.5rem;" id="hologram-status">NEURAL CORE: STABLE</div>
                 </div>
 
                 <!-- MODEL LOADOUT -->
@@ -977,6 +1006,15 @@
 
                 document.getElementById('util-val').innerHTML = `${Math.round(data.util_gpu)}<span class="unit">%</span>`;
                 document.getElementById('util-fill').style.width = `${data.util_gpu}%`;
+
+                // Update Hologram Pulse
+                const pulse = document.getElementById('hologram-pulse');
+                if (pulse) {
+                    const speed = 2 - (data.util_gpu / 100) * 1.8; // Faster pulse when busy
+                    pulse.style.animationDuration = `${Math.max(0.2, speed)}s`;
+                    const scale = 1 + (data.util_gpu / 100);
+                    pulse.style.transform = `scale(${scale})`;
+                }
 
                 document.getElementById('sync-time').textContent = new Date().toLocaleTimeString();
             } catch (err) {}
