@@ -1,0 +1,6 @@
+Initializing Federated Learning Simulation (NumPy Fallback)...
+Node A initial weights sample: -0.9013
+Node B initial weights sample: 2.6070
+Global Average sample: 0.8528
+Node A updated weights sample: 0.8528
+SUCCESS: Weights synchronized correctly across simulated local nodes.

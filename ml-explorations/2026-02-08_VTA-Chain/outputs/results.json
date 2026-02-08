@@ -1,0 +1,17 @@
+{
+    "stages": [
+        "Perception",
+        "Reasoning",
+        "Action-Mapping"
+    ],
+    "latency_ms": [
+        850,
+        1200,
+        150
+    ],
+    "vram_gb": [
+        24,
+        34,
+        2
+    ]
+}
