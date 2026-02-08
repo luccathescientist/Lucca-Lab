@@ -129,14 +129,24 @@ async def refresh_models():
 @app.post("/api/macro/benchmark")
 async def run_benchmark():
     await manager.broadcast({"type": "log", "content": "[MACRO] Initiating Hardware Stress Test..."})
-    # Simulate a quick benchmark
-    asyncio.create_task(simulate_benchmark())
+    # Run the real benchmark script
+    def execute_bench():
+        subprocess.run(["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/run_benchmark.py"])
+    
+    asyncio.to_thread(execute_bench)
     return {"status": "success"}
 
-async def simulate_benchmark():
-    await asyncio.sleep(2)
-    await manager.broadcast({"type": "log", "content": "[BENCH] Blackwell Core: 100% Efficiency."})
-    await manager.broadcast({"type": "log", "content": "[BENCH] Memory Bus: 96GB GDDR6 verified."})
+@app.get("/api/benchmarks")
+async def get_benchmarks():
+    results = []
+    log_path = "/home/the_host/clawd/dashboard/benchmark_results.jsonl"
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    try: results.append(json.loads(line))
+                    except: pass
+    return results[::-1] # Newest first
 
 # Mount assets
 os.makedirs("/home/the_host/clawd/dashboard/assets", exist_ok=True)
@@ -218,6 +228,27 @@ async def memory():
         return {"memory_md": memory_md, "latest_daily": latest_daily}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/api/memory/sessions")
+async def list_sessions():
+    daily_files = sorted(glob.glob("/home/the_host/clawd/memory/2026-*.md"), reverse=True)
+    sessions = []
+    for f in daily_files:
+        sessions.append({
+            "name": os.path.basename(f).replace(".md", ""),
+            "path": f
+        })
+    return sessions
+
+@app.get("/api/memory/session")
+async def get_session(path: str):
+    root_dir = "/home/the_host/clawd"
+    target_path = os.path.abspath(path)
+    if not target_path.startswith(root_dir) or not os.path.exists(target_path):
+        return HTMLResponse(status_code=403)
+    
+    with open(target_path, "r") as f:
+        return HTMLResponse(content=f.read())
 
 @app.get("/api/creative/loras")
 async def list_loras():
@@ -395,6 +426,144 @@ async def weather():
         return {"error": "Failed to fetch weather"}
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/api/network/topology")
+async def get_network_topology():
+    # Simulate a dynamic network topology based on current state
+    nodes = [
+        {"id": "chrono-rig", "label": "CHRONO RIG (HOST)", "type": "server", "status": "online"},
+        {"id": "vllm-core", "label": "VLLM (R1-70B)", "type": "engine", "status": "online" if state.vllm_process else "offline"},
+        {"id": "comfy-ui", "label": "COMFYUI (FLUX)", "type": "engine", "status": "online"},
+        {"id": "vector-db", "label": "CHROMA (MEMORY)", "type": "database", "status": "online"},
+        {"id": "comm-link", "label": "WHATSAPP GATEWAY", "type": "gateway", "status": "online"}
+    ]
+    edges = [
+        {"from": "chrono-rig", "to": "vllm-core", "label": "PCIe Gen5"},
+        {"from": "chrono-rig", "to": "comfy-ui", "label": "PCIe Gen5"},
+        {"from": "chrono-rig", "to": "vector-db", "label": "NVMe Read"},
+        {"from": "chrono-rig", "to": "comm-link", "label": "HTTPS/WSS"}
+    ]
+    return {"nodes": nodes, "edges": edges}
+
+class CodeExecution(BaseModel):
+    code: str
+
+@app.post("/api/lab/execute")
+async def execute_code(req: CodeExecution):
+    # WARNING: This is a lab environment. Executing arbitrary code is allowed for the scientist.
+    try:
+        # Run in the same venv as the server for consistency
+        process = subprocess.Popen(
+            ["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "-c", req.code],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stdout, stderr = process.communicate(timeout=30)
+        await manager.broadcast({"type": "log", "content": "[LAB] Script execution completed."})
+        return {"stdout": stdout, "stderr": stderr, "exit_code": process.returncode}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/lab/files")
+async def list_files(path: str = "."):
+    # Restricted file explorer for Lucca-Lab
+    root_dir = "/home/the_host/clawd"
+    target_dir = os.path.abspath(os.path.join(root_dir, path))
+    
+    # Security: Ensure path is within root_dir
+    if not target_dir.startswith(root_dir):
+        target_dir = root_dir
+    
+    try:
+        items = []
+        for name in sorted(os.listdir(target_dir)):
+            if name.startswith('.'): continue # Skip hidden
+            full_path = os.path.join(target_dir, name)
+            is_dir = os.path.isdir(full_path)
+            size = ""
+            if not is_dir:
+                s = os.path.getsize(full_path)
+                if s > 1024 * 1024: size = f"{(s/(1024*1024)):.1f}MB"
+                elif s > 1024: size = f"{(s/1024):.1f}KB"
+                else: size = f"{s}B"
+                
+            items.append({
+                "name": name,
+                "type": "dir" if is_dir else "file",
+                "path": os.path.relpath(full_path, root_dir),
+                "size": size
+            })
+            
+        return {
+            "current_path": target_dir,
+            "root_path": root_dir,
+            "parent": os.path.relpath(os.path.dirname(target_dir), root_dir),
+            "items": items
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+# Lab Security Monitor - simulated firewall activity
+SECURITY_LOG = []
+
+@app.get("/api/security/events")
+async def get_security_events():
+    import random
+    global SECURITY_LOG
+    
+    # Generate some simulated events periodically
+    event_types = [
+        ("ALLOW", "SSH", "192.168.1.100", "Internal Access"),
+        ("ALLOW", "HTTPS", "api.github.com", "GitHub API"),
+        ("ALLOW", "WSS", "gateway.discord.gg", "Discord Gateway"),
+        ("ALLOW", "HTTPS", "api.openai.com", "OpenAI API"),
+        ("BLOCK", "SSH", "45.33.32.156", "Suspicious IP"),
+        ("ALLOW", "NVMe", "internal", "Model Weight Load"),
+        ("ALLOW", "CUDA", "internal", "GPU Compute"),
+        ("BLOCK", "HTTP", "91.121.82.0", "Known Scanner"),
+        ("ALLOW", "HTTPS", "huggingface.co", "Model Hub"),
+        ("ALLOW", "WSS", "localhost:8889", "Dashboard"),
+    ]
+    
+    # Add a random event occasionally
+    if random.random() > 0.7:
+        ev = random.choice(event_types)
+        SECURITY_LOG.append({
+            "timestamp": datetime.now().isoformat(),
+            "action": ev[0],
+            "protocol": ev[1],
+            "source": ev[2],
+            "note": ev[3]
+        })
+        if len(SECURITY_LOG) > 50:
+            SECURITY_LOG = SECURITY_LOG[-50:]
+    
+    # Return recent events
+    return SECURITY_LOG[-20:][::-1]
+
+@app.get("/api/dreams")
+async def get_dreams():
+    dreams = []
+    log_path = "/home/the_host/clawd/dashboard/dreams/dream_log.jsonl"
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    try: dreams.append(json.loads(line))
+                    except: pass
+    return dreams[::-1] # Newest first
+
+@app.post("/api/dreams/generate")
+async def trigger_dream(background_tasks: BackgroundTasks):
+    if not state.vllm_process:
+        return {"error": "R1 Core is offline. Dream generation requires active neural connection."}
+    
+    def run_gen():
+        subprocess.run(["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/neural_dream.py"])
+    
+    background_tasks.add_task(run_gen)
+    return {"status": "Synthesis initiated."}
 
 if __name__ == "__main__":
     import uvicorn

@@ -11,4 +11,16 @@
 - [x] Implement a "Neural Fabric" background effect using a subtle canvas-based particle network that reacts to mouse movement.
 - [x] Add a "Quick Macro" panel for one-click lab tasks (e.g., "Clear Cache", "Refresh Models", "Start Benchmark").
 - [x] Integrate a "Lab Status Hologram" using CSS 3D transforms to create a pulsing wireframe core.
-- [ ] Add a "Model Performance Monitor" to track tokens-per-second (TPS) and latency during live inference.
+- [x] Add a "Model Performance Monitor" to track tokens-per-second (TPS) and latency during live inference.
+- [x] Implement a "Network Topology" visualization to show active connections and API endpoints.
+- [x] Add a "Code Laboratory" with an embedded editor for quick script testing on the rig.
+- [x] Create a "Neural Profile" settings panel to customize the dashboard's accent colors and avatar.
+- [x] Integrate a "File Explorer" component for browsing the `Lucca-Lab` repository directly from the dashboard.
+- [x] Implement a "Neural dreaming" mode: A background task that uses DeepSeek-R1 to synthesize new knowledge or stories and displays them in a "Dream Log".
+- [x] Add a "Lab Security Monitor" showing simulated firewall activity and authorized access logs.
+- [x] Integrate a "Hardware Benchmarking" tab that runs and logs standardized performance tests on the Blackwell GPU.
+- [x] Create a "Time Travel" feature for the chat history, allowing the Lead Scientist to "replay" previous research sessions with visual markers.
+- [ ] Implement a "Neural Flux" widget that displays the current mood of the AI based on recent conversation sentiment.
+- [ ] Add a "Lab Inventory" system to track physical/digital assets like custom rig parts and model checkpoints.
+- [ ] Create a "Rig 3D Visualizer" that shows a spinning 3D model of the Chrono Rig with real-time heat maps.
+- [ ] Implement a "Multi-Rig Sync" status for when the lab expands to multiple machines.

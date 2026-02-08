@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-02-08T12:36:20.183519",
+  "total_files": 1,
+  "indexed_images": 1,
+  "indexed_videos": 0,
+  "embedding_dim": 768,
+  "latency_per_item_ms": 12.5
+}

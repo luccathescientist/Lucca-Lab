@@ -1,0 +1,29 @@
+[
+    {
+        "prompt": "A beautiful sunrise over a futuristic laboratory, bright and hopeful.",
+        "sentiment_label": "POSITIVE",
+        "selected_lora": "realism_v2.safetensors",
+        "scores": {
+            "pos": 3,
+            "neg": 0
+        }
+    },
+    {
+        "prompt": "A gritty, rain-slicked alleyway in a decaying neon city, shadows everywhere.",
+        "sentiment_label": "NEGATIVE",
+        "selected_lora": "dark_cyberpunk.safetensors",
+        "scores": {
+            "pos": 0,
+            "neg": 3
+        }
+    },
+    {
+        "prompt": "A technical blueprint of a clockwork mechanism on a wooden desk.",
+        "sentiment_label": "NEUTRAL",
+        "selected_lora": "default_tinkerer.safetensors",
+        "scores": {
+            "pos": 0,
+            "neg": 0
+        }
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "quant_type": "fp8",
+        "throughput": 1250,
+        "vram_usage": 12.4,
+        "latency_ms": 12.5
+    },
+    {
+        "quant_type": "int8",
+        "throughput": 1180,
+        "vram_usage": 12.6,
+        "latency_ms": 14.2
+    }
+]

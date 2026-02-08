@@ -1,0 +1,26 @@
+[
+    {
+        "bits": 2,
+        "vram_usage_gb": 18.4,
+        "throughput_tokens_s": 1000.0,
+        "routing_latency_ms": 2.5
+    },
+    {
+        "bits": 3,
+        "vram_usage_gb": 27.6,
+        "throughput_tokens_s": 666.67,
+        "routing_latency_ms": 2.5
+    },
+    {
+        "bits": 4,
+        "vram_usage_gb": 36.8,
+        "throughput_tokens_s": 600.0,
+        "routing_latency_ms": 1.0
+    },
+    {
+        "bits": 8,
+        "vram_usage_gb": 73.6,
+        "throughput_tokens_s": 300.0,
+        "routing_latency_ms": 1.0
+    }
+]

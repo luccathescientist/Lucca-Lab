@@ -1,0 +1,6 @@
+{
+    "visual": "The image shows a handwritten scientific formula on a whiteboard. It involves an integral and some Greek letters (alpha, beta).",
+    "ocr": "Integral[alpha * x^2 + beta, {x, 0, 1}]",
+    "r1_reasoning": "To solve the integral of alpha*x^2 + beta from 0 to 1: \n1. Find antiderivative: (alpha/3)*x^3 + beta*x. \n2. Evaluate at 1: (alpha/3) + beta. \n3. Evaluate at 0: 0. \nResult: alpha/3 + beta.",
+    "timestamp": 1770443332.2315178
+}

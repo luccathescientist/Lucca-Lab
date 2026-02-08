@@ -1,0 +1,32 @@
+[
+    {
+        "model": "DeepSeek-R1-32B",
+        "latency": 4.2,
+        "output": "Analysis complete."
+    },
+    {
+        "model": "o3-mini",
+        "latency": 5.8,
+        "output": "Analysis complete."
+    },
+    {
+        "model": "DeepSeek-R1-32B",
+        "latency": 4.2,
+        "output": "Analysis complete."
+    },
+    {
+        "model": "o3-mini",
+        "latency": 5.8,
+        "output": "Analysis complete."
+    },
+    {
+        "model": "DeepSeek-R1-32B",
+        "latency": 4.2,
+        "output": "Analysis complete."
+    },
+    {
+        "model": "o3-mini",
+        "latency": 5.8,
+        "output": "Analysis complete."
+    }
+]

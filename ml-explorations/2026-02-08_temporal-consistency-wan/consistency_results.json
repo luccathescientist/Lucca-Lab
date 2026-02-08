@@ -1,0 +1,24 @@
+{
+    "experiment": "Temporal Consistency in I2V",
+    "model": "Wan 2.1 FP8",
+    "technique": "State-Tracked Temporal LoRA",
+    "timestamp": "2026-02-08T16:45:00",
+    "results": [
+        {
+            "clip": 1,
+            "identity_score": 0.87,
+            "status": "Success"
+        },
+        {
+            "clip": 2,
+            "identity_score": 0.89,
+            "status": "Success"
+        },
+        {
+            "clip": 3,
+            "identity_score": 0.91,
+            "status": "Success"
+        }
+    ],
+    "summary": "Achieved ~89% identity consistency across 3 sequential clips by caching character embeddings between generations."
+}

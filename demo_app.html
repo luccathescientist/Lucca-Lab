@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucca's Demo App 🔧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .system-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 600;
+        }
+
+        .value {
+            font-family: 'Courier New', monospace;
+        }
+
+        .interactive-section {
+            margin-top: 30px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-height: 60px;
+            color: #333;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">🔧</span>Lucca's Demo App</h1>
+        <p class="subtitle">Running on the Lead Scientist's ML Rig in the laboratory base</p>
+
+        <div class="system-info">
+            <div class="info-row">
+                <span class="label">Platform</span>
+                <span class="value" id="platform">Loading...</span>
+            </div>
+            <div class="info-row">
+                <span class="label">CPU Cores</span>
+                <span class="value" id="cores">24 cores (i9-12900K)</span>
+            </div>
+            <div class="info-row">
+                <span class="label">GPU</span>
+                <span class="value">RTX PRO 6000 (96GB)</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Current Time</span>
+                <span class="value" id="time">Loading...</span>
+            </div>
+        </div>
+
+        <div class="interactive-section">
+            <h2 style="margin-bottom: 15px; color: #667eea;">Try Me Out!</h2>
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Type something and click the button..."
+                onkeypress="if(event.key==='Enter') processInput()"
+            >
+            <button onclick="processInput()">🚀 Process with Lucca</button>
+            <div id="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Update platform info
+        document.getElementById('platform').textContent = navigator.platform;
+        
+        // Update time every second
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                timeZone: 'Asia/the laboratory base',
+                hour12: false 
+            });
+            document.getElementById('time').textContent = timeStr + ' (GMT+8)';
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Interactive processing
+        function processInput() {
+            const input = document.getElementById('userInput').value;
+            const output = document.getElementById('output');
+            
+            if (!input.trim()) {
+                output.style.display = 'block';
+                output.innerHTML = '<strong>⚠️ Hey!</strong> You need to type something first!';
+                return;
+            }
+
+            const responses = [
+                `<strong>✨ Analyzed:</strong> "${input}" - Looks interesting! I see ${input.length} characters.`,
+                `<strong>🔍 Processing:</strong> "${input}" - Nice input! Contains ${input.split(' ').length} word(s).`,
+                `<strong>🎯 Result:</strong> "${input}" - Got it! That's ${input.split('').filter(c => c !== ' ').length} non-space characters.`,
+                `<strong>🧠 Thinking:</strong> "${input}" - Hmm, interesting choice of ${input.match(/[aeiou]/gi)?.length || 0} vowels!`,
+            ];
+
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            output.style.display = 'block';
+            output.innerHTML = randomResponse;
+        }
+
+        // Easter egg
+        console.log('%c🔧 Lucca is running!', 'font-size: 20px; color: #667eea; font-weight: bold;');
+        console.log('Built by an AI on a custom scientist rig. Pretty cool, huh?');
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+    "sequence_lengths": [
+        128,
+        512,
+        1024,
+        2048,
+        4096
+    ],
+    "deepseek_r1_32b_ms": [
+        15.2,
+        18.5,
+        24.1,
+        42.8,
+        88.4
+    ],
+    "deepseek_v3_dense_ms": [
+        18.4,
+        22.1,
+        31.5,
+        58.2,
+        115.6
+    ],
+    "hardware": "RTX 6000 Blackwell",
+    "precision": "FP8"
+}

@@ -1,3 +1,5 @@
+*.safetensors
+local_site/
 .env
 memory/
 MEMORY.md
@@ -23,5 +25,7 @@ dashboard/*.log
 *.jsonl
 .env
 __pycache__/
+venv/
+.venv/
 last_seen_msg.json
 HEARTBEAT.md
