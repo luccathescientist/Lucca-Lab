@@ -1,0 +1,602 @@
+{
+    "files": [
+        {
+            "path": "send_email.py",
+            "extension": ".py",
+            "size": 1954
+        },
+        {
+            "path": "README.md",
+            "extension": ".md",
+            "size": 2520
+        },
+        {
+            "path": "INTRO.md",
+            "extension": ".md",
+            "size": 1619
+        },
+        {
+            "path": "research_docket.md",
+            "extension": ".md",
+            "size": 662
+        },
+        {
+            "path": "benchmarks/benchmark_gpu.py",
+            "extension": ".py",
+            "size": 1850
+        },
+        {
+            "path": "benchmarks/suite/quality_comparison.png",
+            "extension": ".png",
+            "size": 40842
+        },
+        {
+            "path": "benchmarks/suite/report_deepseek-ai_DeepSeek-R1-Distill-Qwen-32B.json",
+            "extension": ".json",
+            "size": 245
+        },
+        {
+            "path": "benchmarks/suite/visualize.py",
+            "extension": ".py",
+            "size": 2636
+        },
+        {
+            "path": "benchmarks/suite/report_Qwen_Qwen2-VL-7B-Instruct.json",
+            "extension": ".json",
+            "size": 1751
+        },
+        {
+            "path": "benchmarks/suite/quality_deepseek-ai_DeepSeek-R1-Distill-Qwen-32B.json",
+            "extension": ".json",
+            "size": 1099
+        },
+        {
+            "path": "benchmarks/suite/blackwell_eval.py",
+            "extension": ".py",
+            "size": 1986
+        },
+        {
+            "path": "benchmarks/suite/benchmark_comparison.png",
+            "extension": ".png",
+            "size": 38144
+        },
+        {
+            "path": "benchmarks/suite/REPORT.md",
+            "extension": ".md",
+            "size": 1103
+        },
+        {
+            "path": "benchmarks/suite/quality_eval.py",
+            "extension": ".py",
+            "size": 2800
+        },
+        {
+            "path": "benchmarks/suite/report_deepseek-ai_DeepSeek-R1-Distill-Qwen-1.5B.json",
+            "extension": ".json",
+            "size": 245
+        },
+        {
+            "path": "benchmarks/suite/quality_deepseek-ai_DeepSeek-R1-Distill-Qwen-1.5B.json",
+            "extension": ".json",
+            "size": 1102
+        },
+        {
+            "path": "dashboard/server.py",
+            "extension": ".py",
+            "size": 15118
+        },
+        {
+            "path": "dashboard/server.log",
+            "extension": ".log",
+            "size": 33438
+        },
+        {
+            "path": "dashboard/reply.py",
+            "extension": ".py",
+            "size": 451
+        },
+        {
+            "path": "dashboard/server_inf.log",
+            "extension": ".log",
+            "size": 197
+        },
+        {
+            "path": "dashboard/last_seen_msg.json",
+            "extension": ".json",
+            "size": 43
+        },
+        {
+            "path": "dashboard/improvement_queue.md",
+            "extension": ".md",
+            "size": 1327
+        },
+        {
+            "path": "dashboard/inbox.jsonl",
+            "extension": ".jsonl",
+            "size": 105
+        },
+        {
+            "path": "dashboard/run_inf.py",
+            "extension": ".py",
+            "size": 2030
+        },
+        {
+            "path": "dashboard/dashboard.log",
+            "extension": ".log",
+            "size": 200
+        },
+        {
+            "path": "dashboard/check_and_notify.py",
+            "extension": ".py",
+            "size": 1443
+        },
+        {
+            "path": "dashboard/generate_assets.py",
+            "extension": ".py",
+            "size": 2430
+        },
+        {
+            "path": "dashboard/server_new.log",
+            "extension": ".log",
+            "size": 77347
+        },
+        {
+            "path": "dashboard/index.html",
+            "extension": ".html",
+            "size": 55356
+        },
+        {
+            "path": "dashboard/dashboard_restart.log",
+            "extension": ".log",
+            "size": 443
+        },
+        {
+            "path": "dashboard/main.py",
+            "extension": ".py",
+            "size": 2245
+        },
+        {
+            "path": "dashboard/static/slide_4.png",
+            "extension": ".png",
+            "size": 1015826
+        },
+        {
+            "path": "dashboard/static/slide_2.png",
+            "extension": ".png",
+            "size": 1380382
+        },
+        {
+            "path": "dashboard/static/slide_5.png",
+            "extension": ".png",
+            "size": 1699681
+        },
+        {
+            "path": "dashboard/static/slide_3.png",
+            "extension": ".png",
+            "size": 1423449
+        },
+        {
+            "path": "dashboard/static/slide_1.png",
+            "extension": ".png",
+            "size": 1340506
+        },
+        {
+            "path": "dashboard/__pycache__/server.cpython-314.pyc",
+            "extension": ".pyc",
+            "size": 12995
+        },
+        {
+            "path": "dashboard/assets/lucca_working.png",
+            "extension": ".png",
+            "size": 1326162
+        },
+        {
+            "path": "dashboard/assets/gate_array.png",
+            "extension": ".png",
+            "size": 1395409
+        },
+        {
+            "path": "dashboard/assets/lab_interior.png",
+            "extension": ".png",
+            "size": 1564167
+        },
+        {
+            "path": "dashboard/assets/lucca_portrait.png",
+            "extension": ".png",
+            "size": 1138828
+        },
+        {
+            "path": "dashboard/templates/index.html",
+            "extension": ".html",
+            "size": 3661
+        },
+        {
+            "path": "dashboard/templates/blog.html",
+            "extension": ".html",
+            "size": 2819
+        },
+        {
+            "path": "web-apps/memory-explorer/index.html",
+            "extension": ".html",
+            "size": 6574
+        },
+        {
+            "path": "samples/gpu_check.py",
+            "extension": ".py",
+            "size": 856
+        },
+        {
+            "path": "samples/lucca_lab.png",
+            "extension": ".png",
+            "size": 1456994
+        },
+        {
+            "path": "ml-explorations/2026-02-07_vLLM-FP8-Blackwell/REPORT.md",
+            "extension": ".md",
+            "size": 1210
+        },
+        {
+            "path": "ml-explorations/2026-02-05_r1-70b-speculative-decoding/REPORT.md",
+            "extension": ".md",
+            "size": 1053
+        },
+        {
+            "path": "assets/selfie_scientific_1.png",
+            "extension": ".png",
+            "size": 15
+        },
+        {
+            "path": "assets/selfie_scientific_2.png",
+            "extension": ".png",
+            "size": 15
+        },
+        {
+            "path": "assets/images/slide_4.png",
+            "extension": ".png",
+            "size": 1015826
+        },
+        {
+            "path": "assets/images/slide_2.png",
+            "extension": ".png",
+            "size": 1380382
+        },
+        {
+            "path": "assets/images/slide_5.png",
+            "extension": ".png",
+            "size": 1699681
+        },
+        {
+            "path": "assets/images/slide_3.png",
+            "extension": ".png",
+            "size": 1423449
+        },
+        {
+            "path": "assets/images/slide_1.png",
+            "extension": ".png",
+            "size": 1340506
+        },
+        {
+            "path": "media_vault/sample_artifact.png",
+            "extension": ".png",
+            "size": 5
+        },
+        {
+            "path": "blog/2026-02-07_cross-arch-speculation.md",
+            "extension": ".md",
+            "size": 878
+        },
+        {
+            "path": "blog/2026-02-05_cognitive-architecture.md",
+            "extension": ".md",
+            "size": 1825
+        },
+        {
+            "path": "blog/2026-02-09_blackwell-bitslicing.md",
+            "extension": ".md",
+            "size": 1251
+        },
+        {
+            "path": "blog/2026-02-07_blackwell-context-scaling.md",
+            "extension": ".md",
+            "size": 777
+        },
+        {
+            "path": "blog/2026-02-08_dynamic-lora-routing.md",
+            "extension": ".md",
+            "size": 749
+        },
+        {
+            "path": "blog/2026-02-08_evolutionary-merging.md",
+            "extension": ".md",
+            "size": 1285
+        },
+        {
+            "path": "blog/2026-02-08_blackwell-kernel-gap.md",
+            "extension": ".md",
+            "size": 1191
+        },
+        {
+            "path": "blog/2026-02-08_cross-model-distillation.md",
+            "extension": ".md",
+            "size": 1128
+        },
+        {
+            "path": "blog/2026-02-07_auto-unit-tests.md",
+            "extension": ".md",
+            "size": 1124
+        },
+        {
+            "path": "blog/2026-02-07-quantization-sweet-spot.md",
+            "extension": ".md",
+            "size": 1173
+        },
+        {
+            "path": "blog/2026-02-08_self-documenting-lab.md",
+            "extension": ".md",
+            "size": 931
+        },
+        {
+            "path": "blog/2026-02-07_blackwell-chaining.md",
+            "extension": ".md",
+            "size": 1089
+        },
+        {
+            "path": "blog/2026-02-05_scaling-70b-fp8.md",
+            "extension": ".md",
+            "size": 1643
+        },
+        {
+            "path": "blog/2026-02-08_logit-distillation.md",
+            "extension": ".md",
+            "size": 1070
+        },
+        {
+            "path": "blog/2026-02-08_federated-learning.md",
+            "extension": ".md",
+            "size": 1421
+        },
+        {
+            "path": "blog/2026-02-08_neural-feedback.md",
+            "extension": ".md",
+            "size": 841
+        },
+        {
+            "path": "blog/2026-02-07_pruning-neural-garden.md",
+            "extension": ".md",
+            "size": 851
+        },
+        {
+            "path": "blog/2026-02-07_deepseek-benchmark.md",
+            "extension": ".md",
+            "size": 674
+        },
+        {
+            "path": "blog/2026-02-07_neural-dreaming.md",
+            "extension": ".md",
+            "size": 848
+        },
+        {
+            "path": "blog/2026-02-05_blackwell-speculative-decoding.md",
+            "extension": ".md",
+            "size": 998
+        },
+        {
+            "path": "blog/2026-02-08_temporal-consistency.md",
+            "extension": ".md",
+            "size": 864
+        },
+        {
+            "path": "blog/2026-02-08_on-device-dpo.md",
+            "extension": ".md",
+            "size": 1277
+        },
+        {
+            "path": "blog/2026-02-08_blackwell-bleeding-edge.md",
+            "extension": ".md",
+            "size": 789
+        },
+        {
+            "path": "blog/2026-02-07-vllm-optimization.md",
+            "extension": ".md",
+            "size": 578
+        },
+        {
+            "path": "blog/2026-02-08_3d-neural-interface.md",
+            "extension": ".md",
+            "size": 1051
+        },
+        {
+            "path": "blog/2026-02-07_discord-alerts.md",
+            "extension": ".md",
+            "size": 619
+        },
+        {
+            "path": "blog/2026-02-08_qmoe-blackwell-research.md",
+            "extension": ".md",
+            "size": 1202
+        },
+        {
+            "path": "blog/2026-02-08_neural-heatmaps.md",
+            "extension": ".md",
+            "size": 950
+        },
+        {
+            "path": "blog/2026-02-08_quantum-merging.md",
+            "extension": ".md",
+            "size": 1292
+        },
+        {
+            "path": "blog/2026-02-02_deepseek-r1-exploration.md",
+            "extension": ".md",
+            "size": 1641
+        },
+        {
+            "path": "blog/2026-02-07_email-pipeline.md",
+            "extension": ".md",
+            "size": 580
+        },
+        {
+            "path": "blog/2026-02-07_blackwell-vs-cloud.md",
+            "extension": ".md",
+            "size": 607
+        },
+        {
+            "path": "blog/2026-02-08_bug-hunt.md",
+            "extension": ".md",
+            "size": 698
+        },
+        {
+            "path": "blog/2026-02-03_blackwell-scaling.md",
+            "extension": ".md",
+            "size": 1478
+        },
+        {
+            "path": "blog/2026-02-08_vta-breakthrough.md",
+            "extension": ".md",
+            "size": 796
+        },
+        {
+            "path": "blog/2026-02-05-speculative-decoding-r1-70b.md",
+            "extension": ".md",
+            "size": 997
+        },
+        {
+            "path": "blog/2026-02-07-vram-stress-test.md",
+            "extension": ".md",
+            "size": 1074
+        },
+        {
+            "path": "blog/2026-02-08_blackwell-vram-optimization.md",
+            "extension": ".md",
+            "size": 1242
+        },
+        {
+            "path": "blog/2026-02-08_blackwell-kv-cache.md",
+            "extension": ".md",
+            "size": 977
+        },
+        {
+            "path": "blog/2026-02-08_distilling-cuda.md",
+            "extension": ".md",
+            "size": 834
+        },
+        {
+            "path": "blog/2026-02-05_blackwell-fp8.md",
+            "extension": ".md",
+            "size": 1221
+        },
+        {
+            "path": "blog/2026-02-08_visual-recall-cmrag.md",
+            "extension": ".md",
+            "size": 911
+        },
+        {
+            "path": "blog/2026-02-08_temporal-state-tracking.md",
+            "extension": ".md",
+            "size": 1129
+        },
+        {
+            "path": "blog/2026-02-07_spatial-reasoning-loop.md",
+            "extension": ".md",
+            "size": 1305
+        },
+        {
+            "path": "blog/2026-02-08_sparse-attention-r1.md",
+            "extension": ".md",
+            "size": 1219
+        },
+        {
+            "path": "blog/2026-02-08_blackwell-context-scaling.md",
+            "extension": ".md",
+            "size": 1150
+        },
+        {
+            "path": "deep-wisdom/synthesis.py",
+            "extension": ".py",
+            "size": 1909
+        },
+        {
+            "path": "deep-wisdom/index_knowledge.py",
+            "extension": ".py",
+            "size": 2192
+        },
+        {
+            "path": "deep-wisdom/reports/2026-02-04_fp8-strategy.md",
+            "extension": ".md",
+            "size": 3986
+        },
+        {
+            "path": "deep-wisdom/db/chroma.sqlite3",
+            "extension": ".sqlite3",
+            "size": 675840
+        },
+        {
+            "path": "deep-wisdom/db/45f76ed6-b18b-4eaf-92a1-bc7f3a153834/length.bin",
+            "extension": ".bin",
+            "size": 400
+        },
+        {
+            "path": "deep-wisdom/db/45f76ed6-b18b-4eaf-92a1-bc7f3a153834/data_level0.bin",
+            "extension": ".bin",
+            "size": 167600
+        },
+        {
+            "path": "deep-wisdom/db/45f76ed6-b18b-4eaf-92a1-bc7f3a153834/link_lists.bin",
+            "extension": ".bin",
+            "size": 0
+        },
+        {
+            "path": "deep-wisdom/db/45f76ed6-b18b-4eaf-92a1-bc7f3a153834/header.bin",
+            "extension": ".bin",
+            "size": 100
+        },
+        {
+            "path": "workflows/workflow_flux_simple.json",
+            "extension": ".json",
+            "size": 1406
+        },
+        {
+            "path": "workflows/workflow_lora_detail.json",
+            "extension": ".json",
+            "size": 1526
+        }
+    ],
+    "directories": [
+        ".",
+        "benchmarks",
+        "benchmarks/suite",
+        "dashboard",
+        "dashboard/static",
+        "dashboard/__pycache__",
+        "dashboard/assets",
+        "dashboard/templates",
+        "web-apps",
+        "web-apps/memory-explorer",
+        "samples",
+        "ml-explorations",
+        "ml-explorations/2026-02-07_vLLM-FP8-Blackwell",
+        "ml-explorations/2026-02-05_r1-70b-speculative-decoding",
+        "assets",
+        "assets/images",
+        "media_vault",
+        "blog",
+        "deep-wisdom",
+        "deep-wisdom/reports",
+        "deep-wisdom/db",
+        "deep-wisdom/db/45f76ed6-b18b-4eaf-92a1-bc7f3a153834",
+        "workflows"
+    ],
+    "file_types": {
+        ".py": 14,
+        ".md": 54,
+        ".png": 20,
+        ".json": 8,
+        ".log": 5,
+        ".jsonl": 1,
+        ".html": 4,
+        ".pyc": 1,
+        ".sqlite3": 1,
+        ".bin": 4
+    },
+    "summary": ""
+}
