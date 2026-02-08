@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "text": "FP8 KV cache reduces VRAM",
+        "timestamp": "2026-02-01",
+        "confidence": 0.8
+    },
+    {
+        "id": 2,
+        "text": "Speculative decoding speeds up R1",
+        "timestamp": "2026-02-03",
+        "confidence": 0.85
+    },
+    {
+        "id": 3,
+        "text": "Blackwell sm_120 kernel desync",
+        "timestamp": "2026-02-05",
+        "confidence": 0.9
+    },
+    {
+        "id": 4,
+        "text": "Temporal LoRA stabilizes character identity",
+        "timestamp": "2026-02-07",
+        "confidence": 0.75
+    },
+    {
+        "id": 5,
+        "text": "Bit-slicing FP8 for INT4 performance",
+        "timestamp": "2026-02-09",
+        "confidence": 0.6
+    }
+]
