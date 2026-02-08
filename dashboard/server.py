@@ -578,6 +578,14 @@ async def get_mood():
     # In a real app, this would analyze recent conversation sentiment
     return random.choice(moods)
 
+@app.get("/api/inventory")
+async def get_inventory():
+    inv_path = "/home/the_host/clawd/dashboard/inventory.json"
+    if os.path.exists(inv_path):
+        with open(inv_path, "r") as f:
+            return json.load(f)
+    return []
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

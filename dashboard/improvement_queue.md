@@ -21,7 +21,7 @@
 - [x] Integrate a "Hardware Benchmarking" tab that runs and logs standardized performance tests on the Blackwell GPU.
 - [x] Create a "Time Travel" feature for the chat history, allowing the Lead Scientist to "replay" previous research sessions with visual markers.
 - [x] Implement a "Neural Flux" widget that displays the current mood of the AI based on recent conversation sentiment.
-- [ ] Add a "Lab Inventory" system to track physical/digital assets like custom rig parts and model checkpoints.
+- [x] Add a "Lab Inventory" system to track physical/digital assets like custom rig parts and model checkpoints.
 - [ ] Create a "Rig 3D Visualizer" that shows a spinning 3D model of the Chrono Rig with real-time heat maps.
 - [ ] Implement a "Multi-Rig Sync" status for when the lab expands to multiple machines.
 - [ ] Add a "Chrono Compass" widget that tracks the timeline of significant lab breakthroughs and project milestones.

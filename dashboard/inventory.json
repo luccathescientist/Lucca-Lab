@@ -1,0 +1,7 @@
+[
+    {"id": "inv_001", "name": "NVIDIA RTX 6000 Ada", "category": "Hardware", "status": "Resident", "location": "PCIe Slot 0", "last_check": "2026-02-09"},
+    {"id": "inv_002", "name": "DeepSeek-R1-70B-FP8", "category": "Model", "status": "Ready", "location": "NVMe /models", "last_check": "2026-02-09"},
+    {"id": "inv_003", "name": "Flux.1 Schnell", "category": "Model", "status": "Resident", "location": "VRAM", "last_check": "2026-02-09"},
+    {"id": "inv_004", "name": "Wan 2.1 14B FP8", "category": "Model", "status": "Resident", "location": "VRAM", "last_check": "2026-02-09"},
+    {"id": "inv_005", "name": "Chrono-SATA SSD 4TB", "category": "Hardware", "status": "Online", "location": "Bay 1", "last_check": "2026-02-09"}
+]
