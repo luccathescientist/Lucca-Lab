@@ -412,10 +412,6 @@ async def ai_message(msg: ChatMessage):
     await manager.broadcast({"type": "message", "msg": entry})
     return {"status": "sent"}
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
-
 @app.get("/api/weather")
 async def weather():
     try:
