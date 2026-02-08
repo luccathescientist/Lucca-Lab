@@ -6,6 +6,12 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Neural Knowledge Distillation for C++ (Phase 2)**: Fine-tune R1-1.5B on the high-density CUDA/C++ synthetic dataset generated in Phase 1.
+- [ ] **Low-Rank Adaptation (LoRA) for Reasoning**: Investigate if LoRA can adapt a generalist 8B model to specialized "Lab Scientist" personas without forgetting.
+- [ ] **Multimodal Speculative Decoding**: Use a small vision model (Llama-3.2-1B-Vision) to speculate on frame descriptions for a larger multimodal model.
+- [ ] **Dynamic Expert Routing in MoE**: Implement a real-time router that shuts down unused experts in Mixtral-style models to save Blackwell VRAM.
+- [ ] **Temporal Graph RAG**: Incorporate timestamps into the "Scientific Knowledge Graph" to track the evolution of lab hypotheses over time.
+- [ ] **Automated Kernel Fusion**: Use R1 to identify and fuse repetitive CUDA operations in the `Lucca-Lab` codebase for 10% speedup.
 - [x] **Autonomous Rig Self-Optimization**: Research dynamic VRAM allocation strategies for heterogeneous model pools (R1, Flux, Wan 2.1) to eliminate swapping overhead.
 - [x] **Quantized Mixture-of-Experts (Q-MoE)**: Evaluate the feasibility of sub-4-bit MoE quantization on Blackwell Tensor Cores without significant routing collapse.
 - [x] **Temporal Consistency in I2V**: Develop a "Memory-Aware Motion" pipeline using Wan 2.1 and a temporal LoRA to maintain character identity across multiple video clips.
