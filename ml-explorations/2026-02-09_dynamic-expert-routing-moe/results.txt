@@ -1,0 +1,3 @@
+Full Routing: 24.21ms
+Dynamic Routing: 12.55ms
+Speedup: 1.93x

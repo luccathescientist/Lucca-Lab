@@ -9,7 +9,7 @@
 - [x] **Neural Knowledge Distillation for C++ (Phase 2)**: Fine-tune R1-1.5B on the high-density CUDA/C++ synthetic dataset generated in Phase 1.
 - [x] **Low-Rank Adaptation (LoRA) for Reasoning**: Investigate if LoRA can adapt a generalist 8B model to specialized "Lab Scientist" personas without forgetting.
 - [x] **Multimodal Speculative Decoding**: Use a small vision model (Llama-3.2-1B-Vision) to speculate on frame descriptions for a larger multimodal model.
-- [ ] **Dynamic Expert Routing in MoE**: Implement a real-time router that shuts down unused experts in Mixtral-style models to save Blackwell VRAM.
+- [x] **Dynamic Expert Routing in MoE**: Implement a real-time router that shuts down unused experts in Mixtral-style models to save Blackwell VRAM.
 - [ ] **Temporal Graph RAG**: Incorporate timestamps into the "Scientific Knowledge Graph" to track the evolution of lab hypotheses over time.
 - [ ] **Automated Kernel Fusion**: Use R1 to identify and fuse repetitive CUDA operations in the `Lucca-Lab` codebase for 10% speedup.
 - [x] **Autonomous Rig Self-Optimization**: Research dynamic VRAM allocation strategies for heterogeneous model pools (R1, Flux, Wan 2.1) to eliminate swapping overhead.
