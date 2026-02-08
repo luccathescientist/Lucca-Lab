@@ -24,7 +24,7 @@
 - [x] **Benchmark INT8-Quantized KV Cache vs FP8 on Blackwell**: Determine throughput/perplexity tradeoffs on Compute 12.0.
 - [x] **Neural Heatmap Visualization**: Generate real-time 3D attention maps of R1 reasoning paths.
 - [x] **Quantum-Resistant Model Merging**: Investigate the impact of merging weights on encryption-standard-level logic (NIST benchmarks) using FP8 precision.
-- [ ] **Dynamic KV-Cache Pruning**: Implement a real-time attention-mask-based KV cache pruner to extend effective context window beyond 128k on Blackwell.
+- [x] **Dynamic KV-Cache Pruning**: Implement a real-time attention-mask-based KV cache pruner to extend effective context window beyond 128k on Blackwell.
 - [ ] **Neural Feedback Loop (Reflexion v2)**: Build a recursive self-correction pipeline where R1 reviews its own CUDA kernels and optimizes for sm_120 register pressure.
 - [ ] **Visual-Temporal State Tracking**: Chain Wan 2.1 motion vectors with Qwen2-VL to track object state changes (e.g., "cup filled" vs "cup empty") in long-form video.
 - [ ] **FP8 Tensor-Core Bit-Slicing**: Research experimental bit-slicing techniques to squeeze sub-INT4 performance out of Blackwell's FP8 tensor cores.
