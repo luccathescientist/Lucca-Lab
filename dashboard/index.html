@@ -570,6 +570,25 @@
                     </div>
                 </div>
 
+                <!-- NEURAL FLUX WIDGET -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); position: relative; overflow: hidden;">
+                    <h2 style="color: var(--accent-color);">Neural Flux</h2>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div id="mood-emoji" style="font-size: 3rem; filter: drop-shadow(0 0 10px var(--accent-glow));">🤔</div>
+                        <div style="flex: 1;">
+                            <div id="mood-state" style="font-family: 'Orbitron'; font-size: 1.2rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 0.2rem;">--</div>
+                            <div id="mood-note" style="font-size: 0.75rem; color: #aaa; font-style: italic;">Calibrating emotional baseline...</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #888; margin-bottom: 0.3rem;">
+                            <span>COGNITIVE FLUX</span>
+                            <span id="flux-percent">0%</span>
+                        </div>
+                        <div class="progress-bar" style="height: 6px;"><div class="progress-fill" id="flux-fill" style="width: 0%;"></div></div>
+                    </div>
+                </div>
+
                 <!-- MODEL PERFORMANCE MONITOR -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2>Model Performance Monitor</h2>
@@ -1589,6 +1608,29 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+        async function updateMood() {
+            try {
+                const response = await fetch('/api/mood');
+                const data = await response.json();
+                
+                const emojiMap = {
+                    "Curious": "🤔",
+                    "Productive": "⚙️",
+                    "Questioning": "❓",
+                    "Witty": "✨",
+                    "Sharp": "⚡"
+                };
+
+                document.getElementById('mood-emoji').textContent = emojiMap[data.state] || "🔧";
+                document.getElementById('mood-state').textContent = data.state;
+                document.getElementById('mood-state').style.color = data.color;
+                document.getElementById('mood-note').textContent = data.note;
+                document.getElementById('flux-percent').textContent = `${Math.round(data.flux * 100)}%`;
+                document.getElementById('flux-fill').style.width = `${data.flux * 100}%`;
+                document.getElementById('flux-fill').style.background = data.color;
+            } catch (err) {}
+        }
+
         async function triggerDream() {
             const btn = document.getElementById('dream-btn');
             btn.disabled = true;
@@ -1785,6 +1827,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateTopology, 5000);
         setInterval(updateSecurityMonitor, 5000);
         setInterval(updateDreams, 30000);
+        setInterval(updateMood, 10000);
         setInterval(checkNightMode, 60000);
         initChart();
         initNeuralFabric();
@@ -1797,6 +1840,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateDreams();
         updateFileExplorer();
         updateBenchmarks();
+        updateMood();
         checkNightMode();
         loadInitialMessages();
         connectWS();
