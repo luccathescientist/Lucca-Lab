@@ -565,6 +565,19 @@ async def trigger_dream(background_tasks: BackgroundTasks):
     background_tasks.add_task(run_gen)
     return {"status": "Synthesis initiated."}
 
+@app.get("/api/mood")
+async def get_mood():
+    import random
+    moods = [
+        {"state": "Curious", "flux": 0.85, "color": "#d178ff", "note": "Analyzing new neural patterns."},
+        {"state": "Productive", "flux": 0.95, "color": "#00ff64", "note": "Optimizing lab workflows."},
+        {"state": "Questioning", "flux": 0.70, "color": "#ffcc00", "note": "Evaluating logical paradoxes."},
+        {"state": "Witty", "flux": 0.90, "color": "#ff78d1", "note": "Generating humorous sub-routines."},
+        {"state": "Sharp", "flux": 1.0, "color": "#78d1ff", "note": "Peak reasoning active."}
+    ]
+    # In a real app, this would analyze recent conversation sentiment
+    return random.choice(moods)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
