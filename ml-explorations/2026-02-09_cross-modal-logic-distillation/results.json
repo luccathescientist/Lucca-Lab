@@ -1,0 +1,6 @@
+{
+    "baseline_accuracy": 0.62,
+    "distilled_accuracy": 0.84,
+    "avg_latency_ms": 45.0,
+    "vram_usage_gb": 18.4
+}
