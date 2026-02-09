@@ -246,6 +246,25 @@ def get_gpu_stats():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/api/benchmarks/archive")
+async def get_benchmarks_archive():
+    results = []
+    log_path = "/home/the_host/clawd/dashboard/benchmark_results.jsonl"
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    try:
+                        data = json.loads(line)
+                        # Extract key metrics for historical visualization
+                        results.append({
+                            "timestamp": data.get("timestamp"),
+                            "vram_util": float(data.get("vram_util", "0").replace('%', '')),
+                            "latency": float(data.get("latency_ms", 0))
+                        })
+                    except: pass
+    return results
+
 @app.get("/")
 async def get():
     return FileResponse("/home/the_host/clawd/dashboard/index.html", headers={"Cache-Control": "no-cache"})

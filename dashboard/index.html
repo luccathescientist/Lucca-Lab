@@ -516,6 +516,17 @@
                     </div>
                 </div>
 
+                <!-- LAB BENCHMARKING ARCHIVE -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Lab Benchmarking Archive
+                        <span onclick="updateBenchmarkArchive()" style="cursor: pointer; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div style="height: 200px; position: relative;">
+                        <canvas id="archive-chart"></canvas>
+                    </div>
+                </div>
+
                 <!-- BLACKWELL VITALS -->
                 <div class="card" style="margin-bottom: 2rem;">
                     <h2>Blackwell Vitals (Thermal History)</h2>
@@ -948,7 +959,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
     <script>
         let lastMessageCount = 0;
         let socket, infSocket;
-        let thermalChart;
+        let thermalChart, archiveChart;
         const maxDataPoints = 30;
         const thermalData = [];
         const thermalLabels = [];
@@ -985,6 +996,72 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     }
                 }
             });
+
+            const archiveCtx = document.getElementById('archive-chart').getContext('2d');
+            archiveChart = new Chart(archiveCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Latency (ms)',
+                            data: [],
+                            borderColor: '#ffd700',
+                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                            borderWidth: 2,
+                            yAxisID: 'y',
+                            tension: 0.3
+                        },
+                        {
+                            label: 'VRAM %',
+                            data: [],
+                            borderColor: '#d178ff',
+                            backgroundColor: 'rgba(209, 120, 255, 0.1)',
+                            borderWidth: 2,
+                            yAxisID: 'y1',
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true, labels: { color: '#888', font: { size: 10 } } } },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#ffd700', font: { size: 10 } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#d178ff', font: { size: 10 } },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        async function updateBenchmarkArchive() {
+            try {
+                const response = await fetch('/api/benchmarks/archive');
+                const data = await response.json();
+                if (data.length === 0) return;
+
+                archiveChart.data.labels = data.map(d => new Date(d.timestamp).toLocaleDateString());
+                archiveChart.data.datasets[0].data = data.map(d => d.latency);
+                archiveChart.data.datasets[1].data = data.map(d => d.vram_util);
+                archiveChart.update();
+                addLog("[SYSTEM] Benchmarking archive synchronized.");
+            } catch (err) {}
         }
 
         function initNeuralFabric() {
@@ -2109,6 +2186,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateDreams();
         updateFileExplorer();
         updateBenchmarks();
+        updateBenchmarkArchive();
         updateStressResults();
         updateInventory();
         updateAgentActivity();
