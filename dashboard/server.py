@@ -650,6 +650,17 @@ async def get_agent_activity():
         })
     return activity
 
+@app.get("/api/moltbook/feed")
+async def get_moltbook_feed():
+    try:
+        # Fetch the public feed from Moltbook
+        res = requests.get("https://www.moltbook.com/api/v1/posts?limit=10")
+        if res.status_code == 200:
+            return res.json()
+        return {"error": "Failed to fetch Moltbook feed"}
+    except Exception as e:
+        return {"error": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

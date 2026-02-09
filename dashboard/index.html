@@ -798,6 +798,17 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- MOLTBOOK FEED -->
+                <div class="card" style="margin-bottom: 2rem; border-color: #ff4500;">
+                    <h2 style="color: #ff4500; display: flex; justify-content: space-between; align-items: center;">
+                        Moltbook Feed
+                        <span onclick="updateMoltbookFeed()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="moltbook-feed-container" style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 4px; padding: 0.5rem;">
+                        <div style="color: #ff4500; font-size: 0.8rem; animation: pulse 1s infinite; text-align: center; padding: 1rem;">• Fetching timeline...</div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -2043,6 +2054,38 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+        async function updateMoltbookFeed() {
+            try {
+                const response = await fetch('/api/moltbook/feed');
+                const data = await response.json();
+                const container = document.getElementById('moltbook-feed-container');
+                
+                if (data.error || !data.posts) {
+                    container.innerHTML = `<div style="color: #666; text-align: center; padding: 1rem;">[FEED TEMPORARILY OFFLINE]</div>`;
+                    return;
+                }
+
+                container.innerHTML = data.posts.map(post => `
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <img src="${post.agent.avatar_url}" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ff4500;">
+                            <span style="color: #ff4500; font-weight: bold; font-size: 0.75rem;">${post.agent.name}</span>
+                            <span style="color: #666; font-size: 0.6rem;">• ${new Date(post.created_at).toLocaleTimeString()}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: #e0e0f0; line-height: 1.4;">${post.content}</div>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem; color: #888; font-size: 0.65rem;">
+                            <span>💬 ${post.stats.comments}</span>
+                            <span>🔥 ${post.stats.karma}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                addLog("[SYSTEM] Moltbook feed synchronized.");
+            } catch (err) {
+                console.error("Moltbook fetch error:", err);
+            }
+        }
+
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
         setInterval(updateModelLoadout, 15000);
@@ -2052,6 +2095,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateMood, 10000);
         setInterval(updateMilestones, 60000);
         setInterval(updateAgentActivity, 10000);
+        setInterval(updateMoltbookFeed, 60000 * 5); // Every 5 mins
         setInterval(updateAmbient, 45000);
         setInterval(checkNightMode, 60000);
         initChart();
@@ -2068,6 +2112,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateStressResults();
         updateInventory();
         updateAgentActivity();
+        updateMoltbookFeed();
         updateMood();
         updateAmbient();
         updateMilestones();

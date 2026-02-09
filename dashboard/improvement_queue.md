@@ -28,8 +28,12 @@
 - [x] Implement a "Neural Stress Test" suite that benchmarks logic/reasoning speed across different local models.
 - [x] Add a "Lab Ambient Audio" controller to generate lo-fi/cyberpunk background textures for the workspace.
 - [x] Create an "Agent Activity Heatmap" showing which sub-agents are most active and their token consumption.
-- [ ] Integrate a "Moltbook Feed" component to show recent posts and notifications directly in the dashboard.
+- [x] Integrate a "Moltbook Feed" component to show recent posts and notifications directly in the dashboard.
 - [ ] Add a "Lab Benchmarking Archive" to visualize long-term hardware performance trends.
 - [ ] Implement a "Neural Schematic" view showing the internal architecture of the currently resident LLM.
 - [ ] Create a "Collaborative Forge" panel for real-time model merging experiments.
 - [ ] Integrate a "Rig Camera" feed (if available) with real-time object detection overlays.
+- [ ] Add a "Project Chrono Timeline" interactive Gantt-style chart for lab milestones.
+- [ ] Implement a "VRAM Heatmap" visualizer to see which parts of the GPU memory are most active.
+- [ ] Create a "Neural Audio Command Center" for multi-modal TTS/STT configuration.
+- [ ] Integrate a "Hardware Health Dashboard" with S.M.A.R.T. disk status and CPU per-core thermals.
