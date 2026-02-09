@@ -9,7 +9,7 @@
 - [x] **Token-Level Uncertainty Quantification**: Train a lightweight "confidence head" on R1-1.5B that outputs per-token uncertainty scores, enabling hallucination detection in real-time.
 - [x] **Async Speculative Decoding with Pipelining**: Overlap draft-model speculation with target-model verification across GPU streams for sub-50ms latency on 128k context.
 - [x] **Mixture-of-Depths (MoD) for Dynamic Compute**: Implement layer-skipping based on input complexity—simple queries use 8 layers, complex reasoning uses 32.
-- [ ] **Video-Grounded Chain-of-Thought**: Use Wan 2.1 extracted keyframes to ground R1 reasoning steps in visual evidence, reducing hallucination on multimodal tasks.
+- [x] **Video-Grounded Chain-of-Thought**: Use Wan 2.1 extracted keyframes to ground R1 reasoning steps in visual evidence, reducing hallucination on multimodal tasks.
 - [ ] **Progressive Quantization Annealing**: Gradually reduce precision from FP16→FP8→INT4 during inference based on attention entropy, preserving quality on critical tokens.
 - [ ] **Self-Healing CUDA Kernels**: Build an R1-driven watchdog that detects kernel OOM or numerical instability and auto-patches tiling parameters in real-time.
 - [x] **Neural Knowledge Distillation for C++ (Phase 2)**: Fine-tune R1-1.5B on the high-density CUDA/C++ synthetic dataset generated in Phase 1.
