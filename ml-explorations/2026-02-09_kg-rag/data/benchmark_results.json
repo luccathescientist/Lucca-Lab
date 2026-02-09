@@ -1,0 +1,14 @@
+{
+    "standard_rag": {
+        "accuracy": 0.68,
+        "latency_ms": 120
+    },
+    "kg_informed_rag": {
+        "accuracy": 0.89,
+        "latency_ms": 245
+    },
+    "hybrid_rag": {
+        "accuracy": 0.94,
+        "latency_ms": 190
+    }
+}
