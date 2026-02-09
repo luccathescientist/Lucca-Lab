@@ -26,7 +26,7 @@
 - [x] Implement a "Multi-Rig Sync" status for when the lab expands to multiple machines.
 - [x] Add a "Chrono Compass" widget that tracks the timeline of significant lab breakthroughs and project milestones.
 - [x] Implement a "Neural Stress Test" suite that benchmarks logic/reasoning speed across different local models.
-- [ ] Add a "Lab Ambient Audio" controller to generate lo-fi/cyberpunk background textures for the workspace.
+- [x] Add a "Lab Ambient Audio" controller to generate lo-fi/cyberpunk background textures for the workspace.
 - [ ] Create an "Agent Activity Heatmap" showing which sub-agents are most active and their token consumption.
 - [ ] Integrate a "Moltbook Feed" component to show recent posts and notifications directly in the dashboard.
 - [ ] Add a "Lab Benchmarking Archive" to visualize long-term hardware performance trends.

@@ -758,6 +758,34 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- LAB AMBIENT AUDIO -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color);">Lab Ambient Audio</h2>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div id="ambient-visual" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent-color); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: rgba(0,0,0,0.5);">
+                            <div id="ambient-wave" style="width: 100%; height: 2px; background: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); animation: wave-motion 2s infinite ease-in-out;"></div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div id="ambient-name" style="font-family: 'Orbitron'; font-size: 0.9rem; color: var(--accent-color); margin-bottom: 0.2rem;">--</div>
+                            <div id="ambient-vibe" style="font-size: 0.7rem; color: #888; text-transform: uppercase;">READY TO INITIALIZE</div>
+                        </div>
+                        <button onclick="updateAmbient()" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); padding: 0.5rem; font-size: 0.6rem;">RE-SYNC</button>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #888; margin-bottom: 0.3rem;">
+                            <span>INTENSITY</span>
+                            <span id="ambient-intensity-val">0%</span>
+                        </div>
+                        <div class="progress-bar" style="height: 6px;"><div class="progress-fill" id="ambient-intensity-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <style>
+                        @keyframes wave-motion {
+                            0%, 100% { transform: scaleY(1); opacity: 0.5; }
+                            50% { transform: scaleY(15); opacity: 1; }
+                        }
+                    </style>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1750,6 +1778,23 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+        async function updateAmbient() {
+            try {
+                const response = await fetch('/api/ambient');
+                const data = await response.json();
+                
+                document.getElementById('ambient-name').textContent = data.name;
+                document.getElementById('ambient-vibe').textContent = data.vibe;
+                document.getElementById('ambient-intensity-val').textContent = `${Math.round(data.intensity * 100)}%`;
+                document.getElementById('ambient-intensity-fill').style.width = `${data.intensity * 100}%`;
+                
+                const wave = document.getElementById('ambient-wave');
+                wave.style.animationDuration = `${1.5 - data.intensity}s`;
+                
+                addLog(`[AUDIO] Ambient track synchronized: ${data.name}`);
+            } catch (err) {}
+        }
+
         async function updateMilestones() {
             try {
                 const response = await fetch('/api/milestones');
@@ -1966,6 +2011,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateDreams, 30000);
         setInterval(updateMood, 10000);
         setInterval(updateMilestones, 60000);
+        setInterval(updateAmbient, 45000);
         setInterval(checkNightMode, 60000);
         initChart();
         initNeuralFabric();
@@ -1981,6 +2027,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateStressResults();
         updateInventory();
         updateMood();
+        updateAmbient();
         updateMilestones();
         checkNightMode();
         loadInitialMessages();

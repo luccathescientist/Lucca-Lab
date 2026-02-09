@@ -621,6 +621,20 @@ async def get_inventory():
             return json.load(f)
     return []
 
+@app.get("/api/ambient")
+async def get_ambient():
+    # In a real setup, this might control a local speaker or return a stream URL
+    # For now, we return a simulated active ambient track
+    tracks = [
+        {"id": "hum", "name": "NEURAL CORE HUM", "vibe": "Industrial", "intensity": 0.4},
+        {"id": "rain", "name": "DATA RAIN", "vibe": "Cyberpunk", "intensity": 0.6},
+        {"id": "fans", "name": "BLACKWELL FANS", "vibe": "Hardware", "intensity": 0.8},
+        {"id": "lofi", "name": "CHRONO LOFI", "vibe": "Relaxing", "intensity": 0.3},
+        {"id": "static", "name": "SIGNAL STATIC", "vibe": "Glitch", "intensity": 0.5}
+    ]
+    import random
+    return random.choice(tracks)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
