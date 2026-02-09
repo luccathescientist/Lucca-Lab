@@ -8,7 +8,7 @@
 ## Pending Tasks
 - [x] **Cross-Modal Temporal Consistency**: Optimize Wan 2.1 frame-to-frame flow using a 3D-UNet based correction layer to stabilize character features in 720p animations.
 - [x] **Autonomous Kernel Profiling (sm_120)**: Build a tool that uses R1 to parse Nsight Compute logs and auto-generate optimized Triton kernels for Blackwell's unique register file architecture.
-- [ ] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-7B) to retain multi-expert breadth.
+- [x] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-7B) to retain multi-expert breadth.
 - [ ] **Predictive VRAM Governor**: Implement an AI governor that predicts the VRAM requirements of multi-stage pipelines (Flux -> Wan -> R1) and pre-emptively flushes non-critical caches.
 - [ ] **Recursive Self-Distillation**: Use R1-70B to generate higher-quality thought-process data from its own outputs, then fine-tune a smaller R1-32B on this refined reasoning "essence".
 - [ ] **Multi-Agent Consensus for Code Review**: Orchestrate a "council" of GPT-4o, Claude 3.5, and R1 to identify logic flaws in high-performance CUDA kernels.
