@@ -6,6 +6,12 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Adaptive Gradient Clipping for FP8 Training**: Investigate if dynamic gradient clipping based on weight distribution can stabilize on-device FP8 fine-tuning on Blackwell.
+- [ ] **Cross-Modal Speculative Decoding (Audio-to-Text)**: Use a lightweight Whisper-distilled model to speculate tokens for a larger multimodal model (like Gemini or a local equivalent).
+- [ ] **Knowledge-Graph Informed RAG (KG-RAG)**: Enhance standard vector search with a structured knowledge graph to improve reasoning on complex technical relationships in `Lucca-Lab`.
+- [ ] **Low-Latency Neural Audio Synthesis**: Benchmark local models for sub-100ms text-to-speech using Blackwell's FP8 tensor cores to improve real-time interaction.
+- [ ] **Hierarchical Context Compression**: Implement a two-stage context compression where recent tokens are kept in FP16/FP8 and older history is compressed via neural summarization.
+- [ ] **Autonomous Rig Health Monitoring**: Develop a predictive maintenance model that analyzes GPU power draws and temperature spikes to detect hardware degradation.
 - [x] **Token-Level Uncertainty Quantification**: Train a lightweight "confidence head" on R1-1.5B that outputs per-token uncertainty scores, enabling hallucination detection in real-time.
 - [x] **Async Speculative Decoding with Pipelining**: Overlap draft-model speculation with target-model verification across GPU streams for sub-50ms latency on 128k context.
 - [x] **Mixture-of-Depths (MoD) for Dynamic Compute**: Implement layer-skipping based on input complexity—simple queries use 8 layers, complex reasoning uses 32.
