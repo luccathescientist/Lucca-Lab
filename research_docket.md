@@ -6,12 +6,20 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
-- [x] **Bit-Level Speculative Decoding**: Research using sub-FP8 bit-level draft models to speculate for full FP8 target models on Blackwell, optimizing for the 96GB VRAM bandwidth.
-- [x] **Neural Knowledge Graph Fusion**: Merge standard vector embeddings with symbolic logic rules in a unified RAG pipeline to eliminate hallucination in technical architecture queries.
-- [ ] **Cross-Modal Temporal Consistency**: Optimize Wan 2.1 frame-to-frame flow using a 3D-UNet based correction layer to stabilize character features in 720p animations.
+- [x] **Cross-Modal Temporal Consistency**: Optimize Wan 2.1 frame-to-frame flow using a 3D-UNet based correction layer to stabilize character features in 720p animations.
 - [ ] **Autonomous Kernel Profiling (sm_120)**: Build a tool that uses R1 to parse Nsight Compute logs and auto-generate optimized Triton kernels for Blackwell's unique register file architecture.
 - [ ] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-7B) to retain multi-expert breadth.
 - [ ] **Predictive VRAM Governor**: Implement an AI governor that predicts the VRAM requirements of multi-stage pipelines (Flux -> Wan -> R1) and pre-emptively flushes non-critical caches.
+- [ ] **Recursive Self-Distillation**: Use R1-70B to generate higher-quality thought-process data from its own outputs, then fine-tune a smaller R1-32B on this refined reasoning "essence".
+- [ ] **Multi-Agent Consensus for Code Review**: Orchestrate a "council" of GPT-4o, Claude 3.5, and R1 to identify logic flaws in high-performance CUDA kernels.
+- [ ] **FP8-Native GQA Optimization**: Research Grouped-Query Attention (GQA) modifications specifically for Blackwell's shared memory layout to reduce cache misses during high-concurrency inference.
+- [ ] **Temporal Knowledge Graph Pruning**: Develop an algorithm to identify and "forget" outdated technical hypotheses in the Lab Knowledge Graph to maintain search speed.
+- [ ] **Neural Code Fusion for sm_120**: Use R1 to autonomously merge and optimize sequential Python/C++ lab scripts into single, fused binaries for 2x faster execution.
+- [ ] **Quantized-Logic Reasoning Benchmarks**: Develop a specialized benchmark to measure the "IQ loss" of reasoning models as they move from FP8 to INT4 precision.
+
+## Completed Tasks
+- [x] **Bit-Level Speculative Decoding**: Research using sub-FP8 bit-level draft models to speculate for full FP8 target models on Blackwell, optimizing for the 96GB VRAM bandwidth.
+- [x] **Neural Knowledge Graph Fusion**: Merge standard vector embeddings with symbolic logic rules in a unified RAG pipeline to eliminate hallucination in technical architecture queries.
 - [x] **Adaptive Gradient Clipping for FP8 Training**: Investigate if dynamic gradient clipping based on weight distribution can stabilize on-device FP8 fine-tuning on Blackwell.
 - [x] **Cross-Modal Speculative Decoding (Audio-to-Text)**: Use a lightweight Whisper-distilled model to speculate tokens for a larger multimodal model (like Gemini or a local equivalent).
 - [x] **Knowledge-Graph Informed RAG (KG-RAG)**: Enhance standard vector search with a structured knowledge graph to improve reasoning on complex technical relationships in `Lucca-Lab`.
@@ -59,8 +67,6 @@
 - [x] **Visual-Temporal State Tracking**: Chain Wan 2.1 motion vectors with Qwen2-VL to track object state changes (e.g., "cup filled" vs "cup empty") in long-form video.
 - [x] **FP8 Tensor-Core Bit-Slicing**: Research experimental bit-slicing techniques to squeeze sub-INT4 performance out of Blackwell's FP8 tensor cores.
 - [x] **Autonomous RAG Synthesis**: Use R1-32B to autonomously synthesize and de-duplicate the entire `Lucca-Lab` repository into a high-density "Scientific Knowledge Graph".
-
-## Completed Tasks
 - [x] Create Spatial Reasoning Loop (Qwen2-VL frames -> DeepSeek-R1 analysis).
 - [x] Conduct Context Window Stress Test (8k to 32k tokens) with FP8 KV cache.
 - [x] Implement Proactive Discord Alerts (Send 8-hour summaries to #tech automatically).
