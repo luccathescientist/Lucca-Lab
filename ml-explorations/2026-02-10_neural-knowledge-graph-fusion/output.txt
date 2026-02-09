@@ -1,0 +1,7 @@
+--- Research Output ---
+Query: What is Blackwell?
+Fusion Output: Vector search result for 'What is Blackwell?': High similarity to 'Blackwell architecture'. | Symbolic Relations: has_compute_capability -> 12.0, supports -> FP8 Tensor Cores
+
+Query: Tell me about FP8 Tensor Cores.
+Fusion Output: Vector search result for 'Tell me about FP8 Tensor Cores.': High similarity to 'Blackwell architecture'. | Symbolic Relations: used_for -> Accelerated Inference
+

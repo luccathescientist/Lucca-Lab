@@ -7,7 +7,7 @@
 
 ## Pending Tasks
 - [x] **Bit-Level Speculative Decoding**: Research using sub-FP8 bit-level draft models to speculate for full FP8 target models on Blackwell, optimizing for the 96GB VRAM bandwidth.
-- [ ] **Neural Knowledge Graph Fusion**: Merge standard vector embeddings with symbolic logic rules in a unified RAG pipeline to eliminate hallucination in technical architecture queries.
+- [x] **Neural Knowledge Graph Fusion**: Merge standard vector embeddings with symbolic logic rules in a unified RAG pipeline to eliminate hallucination in technical architecture queries.
 - [ ] **Cross-Modal Temporal Consistency**: Optimize Wan 2.1 frame-to-frame flow using a 3D-UNet based correction layer to stabilize character features in 720p animations.
 - [ ] **Autonomous Kernel Profiling (sm_120)**: Build a tool that uses R1 to parse Nsight Compute logs and auto-generate optimized Triton kernels for Blackwell's unique register file architecture.
 - [ ] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-7B) to retain multi-expert breadth.
