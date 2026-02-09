@@ -524,6 +524,17 @@
                     </div>
                 </div>
 
+                <!-- NEURAL STRESS RESULTS -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--danger-color);">
+                    <h2 style="color: var(--danger-color); display: flex; justify-content: space-between;">
+                        Neural Stress Results
+                        <span onclick="updateStressResults()" style="cursor: pointer; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="stress-results-list" style="max-height: 200px; overflow-y: auto; font-size: 0.7rem;">
+                        <div style="color: #666; text-align: center; padding: 1rem;">[NO RECENT DATA]</div>
+                    </div>
+                </div>
+
                 <!-- QUICK MACROS -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2>Quick Macros</h2>
@@ -531,6 +542,7 @@
                         <button onclick="runMacro('clear-cache')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">PURGE CACHE</button>
                         <button onclick="runMacro('refresh-models')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">SYNC MODELS</button>
                     </div>
+                    <button onclick="runMacro('stress-test')" style="width: 100%; background: rgba(255, 62, 62, 0.2); color: var(--danger-color); border: 1px solid var(--danger-color); font-size: 0.7rem; padding: 0.8rem; margin-bottom: 1rem;">RUN NEURAL STRESS TEST</button>
                     <button onclick="runMacro('benchmark')" style="width: 100%; background: var(--accent-color); color: white; border: 1px solid var(--accent-color); font-size: 0.7rem; padding: 0.8rem; margin-bottom: 1rem;">RUN HARDWARE BENCHMARK</button>
                     
                     <div id="benchmark-results-container" style="background: rgba(0,0,0,0.4); border-radius: 4px; padding: 0.8rem; font-size: 0.7rem;">
@@ -1116,10 +1128,45 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     if (type === 'benchmark') {
                         setTimeout(updateBenchmarks, 5000); // Check after a bit
                     }
+                    if (type === 'stress-test') {
+                        setTimeout(updateStressResults, 15000); // R1 takes longer
+                    }
                 }
             } catch (err) {
                 addLog(`[ERROR] Macro ${type} failed.`);
             }
+        }
+
+        async function updateStressResults() {
+            try {
+                const response = await fetch('/api/stress-tests');
+                const data = await response.json();
+                const container = document.getElementById('stress-results-list');
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<div style="color: #666; text-align: center; padding: 1rem;">[NO RECENT DATA]</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(s => `
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0.8rem 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                            <span style="color: var(--gold);">${new Date(s.timestamp).toLocaleString()}</span>
+                            <span style="color: var(--danger-color); font-weight: bold;">${s.model}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; text-align: center;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.4rem; border-radius: 4px;">
+                                <div style="font-size: 0.5rem; color: #888;">AVG TPS</div>
+                                <div style="font-size: 1rem; color: white;">${s.avg_tps}</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.4rem; border-radius: 4px;">
+                                <div style="font-size: 0.5rem; color: #888;">AVG LATENCY</div>
+                                <div style="font-size: 1rem; color: white;">${s.avg_latency}s</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {}
         }
 
         async function updateBenchmarks() {
@@ -1931,6 +1978,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateDreams();
         updateFileExplorer();
         updateBenchmarks();
+        updateStressResults();
         updateInventory();
         updateMood();
         updateMilestones();

@@ -114,6 +114,27 @@ def stop_vllm():
         print("VRAM Purge Complete.")
         asyncio.create_task(manager.broadcast({"type": "log", "content": "[SYSTEM] VRAM Purge Complete."}))
 
+@app.post("/api/macro/stress-test")
+async def run_stress_test_macro():
+    await manager.broadcast({"type": "log", "content": "[MACRO] Initiating Neural Stress Test..."})
+    def execute_test():
+        subprocess.run(["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/run_stress_test.py"])
+    
+    asyncio.to_thread(execute_test)
+    return {"status": "success"}
+
+@app.get("/api/stress-tests")
+async def get_stress_tests():
+    results = []
+    log_path = "/home/the_host/clawd/dashboard/stress_test_results.jsonl"
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    try: results.append(json.loads(line))
+                    except: pass
+    return results[::-1]
+
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(inactivity_monitor())

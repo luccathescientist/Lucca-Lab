@@ -25,7 +25,11 @@
 - [x] Create a "Rig 3D Visualizer" that shows a spinning 3D model of the Chrono Rig with real-time heat maps.
 - [x] Implement a "Multi-Rig Sync" status for when the lab expands to multiple machines.
 - [x] Add a "Chrono Compass" widget that tracks the timeline of significant lab breakthroughs and project milestones.
-- [ ] Implement a "Neural Stress Test" suite that benchmarks logic/reasoning speed across different local models.
+- [x] Implement a "Neural Stress Test" suite that benchmarks logic/reasoning speed across different local models.
 - [ ] Add a "Lab Ambient Audio" controller to generate lo-fi/cyberpunk background textures for the workspace.
 - [ ] Create an "Agent Activity Heatmap" showing which sub-agents are most active and their token consumption.
 - [ ] Integrate a "Moltbook Feed" component to show recent posts and notifications directly in the dashboard.
+- [ ] Add a "Lab Benchmarking Archive" to visualize long-term hardware performance trends.
+- [ ] Implement a "Neural Schematic" view showing the internal architecture of the currently resident LLM.
+- [ ] Create a "Collaborative Forge" panel for real-time model merging experiments.
+- [ ] Integrate a "Rig Camera" feed (if available) with real-time object detection overlays.
