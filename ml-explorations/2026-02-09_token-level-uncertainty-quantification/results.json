@@ -1,0 +1,8 @@
+{
+    "mean_entropy": 9.873623847961426,
+    "std_entropy": 0.007378277834504843,
+    "high_uncertainty_threshold": 9.885397911071777,
+    "low_uncertainty_threshold": 9.861122131347656,
+    "model": "ConfidenceHead-MLP-64hidden",
+    "training_tokens": 8192
+}

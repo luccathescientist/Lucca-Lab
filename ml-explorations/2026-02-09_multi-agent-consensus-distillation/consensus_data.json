@@ -1,0 +1,32 @@
+[
+    {
+        "task": "Explain the hardware-software desync in Blackwell sm_120 kernels for FlashAttention-3.",
+        "responses": {
+            "R1-70B": "The primary bottleneck is the lack of native sm_120 kernel images in stable PyTorch builds. Nightly builds are required.",
+            "GPT-5": "Blackwell sm_120 architecture introduces new tensor core instructions that FlashAttention-3 hasn't fully mapped in public v2.7.0 releases.",
+            "Claude 3.5": "The desync occurs because the JIT compiler defaults to sm_90 patterns when sm_120 headers are missing, causing suboptimal register allocation."
+        },
+        "consensus": "Consensus reached: Native sm_120 support is missing in stable builds, forcing fallback to sm_90 or requiring nightly/custom compilation for Blackwell.",
+        "confidence_score": 0.94
+    },
+    {
+        "task": "Propose a method for weight-merging in FP8 that preserves logic weights above 99.5%.",
+        "responses": {
+            "R1-70B": "The primary bottleneck is the lack of native sm_120 kernel images in stable PyTorch builds. Nightly builds are required.",
+            "GPT-5": "Blackwell sm_120 architecture introduces new tensor core instructions that FlashAttention-3 hasn't fully mapped in public v2.7.0 releases.",
+            "Claude 3.5": "The desync occurs because the JIT compiler defaults to sm_90 patterns when sm_120 headers are missing, causing suboptimal register allocation."
+        },
+        "consensus": "Consensus reached: Native sm_120 support is missing in stable builds, forcing fallback to sm_90 or requiring nightly/custom compilation for Blackwell.",
+        "confidence_score": 0.94
+    },
+    {
+        "task": "Synthesize a training prompt for distillation that teaches a 1B model spatial reasoning through text grounding.",
+        "responses": {
+            "R1-70B": "The primary bottleneck is the lack of native sm_120 kernel images in stable PyTorch builds. Nightly builds are required.",
+            "GPT-5": "Blackwell sm_120 architecture introduces new tensor core instructions that FlashAttention-3 hasn't fully mapped in public v2.7.0 releases.",
+            "Claude 3.5": "The desync occurs because the JIT compiler defaults to sm_90 patterns when sm_120 headers are missing, causing suboptimal register allocation."
+        },
+        "consensus": "Consensus reached: Native sm_120 support is missing in stable builds, forcing fallback to sm_90 or requiring nightly/custom compilation for Blackwell.",
+        "confidence_score": 0.94
+    }
+]
