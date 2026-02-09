@@ -6,6 +6,12 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Bit-Level Speculative Decoding**: Research using sub-FP8 bit-level draft models to speculate for full FP8 target models on Blackwell, optimizing for the 96GB VRAM bandwidth.
+- [ ] **Neural Knowledge Graph Fusion**: Merge standard vector embeddings with symbolic logic rules in a unified RAG pipeline to eliminate hallucination in technical architecture queries.
+- [ ] **Cross-Modal Temporal Consistency**: Optimize Wan 2.1 frame-to-frame flow using a 3D-UNet based correction layer to stabilize character features in 720p animations.
+- [ ] **Autonomous Kernel Profiling (sm_120)**: Build a tool that uses R1 to parse Nsight Compute logs and auto-generate optimized Triton kernels for Blackwell's unique register file architecture.
+- [ ] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-7B) to retain multi-expert breadth.
+- [ ] **Predictive VRAM Governor**: Implement an AI governor that predicts the VRAM requirements of multi-stage pipelines (Flux -> Wan -> R1) and pre-emptively flushes non-critical caches.
 - [x] **Adaptive Gradient Clipping for FP8 Training**: Investigate if dynamic gradient clipping based on weight distribution can stabilize on-device FP8 fine-tuning on Blackwell.
 - [x] **Cross-Modal Speculative Decoding (Audio-to-Text)**: Use a lightweight Whisper-distilled model to speculate tokens for a larger multimodal model (like Gemini or a local equivalent).
 - [x] **Knowledge-Graph Informed RAG (KG-RAG)**: Enhance standard vector search with a structured knowledge graph to improve reasoning on complex technical relationships in `Lucca-Lab`.
