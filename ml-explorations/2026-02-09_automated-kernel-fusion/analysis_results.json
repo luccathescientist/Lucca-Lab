@@ -1,0 +1,83 @@
+{
+  "precision": "fp8",
+  "operations": [
+    {
+      "name": "Q_projection",
+      "latency_us": 610.839793208889,
+      "input_mb": 64.0,
+      "output_mb": 64.0
+    },
+    {
+      "name": "K_projection",
+      "latency_us": 610.839793208889,
+      "input_mb": 64.0,
+      "output_mb": 64.0
+    },
+    {
+      "name": "V_projection",
+      "latency_us": 610.839793208889,
+      "input_mb": 64.0,
+      "output_mb": 64.0
+    },
+    {
+      "name": "QKV_reshape",
+      "latency_us": 111.84810666666667,
+      "input_mb": 192.0,
+      "output_mb": 192.0
+    },
+    {
+      "name": "attention_scores",
+      "latency_us": 223.69621333333333,
+      "input_mb": 128.0,
+      "output_mb": 256.0
+    },
+    {
+      "name": "softmax",
+      "latency_us": 298.2616177777778,
+      "input_mb": 256.0,
+      "output_mb": 256.0
+    },
+    {
+      "name": "attention_values",
+      "latency_us": 223.69621333333333,
+      "input_mb": 256.0,
+      "output_mb": 64.0
+    },
+    {
+      "name": "output_projection",
+      "latency_us": 610.839793208889,
+      "input_mb": 64.0,
+      "output_mb": 64.0
+    }
+  ],
+  "fusions": [
+    {
+      "ops": [
+        "Q_projection",
+        "K_projection",
+        "V_projection"
+      ],
+      "speedup": 1.0000000000000002,
+      "memory_saved_mb": 128.0
+    },
+    {
+      "ops": [
+        "QKV_reshape",
+        "attention_scores"
+      ],
+      "speedup": 1.2857142857142856,
+      "memory_saved_mb": 192.0
+    },
+    {
+      "ops": [
+        "softmax",
+        "attention_values"
+      ],
+      "speedup": 2.8,
+      "memory_saved_mb": 256.0
+    }
+  ],
+  "total_speedup": 1.1418695831613703,
+  "total_memory_reduction_pct": 27.27272727272727,
+  "memory_transfer_reduction": "16N -> 7N"
+}
