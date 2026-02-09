@@ -23,8 +23,8 @@
 - [x] Implement a "Neural Flux" widget that displays the current mood of the AI based on recent conversation sentiment.
 - [x] Add a "Lab Inventory" system to track physical/digital assets like custom rig parts and model checkpoints.
 - [x] Create a "Rig 3D Visualizer" that shows a spinning 3D model of the Chrono Rig with real-time heat maps.
-- [ ] Implement a "Multi-Rig Sync" status for when the lab expands to multiple machines.
-- [ ] Add a "Chrono Compass" widget that tracks the timeline of significant lab breakthroughs and project milestones.
+- [x] Implement a "Multi-Rig Sync" status for when the lab expands to multiple machines.
+- [x] Add a "Chrono Compass" widget that tracks the timeline of significant lab breakthroughs and project milestones.
 - [ ] Implement a "Neural Stress Test" suite that benchmarks logic/reasoning speed across different local models.
 - [ ] Add a "Lab Ambient Audio" controller to generate lo-fi/cyberpunk background textures for the workspace.
 - [ ] Create an "Agent Activity Heatmap" showing which sub-agents are most active and their token consumption.

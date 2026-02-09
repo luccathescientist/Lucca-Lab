@@ -37,6 +37,24 @@ class LabState:
 
 state = LabState()
 
+# Breakthroughs / Milestones storage
+MILESTONES_PATH = "/home/the_host/clawd/dashboard/milestones.json"
+
+def get_milestones():
+    if os.path.exists(MILESTONES_PATH):
+        with open(MILESTONES_PATH, "r") as f:
+            return json.load(f)
+    # Default milestones if none exist
+    return [
+        {"date": "2026-02-06", "title": "Dashboard V5 Launch", "desc": "Neural Interface v5 deployed."},
+        {"date": "2026-02-07", "title": "Blackwell Optimization", "desc": "vLLM FP8 kernels verified on sm_120."},
+        {"date": "2026-02-08", "title": "Neural Reflex Prototyped", "desc": "E2E latency reduced for multimodal chains."}
+    ]
+
+@app.get("/api/milestones")
+async def milestones_api():
+    return get_milestones()
+
 async def start_vllm():
     if state.vllm_process or state.is_loading:
         return True
