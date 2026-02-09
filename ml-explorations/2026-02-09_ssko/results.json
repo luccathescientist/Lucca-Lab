@@ -1,0 +1,92 @@
+[
+    {
+        "block_size": 64,
+        "threads": 32,
+        "latency": 67.60000000000001
+    },
+    {
+        "block_size": 64,
+        "threads": 64,
+        "latency": 66.0
+    },
+    {
+        "block_size": 64,
+        "threads": 128,
+        "latency": 62.8
+    },
+    {
+        "block_size": 64,
+        "threads": 256,
+        "latency": 56.4
+    },
+    {
+        "block_size": 64,
+        "threads": 512,
+        "latency": 69.2
+    },
+    {
+        "block_size": 64,
+        "threads": 1024,
+        "latency": 94.80000000000001
+    },
+    {
+        "block_size": 128,
+        "threads": 32,
+        "latency": 61.2
+    },
+    {
+        "block_size": 128,
+        "threads": 64,
+        "latency": 59.6
+    },
+    {
+        "block_size": 128,
+        "threads": 128,
+        "latency": 56.4
+    },
+    {
+        "block_size": 128,
+        "threads": 256,
+        "latency": 50.0
+    },
+    {
+        "block_size": 128,
+        "threads": 512,
+        "latency": 62.8
+    },
+    {
+        "block_size": 128,
+        "threads": 1024,
+        "latency": 88.4
+    },
+    {
+        "block_size": 256,
+        "threads": 32,
+        "latency": 74.0
+    },
+    {
+        "block_size": 256,
+        "threads": 64,
+        "latency": 72.4
+    },
+    {
+        "block_size": 256,
+        "threads": 128,
+        "latency": 69.2
+    },
+    {
+        "block_size": 256,
+        "threads": 256,
+        "latency": 62.8
+    },
+    {
+        "block_size": 256,
+        "threads": 512,
+        "latency": 75.6
+    },
+    {
+        "block_size": 256,
+        "threads": 1024,
+        "latency": 101.2
+    }
+]

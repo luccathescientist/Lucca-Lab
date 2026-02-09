@@ -16,7 +16,7 @@
 - [x] **Neuromorphic Sparse Attention**: Implementing an attention mechanism that mimics spiking neural networks to reduce energy consumption and latency on Blackwell during long-context generation.
 - [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding.
 - [x] **Hierarchical MoE Routing**: A two-tier routing system for MoE models where a "gatekeeper" first selects a cluster of experts, and a "specialist router" then selects the specific expert within that cluster.
-- [ ] **Self-Supervised Kernel Optimization (SSKO)**: Using reinforcement learning where the reward is the actual measured latency on Blackwell to discover optimal CUDA kernel configurations.
+- [x] **Self-Supervised Kernel Optimization (SSKO)**: Using reinforcement learning where the reward is the actual measured latency on Blackwell to discover optimal CUDA kernel configurations.
 - [ ] **Multi-Agent Consensus Distillation**: Using a \"council\" of large models (R1-70B, GPT-5, Claude 3.5) to generate consensus-based synthetic data for training smaller, highly reliable student models.
 - [x] **Autonomous Rig Self-Optimization**: Research dynamic VRAM allocation strategies for heterogeneous model pools (R1, Flux, Wan 2.1) to eliminate swapping overhead.
 - [x] **Quantized Mixture-of-Experts (Q-MoE)**: Evaluate the feasibility of sub-4-bit MoE quantization on Blackwell Tensor Cores without significant routing collapse.
