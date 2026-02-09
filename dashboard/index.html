@@ -786,6 +786,18 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </style>
                 </div>
 
+                <!-- AGENT ACTIVITY HEATMAP -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2>Agent Activity Heatmap</h2>
+                    <div id="agent-heatmap-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div style="font-size: 0.7rem; color: var(--accent-color); animation: pulse 1s infinite;">• Calibrating agent sensors...</div>
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; font-size: 0.6rem; color: #888;">
+                        <span>TOTAL SESSION TOKENS</span>
+                        <span id="total-session-tokens">0</span>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -2003,6 +2015,34 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+        async function updateAgentActivity() {
+            try {
+                const response = await fetch('/api/agents/activity');
+                const data = await response.json();
+                const container = document.getElementById('agent-heatmap-container');
+                let totalTokens = 0;
+                
+                container.innerHTML = data.map(agent => {
+                    totalTokens += agent.tokens_consumed;
+                    // Map activity score to opacity
+                    const opacity = 0.2 + (agent.activity_score * 0.8);
+                    const color = agent.status === 'busy' ? 'var(--danger-color)' : agent.status === 'active' ? 'var(--accent-color)' : '#666';
+                    
+                    return `
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; border-bottom: 3px solid ${color};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="font-size: 0.7rem; font-weight: bold; color: white;">${agent.name.toUpperCase()}</span>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${color}; opacity: ${opacity}; box-shadow: 0 0 10px ${color};"></div>
+                            </div>
+                            <div style="font-size: 0.6rem; color: #888;">${agent.tokens_consumed.toLocaleString()} TOKENS</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('total-session-tokens').textContent = totalTokens.toLocaleString();
+            } catch (err) {}
+        }
+
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
         setInterval(updateModelLoadout, 15000);
@@ -2011,6 +2051,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateDreams, 30000);
         setInterval(updateMood, 10000);
         setInterval(updateMilestones, 60000);
+        setInterval(updateAgentActivity, 10000);
         setInterval(updateAmbient, 45000);
         setInterval(checkNightMode, 60000);
         initChart();
@@ -2026,6 +2067,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateBenchmarks();
         updateStressResults();
         updateInventory();
+        updateAgentActivity();
         updateMood();
         updateAmbient();
         updateMilestones();

@@ -635,6 +635,21 @@ async def get_ambient():
     import random
     return random.choice(tracks)
 
+@app.get("/api/agents/activity")
+async def get_agent_activity():
+    # Simulated agent activity heatmap data
+    import random
+    agents = ["Main", "Researcher", "Coder", "Scientist", "Janitor", "Dreamer"]
+    activity = []
+    for agent in agents:
+        activity.append({
+            "name": agent,
+            "activity_score": random.uniform(0, 1), # 0 to 1
+            "tokens_consumed": random.randint(1000, 50000),
+            "status": random.choice(["active", "idle", "busy"])
+        })
+    return activity
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
