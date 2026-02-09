@@ -11,7 +11,13 @@
 - [x] **Multimodal Speculative Decoding**: Use a small vision model (Llama-3.2-1B-Vision) to speculate on frame descriptions for a larger multimodal model.
 - [x] **Dynamic Expert Routing in MoE**: Implement a real-time router that shuts down unused experts in Mixtral-style models to save Blackwell VRAM.
 - [x] **Temporal Graph RAG**: Incorporate timestamps into the "Scientific Knowledge Graph" to track the evolution of lab hypotheses over time.
-- [ ] **Automated Kernel Fusion**: Use R1 to identify and fuse repetitive CUDA operations in the `Lucca-Lab` codebase for 10% speedup.
+- [x] **Automated Kernel Fusion**: Use R1 to identify and fuse repetitive CUDA operations in the `Lucca-Lab` codebase for 10% speedup.
+- [ ] **Adaptive KV-Cache Compaction**: Dynamically vary the compression ratio of the KV cache based on the semantic importance of tokens (e.g., higher compression for filler words, lower for key logic).
+- [ ] **Neuromorphic Sparse Attention**: Implementing an attention mechanism that mimics spiking neural networks to reduce energy consumption and latency on Blackwell during long-context generation.
+- [ ] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding.
+- [ ] **Hierarchical MoE Routing**: A two-tier routing system for MoE models where a "gatekeeper" first selects a cluster of experts, and a "specialist router" then selects the specific expert within that cluster.
+- [ ] **Self-Supervised Kernel Optimization (SSKO)**: Using reinforcement learning where the reward is the actual measured latency on Blackwell to discover optimal CUDA kernel configurations.
+- [ ] **Multi-Agent Consensus Distillation**: Using a \"council\" of large models (R1-70B, GPT-5, Claude 3.5) to generate consensus-based synthetic data for training smaller, highly reliable student models.
 - [x] **Autonomous Rig Self-Optimization**: Research dynamic VRAM allocation strategies for heterogeneous model pools (R1, Flux, Wan 2.1) to eliminate swapping overhead.
 - [x] **Quantized Mixture-of-Experts (Q-MoE)**: Evaluate the feasibility of sub-4-bit MoE quantization on Blackwell Tensor Cores without significant routing collapse.
 - [x] **Temporal Consistency in I2V**: Develop a "Memory-Aware Motion" pipeline using Wan 2.1 and a temporal LoRA to maintain character identity across multiple video clips.
