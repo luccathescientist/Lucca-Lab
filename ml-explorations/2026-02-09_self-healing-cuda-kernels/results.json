@@ -1,0 +1,50 @@
+[
+    {
+        "config": {
+            "block_size": 1024,
+            "tiling_factor": 8,
+            "shared_mem_kb": 32,
+            "precision": "FP16"
+        },
+        "input_size_gb": 10,
+        "vram_usage": 40.0,
+        "latency": 250.0,
+        "status": "SUCCESS"
+    },
+    {
+        "config": {
+            "block_size": 1024,
+            "tiling_factor": 8,
+            "shared_mem_kb": 32,
+            "precision": "FP16"
+        },
+        "input_size_gb": 20,
+        "vram_usage": 80.0,
+        "latency": 500.0,
+        "status": "SUCCESS"
+    },
+    {
+        "config": {
+            "block_size": 1024,
+            "tiling_factor": 4,
+            "shared_mem_kb": 32,
+            "precision": "FP16"
+        },
+        "input_size_gb": 30,
+        "vram_usage": 60.0,
+        "latency": 750.0,
+        "status": "SUCCESS"
+    },
+    {
+        "config": {
+            "block_size": 1024,
+            "tiling_factor": 4,
+            "shared_mem_kb": 32,
+            "precision": "FP16"
+        },
+        "input_size_gb": 40,
+        "vram_usage": 80.0,
+        "latency": 1000.0,
+        "status": "SUCCESS"
+    }
+]

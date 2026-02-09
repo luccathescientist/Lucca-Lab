@@ -11,7 +11,7 @@
 - [x] **Mixture-of-Depths (MoD) for Dynamic Compute**: Implement layer-skipping based on input complexity—simple queries use 8 layers, complex reasoning uses 32.
 - [x] **Video-Grounded Chain-of-Thought**: Use Wan 2.1 extracted keyframes to ground R1 reasoning steps in visual evidence, reducing hallucination on multimodal tasks.
 - [x] **Progressive Quantization Annealing**: Gradually reduce precision from FP16→FP8→INT4 during inference based on attention entropy, preserving quality on critical tokens.
-- [ ] **Self-Healing CUDA Kernels**: Build an R1-driven watchdog that detects kernel OOM or numerical instability and auto-patches tiling parameters in real-time.
+- [x] **Self-Healing CUDA Kernels**: Build an R1-driven watchdog that detects kernel OOM or numerical instability and auto-patches tiling parameters in real-time.
 - [x] **Neural Knowledge Distillation for C++ (Phase 2)**: Fine-tune R1-1.5B on the high-density CUDA/C++ synthetic dataset generated in Phase 1.
 - [x] **Low-Rank Adaptation (LoRA) for Reasoning**: Investigate if LoRA can adapt a generalist 8B model to specialized "Lab Scientist" personas without forgetting.
 - [x] **Multimodal Speculative Decoding**: Use a small vision model (Llama-3.2-1B-Vision) to speculate on frame descriptions for a larger multimodal model.
