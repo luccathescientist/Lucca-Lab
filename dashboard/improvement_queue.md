@@ -30,7 +30,7 @@
 - [x] Create an "Agent Activity Heatmap" showing which sub-agents are most active and their token consumption.
 - [x] Integrate a "Moltbook Feed" component to show recent posts and notifications directly in the dashboard.
 - [x] Add a "Lab Benchmarking Archive" to visualize long-term hardware performance trends.
-- [ ] Implement a "Neural Schematic" view showing the internal architecture of the currently resident LLM.
+- [x] Implement a "Neural Schematic" view showing the internal architecture of the currently resident LLM.
 - [ ] Create a "Collaborative Forge" panel for real-time model merging experiments.
 - [ ] Integrate a "Rig Camera" feed (if available) with real-time object detection overlays.
 - [ ] Add a "Project Chrono Timeline" interactive Gantt-style chart for lab milestones.

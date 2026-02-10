@@ -820,6 +820,20 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- NEURAL SCHEMATIC -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between;">
+                        Neural Schematic
+                        <span id="schematic-model" style="font-size: 0.6rem; opacity: 0.7;">R1-70B FP8</span>
+                    </h2>
+                    <div id="schematic-container" style="height: 250px; background: rgba(0,0,0,0.5); border-radius: 4px; position: relative; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(209, 120, 255, 0.1);">
+                        <canvas id="schematic-canvas" style="width: 100%; height: 100%;"></canvas>
+                        <div id="schematic-overlay" style="position: absolute; bottom: 10px; left: 10px; font-size: 0.6rem; color: var(--accent-color); font-family: 'Fira Code';">
+                            LAYER_SCAN: <span id="layer-id">0</span> / 80
+                        </div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -2163,6 +2177,80 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             }
         }
 
+        function drawSchematic() {
+            const canvas = document.getElementById('schematic-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            const layers = 80;
+            const activeLayer = Math.floor((Date.now() / 200) % layers);
+            document.getElementById('layer-id').textContent = activeLayer;
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Transformer blocks
+            for (let i = 0; i < layers; i++) {
+                const angle = (i / layers) * Math.PI * 2 + (Date.now() / 5000);
+                const radius = 60 + Math.sin(Date.now() / 1000 + i) * 5;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                const isActive = i === activeLayer;
+                ctx.fillStyle = isActive ? 'var(--accent-color)' : 'rgba(209, 120, 255, 0.2)';
+                if (isActive) {
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = 'var(--accent-color)';
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+                
+                ctx.beginPath();
+                ctx.rect(x - 2, y - 2, 4, 4);
+                ctx.fill();
+                
+                // Connect to next
+                const nextAngle = ((i + 1) / layers) * Math.PI * 2 + (Date.now() / 5000);
+                const nextX = centerX + Math.cos(nextAngle) * radius;
+                const nextY = centerY + Math.sin(nextAngle) * radius;
+                
+                ctx.strokeStyle = isActive ? 'var(--accent-color)' : 'rgba(209, 120, 255, 0.05)';
+                ctx.lineWidth = isActive ? 2 : 0.5;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(nextX, nextY);
+                ctx.stroke();
+            }
+            
+            // Draw Attention Heads (Center)
+            const headCount = 8;
+            for (let i = 0; i < headCount; i++) {
+                const angle = (i / headCount) * Math.PI * 2 - (Date.now() / 2000);
+                const x = centerX + Math.cos(angle) * 20;
+                const y = centerY + Math.sin(angle) * 20;
+                
+                ctx.strokeStyle = 'var(--gold)';
+                ctx.lineWidth = 1;
+                ctx.shadowBlur = 5;
+                ctx.shadowColor = 'var(--gold)';
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                
+                ctx.fillStyle = 'var(--gold)';
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            requestAnimationFrame(drawSchematic);
+        }
+
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
         setInterval(updateModelLoadout, 15000);
@@ -2195,6 +2283,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateAmbient();
         updateMilestones();
         checkNightMode();
+        drawSchematic();
         loadInitialMessages();
         connectWS();
         connectInfWS();
