@@ -46,7 +46,7 @@ To replicate our hardened agentic setup (Docker + GPU Passthrough), check the `o
     "binds": [
       "/home/user/anaconda3:/home/user/anaconda3:ro",
       "/home/user/workspace/pytorch_cuda/.venv:/workspace/venv:ro",
-      "/home/user/lab_env:/workspace:rw"
+      "/home/user/clawd:/workspace:rw"
     ]
   }
 }

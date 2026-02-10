@@ -4,7 +4,7 @@ import os
 import requests
 from datetime import datetime
 
-STRESS_TEST_LOG = "/home/user/lab_env/dashboard/stress_test_results.jsonl"
+STRESS_TEST_LOG = "/home/the_host/clawd/dashboard/stress_test_results.jsonl"
 VLLM_URL = "http://localhost:8001/v1"
 
 TEST_PROMPTS = [

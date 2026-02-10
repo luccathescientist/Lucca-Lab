@@ -41,7 +41,7 @@ def generate_chart(stats):
 
 if __name__ == "__main__":
     # Path to simulation media (or just create a dummy one for the experiment)
-    media_path = "/home/user/lab_env/Lucca-Lab/media_vault"
+    media_path = "/home/the_host/clawd/Lucca-Lab/media_vault"
     if not os.path.exists(media_path):
         os.makedirs(media_path, exist_ok=True)
         # Create a dummy file to ensure it's not empty

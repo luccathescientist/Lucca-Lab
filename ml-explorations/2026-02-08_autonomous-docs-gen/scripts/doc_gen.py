@@ -4,7 +4,7 @@ import requests
 import json
 
 # Configuration
-REPO_PATH = "/home/user/lab_env/Lucca-Lab"
+REPO_PATH = "/home/the_host/clawd/Lucca-Lab"
 DOCS_PATH = os.path.join(REPO_PATH, "docs/auto-generated")
 MODEL_API_URL = "http://localhost:8001/v1/chat/completions" # Assuming local vLLM R1
 

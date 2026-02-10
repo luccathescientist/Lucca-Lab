@@ -6,17 +6,17 @@ import requests
 import glob
 
 VLLM_URL = "http://localhost:8001/v1"
-DREAMS_DIR = "/home/user/lab_env/dashboard/dreams"
-LOG_FILE = "/home/user/lab_env/dashboard/dreams/dream_log.jsonl"
+DREAMS_DIR = "/home/the_host/clawd/dashboard/dreams"
+LOG_FILE = "/home/the_host/clawd/dashboard/dreams/dream_log.jsonl"
 
 def get_recent_context():
     # Grab snippets from MEMORY.md and the latest daily log
     context = ""
     try:
-        with open("/home/user/lab_env/MEMORY.md", "r") as f:
+        with open("/home/the_host/clawd/MEMORY.md", "r") as f:
             context += f.read()[:2000] # First 2k chars
         
-        daily_files = sorted(glob.glob("/home/user/lab_env/memory/2026-*.md"))
+        daily_files = sorted(glob.glob("/home/the_host/clawd/memory/2026-*.md"))
         if daily_files:
             with open(daily_files[-1], "r") as f:
                 context += "\n\nRECENT EVENTS:\n" + f.read()

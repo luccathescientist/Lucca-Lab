@@ -23,7 +23,7 @@ app = FastAPI()
 
 # Configuration
 PORT = 8889
-CHROMA_PATH = "/home/user/lab_env/deep-wisdom/db"
+CHROMA_PATH = "/home/the_host/clawd/deep-wisdom/db"
 MODEL_NAME = "all-MiniLM-L6-v2"
 VLLM_URL = "http://localhost:8001/v1"
 INACTIVITY_LIMIT = 300 # 5 minutes
@@ -38,7 +38,7 @@ class LabState:
 state = LabState()
 
 # Breakthroughs / Milestones storage
-MILESTONES_PATH = "/home/user/lab_env/dashboard/milestones.json"
+MILESTONES_PATH = "/home/the_host/clawd/dashboard/milestones.json"
 
 def get_milestones():
     if os.path.exists(MILESTONES_PATH):
@@ -64,11 +64,11 @@ async def start_vllm():
     await manager.broadcast({"type": "log", "content": "[SYSTEM] Neural Handshake Initiated: Loading R1-70B FP8 Core..."})
     
     env = os.environ.copy()
-    env["PYTHONPATH"] = env.get("PYTHONPATH", "") + ":/home/user/workspace/pytorch_cuda/.venv/lib/python3.12/site-packages"
+    env["PYTHONPATH"] = env.get("PYTHONPATH", "") + ":/home/the_host/workspace/pytorch_cuda/.venv/lib/python3.12/site-packages"
     
     state.vllm_process = subprocess.Popen(
         [
-            "/home/user/workspace/pytorch_cuda/.venv/bin/python3",
+            "/home/the_host/workspace/pytorch_cuda/.venv/bin/python3",
             "-m", "vllm.entrypoints.openai.api_server",
             "--model", "neuralmagic/DeepSeek-R1-Distill-Llama-70B-FP8-dynamic",
             "--port", "8001",
@@ -118,7 +118,7 @@ def stop_vllm():
 async def run_stress_test_macro():
     await manager.broadcast({"type": "log", "content": "[MACRO] Initiating Neural Stress Test..."})
     def execute_test():
-        subprocess.run(["/home/user/workspace/pytorch_cuda/.venv/bin/python3", "/home/user/lab_env/dashboard/run_stress_test.py"])
+        subprocess.run(["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/run_stress_test.py"])
     
     asyncio.to_thread(execute_test)
     return {"status": "success"}
@@ -126,7 +126,7 @@ async def run_stress_test_macro():
 @app.get("/api/stress-tests")
 async def get_stress_tests():
     results = []
-    log_path = "/home/user/lab_env/dashboard/stress_test_results.jsonl"
+    log_path = "/home/the_host/clawd/dashboard/stress_test_results.jsonl"
     if os.path.exists(log_path):
         with open(log_path, "r") as f:
             for line in f:
@@ -170,7 +170,7 @@ async def run_benchmark():
     await manager.broadcast({"type": "log", "content": "[MACRO] Initiating Hardware Stress Test..."})
     # Run the real benchmark script
     def execute_bench():
-        subprocess.run(["/home/user/workspace/pytorch_cuda/.venv/bin/python3", "/home/user/lab_env/dashboard/run_benchmark.py"])
+        subprocess.run(["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/run_benchmark.py"])
     
     asyncio.to_thread(execute_bench)
     return {"status": "success"}
@@ -178,7 +178,7 @@ async def run_benchmark():
 @app.get("/api/benchmarks")
 async def get_benchmarks():
     results = []
-    log_path = "/home/user/lab_env/dashboard/benchmark_results.jsonl"
+    log_path = "/home/the_host/clawd/dashboard/benchmark_results.jsonl"
     if os.path.exists(log_path):
         with open(log_path, "r") as f:
             for line in f:
@@ -188,8 +188,8 @@ async def get_benchmarks():
     return results[::-1] # Newest first
 
 # Mount assets
-os.makedirs("/home/user/lab_env/dashboard/assets", exist_ok=True)
-app.mount("/assets", StaticFiles(directory="/home/user/lab_env/dashboard/assets"), name="assets")
+os.makedirs("/home/the_host/clawd/dashboard/assets", exist_ok=True)
+app.mount("/assets", StaticFiles(directory="/home/the_host/clawd/dashboard/assets"), name="assets")
 
 class ChatMessage(BaseModel):
     text: str
@@ -249,7 +249,7 @@ def get_gpu_stats():
 @app.get("/api/benchmarks/archive")
 async def get_benchmarks_archive():
     results = []
-    log_path = "/home/user/lab_env/dashboard/benchmark_results.jsonl"
+    log_path = "/home/the_host/clawd/dashboard/benchmark_results.jsonl"
     if os.path.exists(log_path):
         with open(log_path, "r") as f:
             for line in f:
@@ -267,7 +267,7 @@ async def get_benchmarks_archive():
 
 @app.get("/")
 async def get():
-    return FileResponse("/home/user/lab_env/dashboard/index.html", headers={"Cache-Control": "no-cache"})
+    return FileResponse("/home/the_host/clawd/dashboard/index.html", headers={"Cache-Control": "no-cache"})
 
 @app.get("/api/stats")
 async def stats():
@@ -276,9 +276,9 @@ async def stats():
 @app.get("/api/memory")
 async def memory():
     try:
-        with open("/home/user/lab_env/MEMORY.md", "r") as f:
+        with open("/home/the_host/clawd/MEMORY.md", "r") as f:
             memory_md = f.read()
-        daily_files = sorted(glob.glob("/home/user/lab_env/memory/2026-*.md"))
+        daily_files = sorted(glob.glob("/home/the_host/clawd/memory/2026-*.md"))
         latest_daily = ""
         if daily_files:
             with open(daily_files[-1], "r") as f:
@@ -289,7 +289,7 @@ async def memory():
 
 @app.get("/api/memory/sessions")
 async def list_sessions():
-    daily_files = sorted(glob.glob("/home/user/lab_env/memory/2026-*.md"), reverse=True)
+    daily_files = sorted(glob.glob("/home/the_host/clawd/memory/2026-*.md"), reverse=True)
     sessions = []
     for f in daily_files:
         sessions.append({
@@ -300,7 +300,7 @@ async def list_sessions():
 
 @app.get("/api/memory/session")
 async def get_session(path: str):
-    root_dir = "/home/user/lab_env"
+    root_dir = "/home/the_host/clawd"
     target_path = os.path.abspath(path)
     if not target_path.startswith(root_dir) or not os.path.exists(target_path):
         return HTMLResponse(status_code=403)
@@ -310,7 +310,7 @@ async def get_session(path: str):
 
 @app.get("/api/creative/loras")
 async def list_loras():
-    lora_dir = "/home/user/lab_env/ComfyUI/models/loras/flux"
+    lora_dir = "/home/the_host/clawd/ComfyUI/models/loras/flux"
     loras = []
     if os.path.exists(lora_dir):
         files = glob.glob(os.path.join(lora_dir, "*.safetensors"))
@@ -334,8 +334,8 @@ async def creative_websocket(websocket: WebSocket):
             
             process = subprocess.Popen(
                 [
-                    "/home/user/workspace/pytorch_cuda/.venv/bin/python3",
-                    "/home/user/lab_env/dashboard/gen_creative.py",
+                    "/home/the_host/workspace/pytorch_cuda/.venv/bin/python3",
+                    "/home/the_host/clawd/dashboard/gen_creative.py",
                     lora_name,
                     prompt,
                     filename
@@ -376,7 +376,7 @@ async def search(q: str):
 
 @app.get("/api/messages")
 async def messages():
-    conv_path = "/home/user/lab_env/dashboard/conversation.jsonl"
+    conv_path = "/home/the_host/clawd/dashboard/conversation.jsonl"
     msgs = []
     if os.path.exists(conv_path):
         with open(conv_path, "r") as f:
@@ -395,7 +395,7 @@ async def websocket_endpoint(websocket: WebSocket):
             data = await websocket.receive_text()
             message = json.loads(data)
             entry = {"timestamp": datetime.now().isoformat(), "sender": "User", "text": message.get("text", "")}
-            with open("/home/user/lab_env/dashboard/conversation.jsonl", "a") as f:
+            with open("/home/the_host/clawd/dashboard/conversation.jsonl", "a") as f:
                 f.write(json.dumps(entry) + "\n")
             await manager.broadcast({"type": "message", "msg": entry})
     except WebSocketDisconnect:
@@ -448,7 +448,7 @@ async def inference_websocket(websocket: WebSocket):
             else:
                 # Fallback to subprocess for other models
                 process = subprocess.Popen(
-                    ["/home/user/workspace/pytorch_cuda/.venv/bin/python3", "/home/user/lab_env/dashboard/run_inf.py", model_id, prompt],
+                    ["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/run_inf.py", model_id, prompt],
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1
                 )
                 for line in iter(process.stdout.readline, ''):
@@ -465,7 +465,7 @@ async def inference_websocket(websocket: WebSocket):
 @app.post("/api/chat/ai")
 async def ai_message(msg: ChatMessage):
     entry = {"timestamp": datetime.now().isoformat(), "sender": "AI", "text": msg.text}
-    with open("/home/user/lab_env/dashboard/conversation.jsonl", "a") as f:
+    with open("/home/the_host/clawd/dashboard/conversation.jsonl", "a") as f:
         f.write(json.dumps(entry) + "\n")
     await manager.broadcast({"type": "message", "msg": entry})
     return {"status": "sent"}
@@ -508,7 +508,7 @@ async def execute_code(req: CodeExecution):
     try:
         # Run in the same venv as the server for consistency
         process = subprocess.Popen(
-            ["/home/user/workspace/pytorch_cuda/.venv/bin/python3", "-c", req.code],
+            ["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "-c", req.code],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -522,7 +522,7 @@ async def execute_code(req: CodeExecution):
 @app.get("/api/lab/files")
 async def list_files(path: str = "."):
     # Restricted file explorer for Lucca-Lab
-    root_dir = "/home/user/lab_env"
+    root_dir = "/home/the_host/clawd"
     target_dir = os.path.abspath(os.path.join(root_dir, path))
     
     # Security: Ensure path is within root_dir
@@ -599,7 +599,7 @@ async def get_security_events():
 @app.get("/api/dreams")
 async def get_dreams():
     dreams = []
-    log_path = "/home/user/lab_env/dashboard/dreams/dream_log.jsonl"
+    log_path = "/home/the_host/clawd/dashboard/dreams/dream_log.jsonl"
     if os.path.exists(log_path):
         with open(log_path, "r") as f:
             for line in f:
@@ -614,7 +614,7 @@ async def trigger_dream(background_tasks: BackgroundTasks):
         return {"error": "R1 Core is offline. Dream generation requires active neural connection."}
     
     def run_gen():
-        subprocess.run(["/home/user/workspace/pytorch_cuda/.venv/bin/python3", "/home/user/lab_env/dashboard/neural_dream.py"])
+        subprocess.run(["/home/the_host/workspace/pytorch_cuda/.venv/bin/python3", "/home/the_host/clawd/dashboard/neural_dream.py"])
     
     background_tasks.add_task(run_gen)
     return {"status": "Synthesis initiated."}
@@ -634,7 +634,7 @@ async def get_mood():
 
 @app.get("/api/inventory")
 async def get_inventory():
-    inv_path = "/home/user/lab_env/dashboard/inventory.json"
+    inv_path = "/home/the_host/clawd/dashboard/inventory.json"
     if os.path.exists(inv_path):
         with open(inv_path, "r") as f:
             return json.load(f)

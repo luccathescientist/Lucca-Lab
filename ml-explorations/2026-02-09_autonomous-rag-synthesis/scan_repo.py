@@ -36,7 +36,7 @@ def scan_repo(root_dir):
 
 if __name__ == "__main__":
     start_time = time.time()
-    repo_path = "/home/user/lab_env/Lucca-Lab"
+    repo_path = "/home/the_host/clawd/Lucca-Lab"
     graph = scan_repo(repo_path)
     
     output_path = "ml-explorations/2026-02-09_autonomous-rag-synthesis/repo_graph.json"

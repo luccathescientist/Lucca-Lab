@@ -7,8 +7,8 @@ from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 
 # Configuration
-CHROMA_PATH = "/home/user/lab_env/deep-wisdom/db"
-SOURCE_DIR = "/home/user/lab_env"
+CHROMA_PATH = "/home/the_host/clawd/deep-wisdom/db"
+SOURCE_DIR = "/home/the_host/clawd"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 def get_files():

@@ -8,7 +8,7 @@ import sys
 COMFY_URL = "http://127.0.0.1:8188"
 
 def generate_creative(lora_name, prompt, filename):
-    workflow_path = "/home/user/lab_env/workflows/workflow_lora_detail.json"
+    workflow_path = "/home/the_host/clawd/workflows/workflow_lora_detail.json"
     with open(workflow_path, "r") as f:
         workflow = json.load(f)
     

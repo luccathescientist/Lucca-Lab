@@ -7,7 +7,7 @@ The goal was to deploy an autonomous agent to scan the `Lucca-Lab` repository fo
 
 ## Methodology
 - Developed `bug_hunt.py` using regex-based pattern matching for common CUDA pitfalls.
-- Scanned the `/home/user/lab_env/Lucca-Lab` workspace.
+- Scanned the `/home/the_host/clawd/Lucca-Lab` workspace.
 - Targeted `.cu`, `.cpp`, and `.py` files.
 
 ## Results

@@ -40,16 +40,16 @@
   const statusEl = document.getElementById("status");
   const log = (msg) => { logEl.textContent = String(msg); };
 
-  const hasIOS = () => !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.lab_envbotCanvasA2UIAction);
-  const hasAndroid = () => !!(window.lab_envbotCanvasA2UIAction && typeof window.lab_envbotCanvasA2UIAction.postMessage === "function");
-  const hasHelper = () => typeof window.lab_envbotSendUserAction === "function";
+  const hasIOS = () => !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.clawdbotCanvasA2UIAction);
+  const hasAndroid = () => !!(window.clawdbotCanvasA2UIAction && typeof window.clawdbotCanvasA2UIAction.postMessage === "function");
+  const hasHelper = () => typeof window.clawdbotSendUserAction === "function";
   statusEl.innerHTML =
     "Bridge: " +
     (hasHelper() ? "<span class='ok'>ready</span>" : "<span class='bad'>missing</span>") +
     " · iOS=" + (hasIOS() ? "yes" : "no") +
     " · Android=" + (hasAndroid() ? "yes" : "no");
 
-  window.addEventListener("lab_envbot:a2ui-action-status", (ev) => {
+  window.addEventListener("clawdbot:a2ui-action-status", (ev) => {
     const d = ev && ev.detail || {};
     log("Action status: id=" + (d.id || "?") + " ok=" + String(!!d.ok) + (d.error ? (" error=" + d.error) : ""));
   });
@@ -59,7 +59,7 @@
       log("No action bridge found. Ensure you're viewing this on an iOS/Android Clawdbot node canvas.");
       return;
     }
-    const ok = window.lab_envbotSendUserAction({
+    const ok = window.clawdbotSendUserAction({
       name,
       surfaceId: "main",
       sourceComponentId,

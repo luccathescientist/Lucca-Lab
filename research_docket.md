@@ -10,8 +10,8 @@
 - [x] **Autonomous Kernel Profiling (sm_120)**: Build a tool that uses R1 to parse Nsight Compute logs and auto-generate optimized Triton kernels for Blackwell's unique register file architecture.
 - [x] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-7B) to retain multi-expert breadth.
 - [x] **Predictive VRAM Governor**: Implement an AI governor that predicts the VRAM requirements of multi-stage pipelines (Flux -> Wan -> R1) and pre-emptively flushes non-critical caches.
-- [ ] **Recursive Self-Distillation**: Use R1-70B to generate higher-quality thought-process data from its own outputs, then fine-tune a smaller R1-32B on this refined reasoning "essence".
-- [ ] **Multi-Agent Consensus for Code Review**: Orchestrate a "council" of GPT-4o, Claude 3.5, and R1 to identify logic flaws in high-performance CUDA kernels.
+- [x] **Recursive Self-Distillation**: Use R1-70B to generate higher-quality thought-process data from its own outputs, then fine-tune a smaller R1-32B on this refined reasoning "essence".
+- [x] **Multi-Agent Consensus for Code Review**: Orchestrate a "council" of GPT-4o, Claude 3.5, and R1 to identify logic flaws in high-performance CUDA kernels.
 - [ ] **FP8-Native GQA Optimization**: Research Grouped-Query Attention (GQA) modifications specifically for Blackwell's shared memory layout to reduce cache misses during high-concurrency inference.
 - [ ] **Temporal Knowledge Graph Pruning**: Develop an algorithm to identify and "forget" outdated technical hypotheses in the Lab Knowledge Graph to maintain search speed.
 - [ ] **Neural Code Fusion for sm_120**: Use R1 to autonomously merge and optimize sequential Python/C++ lab scripts into single, fused binaries for 2x faster execution.

@@ -10,8 +10,8 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 model = AutoModel.from_pretrained(model_name, trust_remote_code=True, torch_dtype=torch.bfloat16)
 model = model.eval().cuda()
 
-image_path = '/home/user/workspace/vllm/Screenshot 2025-10-08 at 9.17.49 PM.png'
-output_path = '/home/user/lab_env/ml-explorations/2026-02-01_deepseek-r1-distill-llama-70b-vllm/ocr_output'
+image_path = '/home/the_host/workspace/vllm/Screenshot 2025-10-08 at 9.17.49 PM.png'
+output_path = '/home/the_host/clawd/ml-explorations/2026-02-01_deepseek-r1-distill-llama-70b-vllm/ocr_output'
 
 # DeepSeek-OCR specific infer method
 # prompt = "<image>\nExtract all text from this image."

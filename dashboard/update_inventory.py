@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 
 # Path to the inventory file
-INVENTORY_PATH = "/home/user/lab_env/dashboard/inventory.json"
+INVENTORY_PATH = "/home/the_host/clawd/dashboard/inventory.json"
 
 def scan_inventory():
     """Scans the local filesystem to update the inventory of assets."""
@@ -20,7 +20,7 @@ def scan_inventory():
     ]
     
     # Check for some specific files/folders to confirm status
-    if not os.path.exists("/home/user/lab_env/deep-wisdom/db"):
+    if not os.path.exists("/home/the_host/clawd/deep-wisdom/db"):
         for a in assets:
             if a["asset"] == "Chroma DB": a["status"] = "MISSING"
 

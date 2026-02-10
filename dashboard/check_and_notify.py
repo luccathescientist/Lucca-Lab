@@ -2,8 +2,8 @@ import json
 import os
 from datetime import datetime
 
-CONV_PATH = "/home/user/lab_env/dashboard/conversation.jsonl"
-STATE_PATH = "/home/user/lab_env/dashboard/last_seen_msg.json"
+CONV_PATH = "/home/the_host/clawd/dashboard/conversation.jsonl"
+STATE_PATH = "/home/the_host/clawd/dashboard/last_seen_msg.json"
 
 def get_last_seen():
     if os.path.exists(STATE_PATH):
