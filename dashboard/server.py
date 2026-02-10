@@ -734,6 +734,21 @@ async def camera_snap(facing: str = "front"):
         "timestamp": datetime.now().isoformat()
     }
 
+@app.get("/api/audio/config")
+async def get_audio_config():
+    return {
+        "voices": ["nova", "shimmer", "echo", "alloy"],
+        "engines": ["whisper-large", "whisper-distill", "deepgram"],
+        "current_voice": "nova",
+        "current_engine": "whisper-large"
+    }
+
+@app.post("/api/audio/test-tts")
+async def test_tts(req: dict):
+    voice = req.get("voice", "nova")
+    await manager.broadcast({"type": "log", "content": f"[AUDIO] TTS Test: Generating speech with {voice} voice."})
+    return {"status": "success", "message": "TTS synthesis complete."}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

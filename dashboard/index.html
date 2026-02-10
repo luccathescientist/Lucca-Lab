@@ -920,6 +920,50 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- NEURAL AUDIO COMMAND CENTER -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Audio Command Center
+                        <span id="audio-status" style="font-size: 0.6rem; background: rgba(209,120,255,0.2); padding: 2px 6px; border-radius: 4px; color: var(--accent-color);">READY</span>
+                    </h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 0.6rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 0.3rem;">TTS Voice</div>
+                            <select id="tts-voice" style="width: 100%; font-size: 0.75rem;">
+                                <option value="nova">Nova (Warm/British)</option>
+                                <option value="shimmer">Shimmer (Clear/Bright)</option>
+                                <option value="echo">Echo (Deep/Resonant)</option>
+                                <option value="alloy">Alloy (Balanced)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.6rem; color: var(--accent-color); text-transform: uppercase; margin-bottom: 0.3rem;">STT Engine</div>
+                            <select id="stt-engine" style="width: 100%; font-size: 0.75rem;">
+                                <option value="whisper-large">Whisper Large v3 (Local)</option>
+                                <option value="whisper-distill">Whisper Distill (Fast)</option>
+                                <option value="deepgram">Deepgram (Cloud)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); border-radius: 4px; padding: 1rem; margin-bottom: 1rem; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.6rem; color: #888;">INPUT GAIN</span>
+                            <div id="mic-visualizer" style="display: flex; gap: 2px; height: 10px; align-items: flex-end;">
+                                <div class="mic-bar" style="width: 3px; height: 20%; background: var(--accent-color);"></div>
+                                <div class="mic-bar" style="width: 3px; height: 40%; background: var(--accent-color);"></div>
+                                <div class="mic-bar" style="width: 3px; height: 15%; background: var(--accent-color);"></div>
+                                <div class="mic-bar" style="width: 3px; height: 60%; background: var(--accent-color);"></div>
+                                <div class="mic-bar" style="width: 3px; height: 30%; background: var(--accent-color);"></div>
+                            </div>
+                        </div>
+                        <div class="progress-bar" style="height: 4px;"><div class="progress-fill" id="audio-input-level" style="width: 0%;"></div></div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="testTTS()" style="flex: 1; background: rgba(209, 120, 255, 0.1); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.6rem;">TEST TTS</button>
+                        <button id="mic-btn" onclick="toggleMic()" style="flex: 1; background: rgba(255, 62, 62, 0.1); color: var(--danger-color); border: 1px solid var(--danger-color); font-size: 0.6rem; padding: 0.6rem;">START LISTENING</button>
+                    </div>
+                </div>
+
                 <!-- NEURAL SCHEMATIC -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
                     <h2 style="color: var(--accent-color); display: flex; justify-content: space-between;">

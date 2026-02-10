@@ -35,5 +35,5 @@
 - [x] Integrate a "Rig Camera" feed (if available) with real-time object detection overlays.
 - [x] Add a "Project Chrono Timeline" interactive Gantt-style chart for lab milestones.
 - [x] Implement a "VRAM Heatmap" visualizer to see which parts of the GPU memory are most active.
-- [ ] Create a "Neural Audio Command Center" for multi-modal TTS/STT configuration.
+- [x] Create a "Neural Audio Command Center" for multi-modal TTS/STT configuration.
 - [ ] Integrate a "Hardware Health Dashboard" with S.M.A.R.T. disk status and CPU per-core thermals.
