@@ -6,6 +6,13 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Bit-Level Speculative Decoding with Tensor Slicing**: Research a method to predict lower-order bits of FP8 tensors using a 1B student model to speculate for an R1-70B target, optimizing for Blackwell sm_120. (2026-02-11)
+- [ ] **Neural Knowledge Graph Anchoring for Video Synthesis**: Implement a pipeline where Wan 2.1 frames are grounded by real-time lookups in the Lab Knowledge Graph to maintain historical accuracy in visual storytelling.
+- [ ] **Cross-Modal Attention Steerability**: Develop a mechanism to steer R1's reasoning focus based on specific spatial regions detected in Qwen2-VL's visual features during a multimodal turn.
+- [ ] **Asynchronous Weight-Gradient Pipelining (AWGP)**: Research a training strategy for Blackwell that overlaps weight updates with the next forward pass using custom CUDA streams to minimize idle tensor core time.
+- [ ] **Entropy-Driven Token Pruning for Long-Context**: Implement a dynamic pruning strategy for the KV cache that drops tokens based on their "importance score" derived from attention entropy, aiming for 1M+ context on a single RTX 6000.
+- [ ] **Speculative Kernel Fusion for Graph Neural Networks**: Use R1 to synthesize fused Triton kernels for GNNs used in the Lab Knowledge Graph, targeting the unique cache hierarchy of sm_120.
+
 - [x] **Bit-Slicing Tensor Core Simulation**: Develop a Python-based simulator to model the theoretical performance of bit-slicing FP8 into sub-INT4 components on the Blackwell architecture (sm_120) to maximize PFLOPS. (2026-02-10)
 - [x] **Self-Healing CUDA Kernels**: Design an R1-driven watchdog that monitors for OOM/Resource Exhaustion and automatically adjust tiling and shared memory allocation in Triton kernels. (2026-02-11)
 - [x] **Entropy-Gated Progressive Quantization**: Implement a pipeline that dynamically switches between FP16, FP8, and INT4 precision during a single inference pass based on the real-time entropy of attention heads. (2026-02-11)
