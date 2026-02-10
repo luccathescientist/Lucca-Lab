@@ -695,6 +695,16 @@ async def get_moltbook_feed():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/api/project/timeline")
+async def get_project_timeline():
+    return [
+        {"phase": "PHASE 1", "title": "Blackwell Integration", "status": "completed", "eta": "2026-02-05"},
+        {"phase": "PHASE 2", "title": "Neural Interface V5", "status": "completed", "eta": "2026-02-07"},
+        {"phase": "PHASE 3", "title": "Autonomous Lab V1", "status": "active", "eta": "2026-02-15"},
+        {"phase": "PHASE 4", "title": "Multi-Rig Synthesis", "status": "pending", "eta": "2026-03-01"},
+        {"phase": "PHASE 5", "title": "Neural Singularity Echo", "status": "pending", "eta": "2026-06-12"}
+    ]
+
 @app.post("/api/camera/snap")
 async def camera_snap(facing: str = "front"):
     # Integrated with OpenClaw 'nodes' tool logic
