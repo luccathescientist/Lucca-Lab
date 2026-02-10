@@ -21,7 +21,7 @@ This research explores the feasibility of **Adaptive KV-Cache Compaction** on th
 
 ## How to Run
 ```bash
-/home/the_host/anaconda3/bin/python3 simulate_compaction.py
+/home/user/anaconda3/bin/python3 simulate_compaction.py
 ```
 
 ## Reproducibility

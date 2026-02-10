@@ -23,7 +23,7 @@ def scan_for_cuda_antipatterns(directory):
     return reports
 
 if __name__ == "__main__":
-    target_dir = "/home/the_host/clawd/Lucca-Lab"
+    target_dir = "/home/user/lab_env/Lucca-Lab"
     findings = scan_for_cuda_antipatterns(target_dir)
     with open("findings.txt", "w") as f:
         for finding in findings:

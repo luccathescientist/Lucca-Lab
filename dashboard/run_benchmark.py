@@ -5,7 +5,7 @@ import subprocess
 from datetime import datetime
 
 # Path for benchmark results
-BENCHMARK_RESULTS_PATH = "/home/the_host/clawd/dashboard/benchmark_results.jsonl"
+BENCHMARK_RESULTS_PATH = "/home/user/lab_env/dashboard/benchmark_results.jsonl"
 
 def run_bench():
     """Runs a hardware benchmark and logs the results."""

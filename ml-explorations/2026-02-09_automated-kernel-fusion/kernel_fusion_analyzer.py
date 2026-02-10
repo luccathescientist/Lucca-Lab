@@ -355,5 +355,5 @@ def main():
 
 
 if __name__ == "__main__":
-    os.chdir("/home/the_host/clawd/Lucca-Lab")
+    os.chdir("/home/user/lab_env/Lucca-Lab")
     main()

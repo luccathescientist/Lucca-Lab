@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 
 # Configuration
-CHROMA_PATH = "/home/the_host/clawd/deep-wisdom/db"
+CHROMA_PATH = "/home/user/lab_env/deep-wisdom/db"
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 def synthesize(query):
