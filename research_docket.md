@@ -15,7 +15,7 @@
 - [x] **FP8-Native GQA Optimization**: Research Grouped-Query Attention (GQA) modifications specifically for Blackwell's shared memory layout to reduce cache misses during high-concurrency inference.
 - [x] **Temporal Knowledge Graph Pruning**: Develop an algorithm to identify and "forget" outdated technical hypotheses in the Lab Knowledge Graph to maintain search speed.
 - [x] **Neural Code Fusion for sm_120**: Use R1 to autonomously merge and optimize sequential Python/C++ lab scripts into single, fused binaries for 2x faster execution.
-- [ ] **Quantized-Logic Reasoning Benchmarks**: Develop a specialized benchmark to measure the "IQ loss" of reasoning models as they move from FP8 to INT4 precision.
+- [x] **Quantized-Logic Reasoning Benchmarks**: Develop a specialized benchmark to measure the "IQ loss" of reasoning models as they move from FP8 to INT4 precision.
 
 ## Completed Tasks
 - [x] **Bit-Level Speculative Decoding**: Research using sub-FP8 bit-level draft models to speculate for full FP8 target models on Blackwell, optimizing for the 96GB VRAM bandwidth.
