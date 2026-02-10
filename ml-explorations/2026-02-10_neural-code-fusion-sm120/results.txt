@@ -1,0 +1,3 @@
+Baseline: 2.0000s
+Fused: 0.7000s
+Speedup: 2.86x
