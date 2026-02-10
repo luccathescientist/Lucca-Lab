@@ -1,0 +1,12 @@
+Cross-Modal Attention Steerability Results
+==================================================
+
+ROI Size: 50 patches (out of 576)
+Baseline ROI Focus: 0.007682
+Steered ROI Focus: 0.016447
+Focus Increase: 114.10%
+
+Interpretation:
+- Steering successfully amplifies attention to the target ROI
+- Cross-modal bias injection is effective for spatial grounding
+- This validates steering as a mechanism for multimodal focus control
