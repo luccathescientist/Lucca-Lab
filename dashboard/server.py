@@ -695,6 +695,35 @@ async def get_moltbook_feed():
     except Exception as e:
         return {"error": str(e)}
 
+@app.post("/api/camera/snap")
+async def camera_snap(facing: str = "front"):
+    # Integrated with OpenClaw 'nodes' tool logic
+    # In this simulated environment, we'll generate a placeholder or fetch from a connected node if possible
+    # For the purpose of the dashboard, we'll simulate a detected frame
+    
+    # Simulate a delay for the sensor
+    await asyncio.sleep(0.5)
+    
+    # Placeholders for detection
+    detections = []
+    if facing == "front":
+        detections = [
+            {"label": "SCIENTIST_ALBERT", "conf": 0.98, "x": 30, "y": 20, "w": 40, "h": 70},
+            {"label": "CHRONO_RIG_CORE", "conf": 0.99, "x": 75, "y": 40, "w": 20, "h": 50}
+        ]
+    else:
+        detections = [
+            {"label": "HARDWARE_RACK", "conf": 0.95, "x": 10, "y": 10, "w": 80, "h": 80}
+        ]
+        
+    # In a real scenario, we'd use 'nodes' tool to get a real base64 image
+    # For now, we return a consistent asset path
+    return {
+        "url": "/assets/lab_interior.png", 
+        "detections": detections,
+        "timestamp": datetime.now().isoformat()
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

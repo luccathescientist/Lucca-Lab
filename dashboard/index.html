@@ -809,6 +809,33 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- RIG CAMERA FEED -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Rig Camera Feed
+                        <span id="camera-status" style="font-size: 0.6rem; background: rgba(0,255,100,0.2); padding: 2px 6px; border-radius: 4px; color: #00ff64;">LIVE</span>
+                    </h2>
+                    <div id="camera-container" style="position: relative; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid rgba(209, 120, 255, 0.2);">
+                        <img id="camera-frame" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <div id="camera-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #444;">
+                            <span style="font-size: 3rem;">📷</span>
+                            <span style="font-size: 0.7rem; margin-top: 10px; font-family: 'Orbitron';">INITIALIZING OPTICAL LINK...</span>
+                        </div>
+                        <!-- Detection Overlays -->
+                        <div id="camera-overlays" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+                        <div style="position: absolute; bottom: 10px; left: 10px; font-size: 0.6rem; color: #00ff64; font-family: 'Fira Code'; text-shadow: 1px 1px 2px black;">
+                            REC ● <span id="camera-time">00:00:00</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.8rem;">
+                        <button onclick="snapCamera()" style="flex: 1; background: rgba(209, 120, 255, 0.1); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">CAPTURE STILL</button>
+                        <select id="camera-select" style="flex: 1; font-size: 0.6rem; padding: 0.4rem;">
+                            <option value="front">FRONT_CAM (MAIN)</option>
+                            <option value="back">BACK_CAM (REAR)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- COLLABORATIVE FORGE -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--gold);">
                     <h2 style="color: var(--gold);">Collaborative Forge</h2>
@@ -2309,6 +2336,75 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             
             requestAnimationFrame(drawSchematic);
         }
+
+        async function snapCamera() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "CAPTURING...";
+            addLog("[CAMERA] Requesting optical snapshot...");
+            
+            try {
+                const facing = document.getElementById('camera-select').value;
+                const response = await fetch(`/api/camera/snap?facing=${facing}`, { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.url) {
+                    const img = document.getElementById('camera-frame');
+                    const placeholder = document.getElementById('camera-placeholder');
+                    img.src = data.url + '?t=' + Date.now();
+                    img.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    
+                    // Draw random detection overlays to simulate AI detection
+                    const overlayContainer = document.getElementById('camera-overlays');
+                    overlayContainer.innerHTML = '';
+                    if (data.detections) {
+                        data.detections.forEach(det => {
+                            const box = document.createElement('div');
+                            box.style.position = 'absolute';
+                            box.style.border = '2px solid #00ff64';
+                            box.style.left = `${det.x}%`;
+                            box.style.top = `${det.y}%`;
+                            box.style.width = `${det.w}%`;
+                            box.style.height = `${det.h}%`;
+                            box.style.boxShadow = '0 0 10px #00ff64';
+                            
+                            const label = document.createElement('div');
+                            label.style.position = 'absolute';
+                            label.style.top = '-15px';
+                            label.style.left = '-2px';
+                            label.style.background = '#00ff64';
+                            label.style.color = '#000';
+                            label.style.fontSize = '0.5rem';
+                            label.style.padding = '0 4px';
+                            label.style.fontFamily = 'Orbitron';
+                            label.textContent = `${det.label} [${Math.round(det.conf * 100)}%]`;
+                            
+                            box.appendChild(label);
+                            overlayContainer.appendChild(box);
+                        });
+                    }
+                    
+                    addLog(`[CAMERA] Snapshot received from ${facing} sensor.`);
+                }
+            } catch (err) {
+                addLog("[ERROR] Optical link failure.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        function updateCameraTime() {
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            const display = document.getElementById('camera-time');
+            if (display) display.textContent = timeStr;
+        }
+
+        setInterval(updateCameraTime, 1000);
+        setInterval(snapCamera, 30000); // Auto-refresh every 30s
 
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);

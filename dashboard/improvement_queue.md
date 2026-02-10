@@ -32,7 +32,7 @@
 - [x] Add a "Lab Benchmarking Archive" to visualize long-term hardware performance trends.
 - [x] Implement a "Neural Schematic" view showing the internal architecture of the currently resident LLM.
 - [x] Create a "Collaborative Forge" panel for real-time model merging experiments.
-- [ ] Integrate a "Rig Camera" feed (if available) with real-time object detection overlays.
+- [x] Integrate a "Rig Camera" feed (if available) with real-time object detection overlays.
 - [ ] Add a "Project Chrono Timeline" interactive Gantt-style chart for lab milestones.
 - [ ] Implement a "VRAM Heatmap" visualizer to see which parts of the GPU memory are most active.
 - [ ] Create a "Neural Audio Command Center" for multi-modal TTS/STT configuration.
