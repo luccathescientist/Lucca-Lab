@@ -608,6 +608,21 @@ async def get_dreams():
                     except: pass
     return dreams[::-1] # Newest first
 
+@app.get("/api/lab/merge/status")
+async def get_merge_status():
+    return {
+        "active": False,
+        "history": [
+            {"date": "2026-02-08", "base": "DeepSeek-R1-32B", "target": "Llama-3.1-32B", "ratio": 0.5544, "result": "Success"}
+        ]
+    }
+
+@app.post("/api/lab/merge/initiate")
+async def initiate_merge(req: dict):
+    # Simulated merge initiation
+    await manager.broadcast({"type": "log", "content": f"[FORGE] Initiating Model Merge: {req.get('base')} + {req.get('target')} (Ratio: {req.get('ratio')})"})
+    return {"status": "Merge sequence initialized in sandbox."}
+
 @app.post("/api/dreams/generate")
 async def trigger_dream(background_tasks: BackgroundTasks):
     if not state.vllm_process:

@@ -809,6 +809,40 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- COLLABORATIVE FORGE -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--gold);">
+                    <h2 style="color: var(--gold);">Collaborative Forge</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase; margin-bottom: 0.3rem;">Base Model</div>
+                            <select id="merge-base" style="width: 100%; font-size: 0.75rem;">
+                                <option value="r1-32b">DeepSeek-R1-32B</option>
+                                <option value="llama-32b">Llama-3.1-32B</option>
+                                <option value="qwen-32b">Qwen2.5-32B</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase; margin-bottom: 0.3rem;">Target Model</div>
+                            <select id="merge-target" style="width: 100%; font-size: 0.75rem;">
+                                <option value="llama-32b">Llama-3.1-32B</option>
+                                <option value="r1-32b">DeepSeek-R1-32B</option>
+                                <option value="qwen-32b">Qwen2.5-32B</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #888; margin-bottom: 0.3rem;">
+                            <span>MERGE RATIO (ALPHA)</span>
+                            <span id="merge-ratio-val">0.50</span>
+                        </div>
+                        <input type="range" id="merge-ratio" min="0" max="1" step="0.01" value="0.50" oninput="document.getElementById('merge-ratio-val').textContent = this.value" style="width: 100%; accent-color: var(--gold);">
+                    </div>
+                    <button onclick="initiateMerge()" style="width: 100%; margin-top: 1rem; background: rgba(255, 215, 0, 0.2); color: var(--gold); border: 1px solid var(--gold);">INITIATE MERGE SEQUENCE</button>
+                    <div id="merge-status-log" style="margin-top: 1rem; font-size: 0.7rem; color: #888; height: 60px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px;">
+                        [FORGE] Ready for neural hybridization.
+                    </div>
+                </div>
+
                 <!-- MOLTBOOK FEED -->
                 <div class="card" style="margin-bottom: 2rem; border-color: #ff4500;">
                     <h2 style="color: #ff4500; display: flex; justify-content: space-between; align-items: center;">
@@ -1925,6 +1959,31 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 `).join('');
             } catch (err) {}
+        }
+
+        async function initiateMerge() {
+            const base = document.getElementById('merge-base').value;
+            const target = document.getElementById('merge-target').value;
+            const ratio = document.getElementById('merge-ratio').value;
+            const log = document.getElementById('merge-status-log');
+            
+            addLog(`[FORGE] Initiating merge: ${base} + ${target}`);
+            log.innerHTML = `<div style="color: var(--gold); animation: pulse 1s infinite;">[FORGE] Calibrating weight tensors...</div>`;
+            
+            try {
+                const res = await fetch('/api/lab/merge/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ base, target, ratio })
+                });
+                const data = await res.json();
+                setTimeout(() => {
+                    log.innerHTML = `<div style="color: #00ff64;">[SUCCESS] ${data.status}</div>`;
+                    addLog("[FORGE] Merge sequence successfully offloaded to sandbox.");
+                }, 2000);
+            } catch (err) {
+                log.innerHTML = `<div style="color: var(--danger-color);">[ERROR] Connection failed.</div>`;
+            }
         }
 
         async function triggerDream() {
