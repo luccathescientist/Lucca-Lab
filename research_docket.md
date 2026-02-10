@@ -11,7 +11,7 @@
 - [x] **Neural Symbolic Distillation**: Distill formal logic and symbolic mathematics from a large teacher (R1-70B) into a student's hidden states, bypassing the need for explicit chain-of-thought tokens. (2026-02-10)
 - [x] **Autonomous Kernel Synthesis for FlashAttention-4**: Using R1 to speculate and write early Triton kernels for the theoretical FlashAttention-4 specification, optimized for Blackwell's sm_120.
 - [x] **Dynamic Precision Annealing for Video Diffusion**: Implement a precision-aware scheduler for Wan 2.1 that uses FP16 for initial noise frames and aggressively shifts to FP8/INT8 for fine-detail convergence. (2026-02-10)
-- [ ] **Neural Knowledge Graph pruning (Semantic Decay)**: Implement a decay-based pruning algorithm that archives technical nodes based on semantic relevance and access frequency to keep the Lab KG at sub-100ms latency.
+- [x] **Neural Knowledge Graph pruning (Semantic Decay)**: Implement a decay-based pruning algorithm that archives technical nodes based on semantic relevance and access frequency to keep the Lab KG at sub-100ms latency. (2026-02-10)
 - [x] **Cross-Modal Temporal Consistency**: Optimize Wan 2.1 frame-to-frame flow using a 3D-UNet based correction layer to stabilize character features in 720p animations.
 - [x] **Autonomous Kernel Profiling (sm_120)**: Build a tool that uses R1 to parse Nsight Compute logs and auto-generate optimized Triton kernels for Blackwell's unique register file architecture.
 - [x] **Sparse-MoE Knowledge Distillation**: Research distilling the routing logic of a large MoE (like DeepSeek-V3) into a dense student model (like R1-77B) to retain multi-expert breadth.
