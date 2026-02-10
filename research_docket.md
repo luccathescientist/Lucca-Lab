@@ -18,6 +18,7 @@
 - [x] **Quantized-Logic Reasoning Benchmarks**: Develop a specialized benchmark to measure the "IQ loss" of reasoning models as they move from FP8 to INT4 precision.
 
 ## Completed Tasks
+- [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding. (2026-02-10)
 - [x] **Bit-Level Speculative Decoding**: Research using sub-FP8 bit-level draft models to speculate for full FP8 target models on Blackwell, optimizing for the 96GB VRAM bandwidth.
 - [x] **Neural Knowledge Graph Fusion**: Merge standard vector embeddings with symbolic logic rules in a unified RAG pipeline to eliminate hallucination in technical architecture queries.
 - [x] **Adaptive Gradient Clipping for FP8 Training**: Investigate if dynamic gradient clipping based on weight distribution can stabilize on-device FP8 fine-tuning on Blackwell.
@@ -40,7 +41,6 @@
 - [x] **Automated Kernel Fusion**: Use R1 to identify and fuse repetitive CUDA operations in the `Lucca-Lab` codebase for 10% speedup.
 - [x] **Adaptive KV-Cache Compaction**: Dynamically vary the compression ratio of the KV cache based on the semantic importance of tokens (e.g., higher compression for filler words, lower for key logic).
 - [x] **Neuromorphic Sparse Attention**: Implementing an attention mechanism that mimics spiking neural networks to reduce energy consumption and latency on Blackwell during long-context generation.
-- [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding.
 - [x] **Hierarchical MoE Routing**: A two-tier routing system for MoE models where a "gatekeeper" first selects a cluster of experts, and a "specialist router" then selects the specific expert within that cluster.
 - [x] **Self-Supervised Kernel Optimization (SSKO)**: Using reinforcement learning where the reward is the actual measured latency on Blackwell to discover optimal CUDA kernel configurations.
 - [x] **Multi-Agent Consensus Distillation**: Using a \"council\" of large models (R1-70B, GPT-5, Claude 3.5) to generate consensus-based synthetic data for training smaller, highly reliable student models.
