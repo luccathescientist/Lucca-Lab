@@ -37,3 +37,7 @@
 - [x] Implement a "VRAM Heatmap" visualizer to see which parts of the GPU memory are most active.
 - [x] Create a "Neural Audio Command Center" for multi-modal TTS/STT configuration.
 - [x] Integrate a "Hardware Health Dashboard" with S.M.A.R.T. disk status and CPU per-core thermals.
+- [x] Add a "Resource Prediction Engine" visualization that forecasts VRAM and Power usage based on current task trajectories.
+- [ ] Implement a "Neural Latency Radar" that maps response times from different model endpoints globally vs locally.
+- [ ] Create a "Laboratory Supply Chain" widget to track API credit balances and local storage capacity.
+- [ ] Add a "Quantum Pulse" UI element that syncs its animation frequency to the Blackwell GPU's current clock speed.
