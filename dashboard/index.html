@@ -650,6 +650,21 @@
                     </div>
                 </div>
 
+                <!-- NEURAL LATENCY RADAR -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Latency Radar
+                        <span onclick="updateLatencyRadar()" style="cursor: pointer; opacity: 0.7; font-size: 0.7rem;">🔄</span>
+                    </h2>
+                    <div id="radar-container" style="height: 250px; background: rgba(0,0,0,0.4); border-radius: 4px; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                        <canvas id="radar-canvas" style="width: 100%; height: 100%;"></canvas>
+                        <div id="radar-center" style="position: absolute; width: 10px; height: 10px; background: var(--accent-color); border-radius: 50%; box-shadow: 0 0 15px var(--accent-glow);"></div>
+                    </div>
+                    <div id="radar-stats" style="margin-top: 1rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 0.65rem; max-height: 100px; overflow-y: auto;">
+                        <!-- Radar entries added via JS -->
+                    </div>
+                </div>
+
                 <!-- CHRONO COMPASS -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); position: relative; overflow: hidden;">
                     <h2 style="color: var(--accent-color);">Chrono Compass</h2>
@@ -2538,6 +2553,80 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             }
         }
 
+        async function updateLatencyRadar() {
+            try {
+                const response = await fetch('/api/latency/radar');
+                const data = await response.json();
+                
+                const canvas = document.getElementById('radar-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const maxRadius = Math.min(centerX, centerY) - 20;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw Radar Rings
+                ctx.strokeStyle = 'rgba(209, 120, 255, 0.1)';
+                ctx.lineWidth = 1;
+                for (let i = 1; i <= 4; i++) {
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, (maxRadius / 4) * i, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Draw Radar Sweeper
+                const angle = (Date.now() / 1000) % (Math.PI * 2);
+                const gradient = ctx.createConicGradient(angle, centerX, centerY);
+                gradient.addColorStop(0, 'rgba(209, 120, 255, 0.3)');
+                gradient.addColorStop(0.1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, maxRadius, angle - 0.2, angle);
+                ctx.fill();
+
+                // Draw Data Points
+                const statsContainer = document.getElementById('radar-stats');
+                statsContainer.innerHTML = '';
+                
+                data.forEach((d, i) => {
+                    const dAngle = (i / data.length) * Math.PI * 2;
+                    const radius = (d.latency / 500) * maxRadius;
+                    const x = centerX + Math.cos(dAngle) * radius;
+                    const y = centerY + Math.sin(dAngle) * radius;
+                    
+                    const color = d.type === 'local' ? '#00ff64' : d.type === 'node' ? 'var(--accent-color)' : '#888';
+                    
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = color;
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    const entry = document.createElement('div');
+                    entry.style.background = 'rgba(0,0,0,0.3)';
+                    entry.style.padding = '5px';
+                    entry.style.borderRadius = '4px';
+                    entry.style.borderLeft = `2px solid ${color}`;
+                    entry.innerHTML = `
+                        <div style="font-weight: bold; color: white;">${d.endpoint}</div>
+                        <div style="display: flex; justify-content: space-between; color: #888;">
+                            <span>${d.region}</span>
+                            <span style="color: ${color};">${Math.round(d.latency)}ms</span>
+                        </div>
+                    `;
+                    statsContainer.appendChild(entry);
+                });
+
+            } catch (err) {}
+        }
+
         function drawSchematic() {
             const canvas = document.getElementById('schematic-canvas');
             if (!canvas) return;
@@ -2681,6 +2770,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateCameraTime, 1000);
         setInterval(snapCamera, 30000); // Auto-refresh every 30s
 
+        setInterval(updateLatencyRadar, 10000);
         setInterval(updateStats, 2000);
         setInterval(updateMemory, 10000);
         setInterval(updateModelLoadout, 15000);
@@ -2715,6 +2805,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateAmbient();
         updateMilestones();
         updateChronoTimeline();
+        updateLatencyRadar();
         checkNightMode();
         drawSchematic();
         initVramHeatmap();

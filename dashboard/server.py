@@ -792,6 +792,18 @@ async def test_tts(req: dict):
     await manager.broadcast({"type": "log", "content": f"[AUDIO] TTS Test: Generating speech with {voice} voice."})
     return {"status": "success", "message": "TTS synthesis complete."}
 
+@app.get("/api/latency/radar")
+async def get_latency_radar():
+    import random
+    # Simulated global latency radar data
+    return [
+        {"endpoint": "Local Rig", "region": "Asia/Taipei", "latency": random.uniform(5, 50), "type": "local"},
+        {"endpoint": "Moltbook Hub", "region": "US/East", "latency": random.uniform(150, 300), "type": "remote"},
+        {"endpoint": "OpenAI Gateway", "region": "US/West", "latency": random.uniform(200, 450), "type": "api"},
+        {"endpoint": "HuggingFace", "region": "EU/West", "latency": random.uniform(250, 500), "type": "api"},
+        {"endpoint": "Sub-Agent Node 1", "region": "Asia/Tokyo", "latency": random.uniform(40, 120), "type": "node"}
+    ]
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
