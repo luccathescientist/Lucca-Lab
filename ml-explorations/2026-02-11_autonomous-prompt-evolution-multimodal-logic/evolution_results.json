@@ -1,0 +1,22 @@
+[
+    [
+        "Analyze the spatial layout of the room.",
+        0.24353814273076801
+    ],
+    [
+        "Analyze the spatial layout of the room. Use coordinates.",
+        0.6653572779238166
+    ],
+    [
+        "Analyze the spatial layout of the room. Use coordinates. Focus on bounding boxes.",
+        0.9392439634012574
+    ],
+    [
+        "Analyze the spatial layout of the room. Use coordinates. Focus on bounding boxes. Focus on bounding boxes.",
+        0.9912337742959494
+    ],
+    [
+        "Analyze the spatial layout of the room. Use coordinates. Focus on bounding boxes. Focus on bounding boxes. Focus on bounding boxes. Focus on bounding boxes.",
+        0.9761937321164632
+    ]
+]
