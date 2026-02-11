@@ -54,7 +54,7 @@
 - [x] **Speculative Decoding with Multi-Exit Heads**: Research adding lightweight "exit heads" at different layers to speculate tokens and speed up inference on deep reasoning models. (2026-02-12)
 - [x] **Hardware-Aware Neural Architecture Search for sm_120**: Automate the search for optimal transformer blocks that maximize the utilization of Blackwell's 5th-gen Tensor Cores. (2026-02-12)
 - [x] **Quantum-Inspired Optimization for Neural Architecture**: Research using simulated annealing or quantum-inspired algorithms to find global optima for neural network weights. (2026-02-12)
-- [ ] **Adaptive Sparsity for Real-Time Video Synthesis**: Develop a mechanism to dynamically prune neural network weights in Wan 2.1 based on the movement complexity of the scene. (2026-02-12)
+- [x] **Adaptive Sparsity for Real-Time Video Synthesis**: Develop a mechanism to dynamically prune neural network weights in Wan 2.1 based on the movement complexity of the scene. (2026-02-12)
 - [ ] **Cross-Modal Latent Fusion for Emotionally Aware AI**: Research fusing the latent spaces of audio (Whisper) and vision (Qwen2-VL) to improve the emotional depth of reasoning models. (2026-02-12)
 - [ ] **Autonomous Kernel Optimization for NVLink-7**: Use R1 to synthesize kernels that maximize data throughput across the latest NVLink interconnects on multi-GPU Blackwell rigs. (2026-02-12)
 - [ ] **Neural Knowledge Graph Anchoring for Reasoning Consistency**: Implement a feedback loop that uses KG-retrieved facts to bias the attention heads of reasoning models toward factual accuracy. (2026-02-12)
