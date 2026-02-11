@@ -51,9 +51,15 @@
 - [x] **Recursive Latent Self-Correction**: Implement a feedback loop where the model's own latent representations are used to identify and correct logical inconsistencies before token generation. (2026-02-12)
 - [x] **Bio-Inspired Neural Plasticity for Online Learning**: Research a mechanism for real-time weight adjustments during inference based on synaptic-like importance scores for edge adaptation. (2026-02-12)
 - [x] **Cross-Modal Identity Preservation via Latent Anchoring**: Use persistent latent codes to maintain character identity across vision, audio, and video generation stages in a unified pipeline. (2026-02-12)
-- [ ] **Speculative Decoding with Multi-Exit Heads**: Research adding lightweight "exit heads" at different layers to speculate tokens and speed up inference on deep reasoning models. (2026-02-11)
+- [x] **Speculative Decoding with Multi-Exit Heads**: Research adding lightweight "exit heads" at different layers to speculate tokens and speed up inference on deep reasoning models. (2026-02-12)
 - [ ] **Hardware-Aware Neural Architecture Search for sm_120**: Automate the search for optimal transformer blocks that maximize the utilization of Blackwell's 5th-gen Tensor Cores. (2026-02-11)
 - [ ] **Quantum-Inspired Optimization for Neural Architecture**: Research using simulated annealing or quantum-inspired algorithms to find global optima for neural network weights. (2026-02-11)
+- [ ] **Adaptive Sparsity for Real-Time Video Synthesis**: Develop a mechanism to dynamically prune neural network weights in Wan 2.1 based on the movement complexity of the scene. (2026-02-12)
+- [ ] **Cross-Modal Latent Fusion for Emotionally Aware AI**: Research fusing the latent spaces of audio (Whisper) and vision (Qwen2-VL) to improve the emotional depth of reasoning models. (2026-02-12)
+- [ ] **Autonomous Kernel Optimization for NVLink-7**: Use R1 to synthesize kernels that maximize data throughput across the latest NVLink interconnects on multi-GPU Blackwell rigs. (2026-02-12)
+- [ ] **Neural Knowledge Graph Anchoring for Reasoning Consistency**: Implement a feedback loop that uses KG-retrieved facts to bias the attention heads of reasoning models toward factual accuracy. (2026-02-12)
+- [ ] **Bit-Slicing for 1-Bit Reasoning Models**: Research the feasibility of extreme quantization (1-bit weights) for logical reasoning tasks by using error-correcting latent codes. (2026-02-12)
+- [ ] **Temporal Feedback Loops for Long-Horizon Planning**: Develop a mechanism for models to "remember" their prior reasoning steps over hours-long autonomous sessions using a dedicated temporal memory buffer. (2026-02-12)
 
 ## Completed Tasks
 - [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding. (2026-02-10)
