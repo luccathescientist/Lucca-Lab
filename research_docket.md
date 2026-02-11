@@ -41,7 +41,7 @@
 - [x] **Cross-Modal Feedback Loops for Image-to-Video Synthesis**: Develop a mechanism where Flux.1-generated stills are evaluated by Qwen2-VL to auto-tune prompts for Wan 2.1 video generation. (2026-02-11)
 - [x] **Neural Architecture Search for Sparse-Attention Kernels**: Use R1 to autonomously search for the optimal sparsity patterns in attention layers for models running on sm_120, aiming to maximize throughput without accuracy loss. (2026-02-11)
 - [x] **Latent-Space Logic Distillation for Small LMs**: Research distilling the hidden state activations of R1-70B during logical reasoning into an R1-1.5B model to improve its "intuitive" problem-solving. (2026-02-11)
-- [ ] **Hardware-Aware DPO for Low-Precision Fine-Tuning**: Optimize the DPO (Direct Preference Optimization) algorithm to account for quantization-induced noise during fine-tuning on Blackwell FP8.
+- [x] **Hardware-Aware DPO for Low-Precision Fine-Tuning**: Optimize the DPO (Direct Preference Optimization) algorithm to account for quantization-induced noise during fine-tuning on Blackwell FP8.
 - [ ] **Dynamic Expert Parallelism for sm_120**: Research a load-balancing algorithm for MoE models that dynamically reassigns experts to specific Blackwell TPCs based on real-time activation density. (2026-02-11)
 - [ ] **Speculative Audio-Visual Alignment**: Develop a pipeline where Whisper-distilled audio features are used to speculate video keyframes in Wan 2.1 for sub-second lip-sync. (2026-02-11)
 - [ ] **Self-Correcting CUDA JIT Compiler**: Use R1 to build a JIT compiler that recompiles CUDA kernels on-the-fly when it detects suboptimal register pressure on Blackwell sm_120. (2026-02-11)
