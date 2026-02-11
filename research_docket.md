@@ -39,9 +39,15 @@
 - [x] **Sub-INT4 Weight Interpolation for Reasoning Models**: Research the impact of interpolating weights at 2-bit and 3-bit precision on logical consistency in DeepSeek-R1-32B, targeting Blackwell's sub-byte throughput. (2026-02-11)
 - [x] **Temporal KV-Cache Compression for Long-Form Video Reasoning**: Implement a hierarchical compression strategy for the KV cache when processing 5-minute+ video sequences with Wan 2.1 to prevent VRAM exhaustion. (2026-02-11)
 - [x] **Cross-Modal Feedback Loops for Image-to-Video Synthesis**: Develop a mechanism where Flux.1-generated stills are evaluated by Qwen2-VL to auto-tune prompts for Wan 2.1 video generation. (2026-02-11)
-- [ ] **Neural Architecture Search for Sparse-Attention Kernels**: Use R1 to autonomously search for the optimal sparsity patterns in attention layers for models running on sm_120, aiming to maximize throughput without accuracy loss.
+- [x] **Neural Architecture Search for Sparse-Attention Kernels**: Use R1 to autonomously search for the optimal sparsity patterns in attention layers for models running on sm_120, aiming to maximize throughput without accuracy loss. (2026-02-11)
 - [ ] **Latent-Space Logic Distillation for Small LMs**: Research distilling the hidden state activations of R1-70B during logical reasoning into an R1-1.5B model to improve its "intuitive" problem-solving.
 - [ ] **Hardware-Aware DPO for Low-Precision Fine-Tuning**: Optimize the DPO (Direct Preference Optimization) algorithm to account for quantization-induced noise during fine-tuning on Blackwell FP8.
+- [ ] **Dynamic Expert Parallelism for sm_120**: Research a load-balancing algorithm for MoE models that dynamically reassigns experts to specific Blackwell TPCs based on real-time activation density. (2026-02-11)
+- [ ] **Speculative Audio-Visual Alignment**: Develop a pipeline where Whisper-distilled audio features are used to speculate video keyframes in Wan 2.1 for sub-second lip-sync. (2026-02-11)
+- [ ] **Self-Correcting CUDA JIT Compiler**: Use R1 to build a JIT compiler that recompiles CUDA kernels on-the-fly when it detects suboptimal register pressure on Blackwell sm_120. (2026-02-11)
+- [ ] **Attention-Based Memory Defragmentation**: Implement a VRAM management strategy that defragments the KV cache based on the temporal decay of attention weights. (2026-02-11)
+- [ ] **Multi-Scale Tensor Slicing for Hybrid Precision**: Research slicing weights into multi-scale components (e.g., MS-FP8) to optimize for Blackwell's specialized tensor cores. (2026-02-11)
+- [ ] **Autonomous Prompt Evolution for Multimodal Logic**: Develop a system where R1 evolves its own prompt templates for Qwen2-VL by observing successful vs. failed spatial reasoning turns. (2026-02-11)
 
 ## Completed Tasks
 - [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding. (2026-02-10)
