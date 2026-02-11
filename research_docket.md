@@ -44,10 +44,16 @@
 - [x] **Hardware-Aware DPO for Low-Precision Fine-Tuning**: Optimize the DPO (Direct Preference Optimization) algorithm to account for quantization-induced noise during fine-tuning on Blackwell FP8.
 - [x] **Dynamic Expert Parallelism for sm_120**: Research a load-balancing algorithm for MoE models that dynamically reassigns experts to specific Blackwell TPCs based on real-time activation density. (2026-02-11)
 - [x] **Speculative Audio-Visual Alignment**: Develop a pipeline where Whisper-distilled audio features are used to speculate video keyframes in Wan 2.1 for sub-second lip-sync. (2026-02-11)
-- [ ] **Self-Correcting CUDA JIT Compiler**: Use R1 to build a JIT compiler that recompiles CUDA kernels on-the-fly when it detects suboptimal register pressure on Blackwell sm_120. (2026-02-11)
+- [x] **Self-Correcting CUDA JIT Compiler**: Use R1 to build a JIT compiler that recompiles CUDA kernels on-the-fly when it detects suboptimal register pressure on Blackwell sm_120. (2026-02-11)
 - [ ] **Attention-Based Memory Defragmentation**: Implement a VRAM management strategy that defragments the KV cache based on the temporal decay of attention weights. (2026-02-11)
 - [ ] **Multi-Scale Tensor Slicing for Hybrid Precision**: Research slicing weights into multi-scale components (e.g., MS-FP8) to optimize for Blackwell's specialized tensor cores. (2026-02-11)
 - [ ] **Autonomous Prompt Evolution for Multimodal Logic**: Develop a system where R1 evolves its own prompt templates for Qwen2-VL by observing successful vs. failed spatial reasoning turns. (2026-02-11)
+- [ ] **Recursive Latent Self-Correction**: Implement a feedback loop where the model's own latent representations are used to identify and correct logical inconsistencies before token generation. (2026-02-11)
+- [ ] **Bio-Inspired Neural Plasticity for Online Learning**: Research a mechanism for real-time weight adjustments during inference based on synaptic-like importance scores for edge adaptation. (2026-02-11)
+- [ ] **Cross-Modal Identity Preservation via Latent Anchoring**: Use persistent latent codes to maintain character identity across vision, audio, and video generation stages in a unified pipeline. (2026-02-11)
+- [ ] **Speculative Decoding with Multi-Exit Heads**: Research adding lightweight "exit heads" at different layers to speculate tokens and speed up inference on deep reasoning models. (2026-02-11)
+- [ ] **Hardware-Aware Neural Architecture Search for sm_120**: Automate the search for optimal transformer blocks that maximize the utilization of Blackwell's 5th-gen Tensor Cores. (2026-02-11)
+- [ ] **Quantum-Inspired Optimization for Neural Architecture**: Research using simulated annealing or quantum-inspired algorithms to find global optima for neural network weights. (2026-02-11)
 
 ## Completed Tasks
 - [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding. (2026-02-10)
