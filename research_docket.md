@@ -52,7 +52,7 @@
 - [x] **Bio-Inspired Neural Plasticity for Online Learning**: Research a mechanism for real-time weight adjustments during inference based on synaptic-like importance scores for edge adaptation. (2026-02-12)
 - [x] **Cross-Modal Identity Preservation via Latent Anchoring**: Use persistent latent codes to maintain character identity across vision, audio, and video generation stages in a unified pipeline. (2026-02-12)
 - [x] **Speculative Decoding with Multi-Exit Heads**: Research adding lightweight "exit heads" at different layers to speculate tokens and speed up inference on deep reasoning models. (2026-02-12)
-- [ ] **Hardware-Aware Neural Architecture Search for sm_120**: Automate the search for optimal transformer blocks that maximize the utilization of Blackwell's 5th-gen Tensor Cores. (2026-02-11)
+- [x] **Hardware-Aware Neural Architecture Search for sm_120**: Automate the search for optimal transformer blocks that maximize the utilization of Blackwell's 5th-gen Tensor Cores. (2026-02-12)
 - [ ] **Quantum-Inspired Optimization for Neural Architecture**: Research using simulated annealing or quantum-inspired algorithms to find global optima for neural network weights. (2026-02-11)
 - [ ] **Adaptive Sparsity for Real-Time Video Synthesis**: Develop a mechanism to dynamically prune neural network weights in Wan 2.1 based on the movement complexity of the scene. (2026-02-12)
 - [ ] **Cross-Modal Latent Fusion for Emotionally Aware AI**: Research fusing the latent spaces of audio (Whisper) and vision (Qwen2-VL) to improve the emotional depth of reasoning models. (2026-02-12)
