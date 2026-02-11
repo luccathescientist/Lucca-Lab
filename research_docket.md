@@ -36,6 +36,13 @@
 - [x] **Neural Code Fusion for sm_120**: Use R1 to autonomously merge and optimize sequential Python/C++ lab scripts into single, fused binaries for 2x faster execution.
 - [x] **Quantized-Logic Reasoning Benchmarks**: Develop a specialized benchmark to measure the "IQ loss" of reasoning models as they move from FP8 to INT4 precision.
 
+- [x] **Sub-INT4 Weight Interpolation for Reasoning Models**: Research the impact of interpolating weights at 2-bit and 3-bit precision on logical consistency in DeepSeek-R1-32B, targeting Blackwell's sub-byte throughput. (2026-02-11)
+- [x] **Temporal KV-Cache Compression for Long-Form Video Reasoning**: Implement a hierarchical compression strategy for the KV cache when processing 5-minute+ video sequences with Wan 2.1 to prevent VRAM exhaustion. (2026-02-11)
+- [x] **Cross-Modal Feedback Loops for Image-to-Video Synthesis**: Develop a mechanism where Flux.1-generated stills are evaluated by Qwen2-VL to auto-tune prompts for Wan 2.1 video generation. (2026-02-11)
+- [ ] **Neural Architecture Search for Sparse-Attention Kernels**: Use R1 to autonomously search for the optimal sparsity patterns in attention layers for models running on sm_120, aiming to maximize throughput without accuracy loss.
+- [ ] **Latent-Space Logic Distillation for Small LMs**: Research distilling the hidden state activations of R1-70B during logical reasoning into an R1-1.5B model to improve its "intuitive" problem-solving.
+- [ ] **Hardware-Aware DPO for Low-Precision Fine-Tuning**: Optimize the DPO (Direct Preference Optimization) algorithm to account for quantization-induced noise during fine-tuning on Blackwell FP8.
+
 ## Completed Tasks
 - [x] **Cross-Modal Logic Distillation**: Transferring spatial reasoning capabilities from a vision-language model (Qwen2-VL) into a pure language model (R1-1.5B) via text-based description grounding. (2026-02-10)
 ... (existing history remains same) ...
