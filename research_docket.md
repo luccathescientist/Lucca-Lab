@@ -10,7 +10,7 @@
 - [x] **Neural Knowledge Graph Anchoring for Video Synthesis**: Implement a pipeline where Wan 2.1 frames are grounded by real-time lookups in the Lab Knowledge Graph to maintain historical accuracy in visual storytelling. (2026-02-11)
 - [x] **Cross-Modal Attention Steerability**: Develop a mechanism to steer R1's reasoning focus based on specific spatial regions detected in Qwen2-VL's visual features during a multimodal turn. (2026-02-11)
 - [x] **Asynchronous Weight-Gradient Pipelining (AWGP)**: Research a training strategy for Blackwell that overlaps weight updates with the next forward pass using custom CUDA streams to minimize idle tensor core time. (2026-02-11)
-- [ ] **Entropy-Driven Token Pruning for Long-Context**: Implement a dynamic pruning strategy for the KV cache that drops tokens based on their "importance score" derived from attention entropy, aiming for 1M+ context on a single RTX 6000.
+- [x] **Entropy-Driven Token Pruning for Long-Context**: Implement a dynamic pruning strategy for the KV cache that drops tokens based on their "importance score" derived from attention entropy, aiming for 1M+ context on a single RTX 6000. (2026-02-11)
 - [ ] **Speculative Kernel Fusion for Graph Neural Networks**: Use R1 to synthesize fused Triton kernels for GNNs used in the Lab Knowledge Graph, targeting the unique cache hierarchy of sm_120.
 
 - [x] **Bit-Slicing Tensor Core Simulation**: Develop a Python-based simulator to model the theoretical performance of bit-slicing FP8 into sub-INT4 components on the Blackwell architecture (sm_120) to maximize PFLOPS. (2026-02-10)
