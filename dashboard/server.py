@@ -743,6 +743,43 @@ async def get_audio_config():
         "current_engine": "whisper-large"
     }
 
+@app.get("/api/hardware/health")
+async def get_hardware_health():
+    # Attempt to read CPU temperatures
+    temps = []
+    try:
+        for i in range(10): # Check first 10 zones
+            path = f"/sys/class/thermal/thermal_zone{i}/temp"
+            if os.path.exists(path):
+                with open(path, "r") as f:
+                    t = int(f.read().strip()) / 1000.0
+                    temps.append(t)
+    except: pass
+    
+    # Load averages
+    load1, load5, load15 = os.getloadavg()
+    
+    # Simple disk check
+    disk_usage = "/"
+    disk_total = 0
+    disk_used = 0
+    try:
+        st = os.statvfs('/')
+        disk_total = (st.f_blocks * st.f_frsize) / (1024**3)
+        disk_used = ((st.f_blocks - st.f_bfree) * st.f_frsize) / (1024**3)
+    except: pass
+
+    return {
+        "cpu_temps": temps,
+        "load_avg": [load1, load5, load15],
+        "disk": {
+            "total_gb": round(disk_total, 2),
+            "used_gb": round(disk_used, 2),
+            "percent": round((disk_used / disk_total * 100), 2) if disk_total > 0 else 0
+        },
+        "status": "healthy" if (not temps or max(temps) < 85) else "warning"
+    }
+
 @app.post("/api/audio/test-tts")
 async def test_tts(req: dict):
     voice = req.get("voice", "nova")
