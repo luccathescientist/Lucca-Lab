@@ -586,6 +586,40 @@
                     <div style="text-align: center; font-size: 0.6rem; color: var(--accent-color); letter-spacing: 2px; margin-top: 0.5rem;" id="hologram-status">NEURAL CORE: STABLE</div>
                 </div>
 
+                <!-- QUANTUM PULSE -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden; position: relative;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Quantum Pulse
+                        <span id="gpu-clock-label" style="font-size: 0.6rem; opacity: 0.7;">0 MHz</span>
+                    </h2>
+                    <div id="quantum-pulse-container" style="height: 100px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <!-- Animated pulse bars -->
+                        <div class="pulse-bar" style="height: 40%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                        <div class="pulse-bar" style="height: 60%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                        <div class="pulse-bar" style="height: 80%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                        <div class="pulse-bar" style="height: 100%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                        <div class="pulse-bar" style="height: 80%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                        <div class="pulse-bar" style="height: 60%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                        <div class="pulse-bar" style="height: 40%; width: 4px; background: var(--accent-color); border-radius: 2px;"></div>
+                    </div>
+                    <style>
+                        @keyframes quantum-throb {
+                            0%, 100% { transform: scaleY(0.4); opacity: 0.5; filter: blur(0px); }
+                            50% { transform: scaleY(1.2); opacity: 1; filter: blur(2px); }
+                        }
+                        .pulse-bar {
+                            animation: quantum-throb var(--pulse-speed, 1s) infinite ease-in-out;
+                        }
+                        .pulse-bar:nth-child(1) { animation-delay: 0.0s; }
+                        .pulse-bar:nth-child(2) { animation-delay: 0.1s; }
+                        .pulse-bar:nth-child(3) { animation-delay: 0.2s; }
+                        .pulse-bar:nth-child(4) { animation-delay: 0.3s; }
+                        .pulse-bar:nth-child(5) { animation-delay: 0.2s; }
+                        .pulse-bar:nth-child(6) { animation-delay: 0.1s; }
+                        .pulse-bar:nth-child(7) { animation-delay: 0.0s; }
+                    </style>
+                </div>
+
                 <!-- MODEL LOADOUT -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2>Model Loadout</h2>
@@ -1685,6 +1719,15 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     pulse.style.animationDuration = `${Math.max(0.2, speed)}s`;
                     const scale = 1 + (data.util_gpu / 100);
                     pulse.style.transform = `scale(${scale})`;
+                }
+
+                // Update Quantum Pulse
+                const clockResponse = await fetch('/api/stats/clocks');
+                const clockData = await clockResponse.json();
+                if (clockData.clock) {
+                    document.getElementById('gpu-clock-label').textContent = `${clockData.clock} MHz`;
+                    const speed = Math.max(0.2, 2.0 - (clockData.clock / 2000));
+                    document.documentElement.style.setProperty('--pulse-speed', `${speed}s`);
                 }
 
                 document.getElementById('sync-time').textContent = new Date().toLocaleTimeString();
