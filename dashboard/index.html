@@ -474,6 +474,28 @@
 <body>
     <canvas id="neural-fabric"></canvas>
     <div id="gate-overlay"></div>
+    <div id="model-comparison-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; backdrop-filter: blur(10px); justify-content: center; align-items: center;">
+        <div class="card" style="width: 90%; max-width: 800px; border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);">
+            <h2 style="color: var(--gold); font-size: 1.2rem; border-bottom: 1px solid var(--gold); padding-bottom: 0.5rem; margin-bottom: 1rem;">[MODEL COMPARISON MATRIX]</h2>
+            <div id="comparison-matrix-container" style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+                    <thead style="background: rgba(255, 215, 0, 0.1); color: var(--gold);">
+                        <tr>
+                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">MODEL</th>
+                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">TPS (AVG)</th>
+                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">LATENCY</th>
+                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">VRAM</th>
+                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">LOGIC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparison-matrix-body">
+                        <!-- Data populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="toggleComparisonMatrix()" style="width: 100%; margin-top: 2rem; background: var(--gold); color: black;">CLOSE MATRIX</button>
+        </div>
+    </div>
     <div class="container">
         <header>
             <div class="header-left">
@@ -1193,6 +1215,10 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
 
                 <div class="card" style="margin-top: 1rem; text-align: center; cursor: pointer; border-style: dashed; opacity: 0.7;" onclick="toggleTechSpecs()">
                     <span style="font-size: 0.8rem; color: var(--accent-color);">📡 VIEW CHRONO RIG TECH SPECS</span>
+                </div>
+
+                <div class="card" style="margin-top: 1rem; text-align: center; cursor: pointer; border-style: dashed; opacity: 0.7; border-color: var(--gold);" onclick="toggleComparisonMatrix()">
+                    <span style="font-size: 0.8rem; color: var(--gold);">📊 OPEN MODEL COMPARISON MATRIX</span>
                 </div>
 
                 <!-- VOICE COMMAND VISUALIZER -->
@@ -1997,6 +2023,43 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         function toggleTechSpecs() {
             const modal = document.getElementById('tech-specs-modal');
             modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        async function toggleComparisonMatrix() {
+            const modal = document.getElementById('model-comparison-modal');
+            if (modal.style.display === 'none' || modal.style.display === '') {
+                modal.style.display = 'flex';
+                updateComparisonMatrix();
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+
+        async function updateComparisonMatrix() {
+            const body = document.getElementById('comparison-matrix-body');
+            body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--gold); animation: pulse 1s infinite;">[QUERYING NEURAL PERFORMANCE DATA...]</td></tr>';
+            
+            try {
+                const response = await fetch('/api/models/comparison');
+                const data = await response.json();
+                
+                body.innerHTML = data.map(m => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 12px; font-weight: bold; color: white;">${m.name}</td>
+                        <td style="padding: 12px; color: #00ff64;">${m.tps} <span style="font-size: 0.6rem; color: #666;">TPS</span></td>
+                        <td style="padding: 12px;">${m.latency}s</td>
+                        <td style="padding: 12px; color: var(--accent-color);">${m.vram}</td>
+                        <td style="padding: 12px;">
+                            <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px;">
+                                <div style="width: ${m.logic_score}%; height: 100%; background: var(--gold); box-shadow: 0 0 5px var(--gold);"></div>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                addLog("[SYSTEM] Model comparison matrix updated.");
+            } catch (err) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--danger-color);">[ERROR: NEURAL DATA UNREACHABLE]</td></tr>';
+            }
         }
 
         async function toggleTimeTravel() {
