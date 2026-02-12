@@ -21,7 +21,7 @@
 - [x] **Neural Symbolic Integration for Mathematical Verifiability**: Build a pipeline that uses a symbolic solver to verify the logical steps of an R1-driven mathematical proof, feeding errors back as DPO penalties. (2026-02-12)
 - [x] **Autonomous Hardware-Aware Model Slicing**: Develop an algorithm to automatically slice large models into optimal chunks for multi-GPU Blackwell rigs based on real-time NVLink bandwidth. (2026-02-12)
 - [x] **Sparse-Attention Distillation for Edge Devices**: Research distilling the sparse attention patterns of a Blackwell-optimized model into a standard dense transformer for deployment on non-tensor-core hardware. (2026-02-12)
-- [ ] **Recursive Self-Correction for Multimodal Hallucinations**: Implement a visual-feedback loop where the model re-examines specific image regions when it detects a logical conflict in its own text description. (2026-02-12)
+- [x] **Recursive Self-Correction for Multimodal Hallucinations**: Implement a visual-feedback loop where the model re-examines specific image regions when it detects a logical conflict in its own text description. (2026-02-12)
 - [ ] **Self-Correcting Multimodal Prompts via Visual Feedback**: Build a closed-loop system where the model critiques its own vision-language prompts based on the generated image/video quality. (2026-02-12)
 
 ## Completed Tasks

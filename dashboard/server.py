@@ -224,8 +224,10 @@ _vector_db = None
 _memory_cache = {"memory_md": "", "latest_daily": "", "memory_mtime": 0, "daily_mtime": 0, "last_check": 0}
 _session_cache = {"sessions": [], "last_check": 0}
 _stats_cache = {"data": None, "ts": 0}
+_api_cache = {}
 CACHE_TTL_SECONDS = 10
 STATS_TTL_SECONDS = 2
+DEFAULT_TTL_SECONDS = 10
 
 def get_embeddings():
     global _embeddings
@@ -241,6 +243,15 @@ def get_vector_db():
         embeddings = get_embeddings()
         _vector_db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
     return _vector_db
+
+def cached_response(key, ttl, producer):
+    now = time.time()
+    entry = _api_cache.get(key)
+    if entry and (now - entry["ts"]) < ttl:
+        return entry["data"]
+    data = producer()
+    _api_cache[key] = {"data": data, "ts": now}
+    return data
 
 def get_memory_payload():
     now = time.time()
@@ -367,6 +378,19 @@ async def list_loras():
             loras.append({"id": f"flux/${name}", "name": name.replace(".safetensors", "").replace("_", " ").title()})
     return loras
 
+@app.get("/api/creative/checkpoints")
+async def list_checkpoints():
+    ckpt_dir = "/home/rocketegg/clawd/ComfyUI/models/checkpoints"
+    checkpoints = []
+    if os.path.exists(ckpt_dir):
+        files = glob.glob(os.path.join(ckpt_dir, "*.safetensors")) + glob.glob(os.path.join(ckpt_dir, "*.ckpt"))
+        for f in files:
+            name = os.path.basename(f)
+            if name == "put_checkpoints_here":
+                continue
+            checkpoints.append({"id": name, "name": name})
+    return checkpoints
+
 @app.websocket("/ws/creative")
 async def creative_websocket(websocket: WebSocket):
     await websocket.accept()
@@ -376,6 +400,8 @@ async def creative_websocket(websocket: WebSocket):
             req = json.loads(data)
             lora_name = req.get("lora")
             prompt = req.get("prompt")
+            base_model = req.get("base_model")
+            print(f"[CREATIVE] Request received: lora={lora_name} base_model={base_model} prompt_len={len(prompt) if prompt else 0}")
             
             # Use a specialized script for image generation
             filename = f"dashboard/assets/gen_{int(time.time())}.png"
@@ -388,9 +414,10 @@ async def creative_websocket(websocket: WebSocket):
                 [
                     "/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3",
                     "/home/rocketegg/clawd/dashboard/gen_creative.py",
-                    lora_name,
-                    prompt,
-                    filename
+                    lora_name or "",
+                    prompt or "",
+                    filename,
+                    base_model or ""
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
@@ -505,15 +532,21 @@ async def inference_websocket(websocket: WebSocket):
                 env.setdefault("HF_HOME", "/home/rocketegg/.cache/huggingface")
                 env.setdefault("TRANSFORMERS_CACHE", "/home/rocketegg/.cache/huggingface")
                 env.setdefault("HF_HUB_OFFLINE", "1")
+                env["PYTHONUNBUFFERED"] = "1"
                 process = subprocess.Popen(
-                    ["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "/home/rocketegg/clawd/dashboard/run_inf.py", model_id, prompt],
-                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1,
+                    ["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "-u", "/home/rocketegg/clawd/dashboard/run_inf.py", model_id, prompt],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=0,
                     env=env
                 )
-                for line in iter(process.stdout.readline, ''):
-                    if line: await websocket.send_json({"type": "token", "text": line})
+                await websocket.send_json({"type": "token", "text": f"[SYSTEM] Inference subprocess PID {process.pid}\n"})
+                while True:
+                    chunk = process.stdout.read(512)
+                    if not chunk:
+                        break
+                    await websocket.send_json({"type": "token", "text": chunk})
                 process.stdout.close()
                 process.wait()
+                await websocket.send_json({"type": "token", "text": f"[SYSTEM] Inference subprocess finished (code {process.returncode})\n"})
                 if process.returncode not in (0, None):
                     await websocket.send_json({"type": "token", "text": f"[ERROR] Inference process exited with code {process.returncode}\n"})
             
@@ -533,32 +566,36 @@ async def ai_message(msg: ChatMessage):
 
 @app.get("/api/weather")
 async def weather():
-    try:
-        # Get weather for the laboratory base using wttr.in
-        res = requests.get("https://wttr.in/the laboratory base?format=%c+%t+%h+%w")
-        if res.status_code == 200:
-            return {"data": res.text.strip()}
-        return {"error": "Failed to fetch weather"}
-    except Exception as e:
-        return {"error": str(e)}
+    def produce():
+        try:
+            # Get weather for the laboratory base using wttr.in
+            res = requests.get("https://wttr.in/the laboratory base?format=%c+%t+%h+%w", timeout=3)
+            if res.status_code == 200:
+                return {"data": res.text.strip()}
+            return {"error": "Failed to fetch weather"}
+        except Exception as e:
+            return {"error": str(e)}
+    return cached_response("weather", 60, produce)
 
 @app.get("/api/network/topology")
 async def get_network_topology():
-    # Simulate a dynamic network topology based on current state
-    nodes = [
-        {"id": "chrono-rig", "label": "CHRONO RIG (HOST)", "type": "server", "status": "online"},
-        {"id": "vllm-core", "label": "VLLM (R1-70B)", "type": "engine", "status": "online" if state.vllm_process else "offline"},
-        {"id": "comfy-ui", "label": "COMFYUI (FLUX)", "type": "engine", "status": "online"},
-        {"id": "vector-db", "label": "CHROMA (MEMORY)", "type": "database", "status": "online"},
-        {"id": "comm-link", "label": "WHATSAPP GATEWAY", "type": "gateway", "status": "online"}
-    ]
-    edges = [
-        {"from": "chrono-rig", "to": "vllm-core", "label": "PCIe Gen5"},
-        {"from": "chrono-rig", "to": "comfy-ui", "label": "PCIe Gen5"},
-        {"from": "chrono-rig", "to": "vector-db", "label": "NVMe Read"},
-        {"from": "chrono-rig", "to": "comm-link", "label": "HTTPS/WSS"}
-    ]
-    return {"nodes": nodes, "edges": edges}
+    def produce():
+        # Simulate a dynamic network topology based on current state
+        nodes = [
+            {"id": "chrono-rig", "label": "CHRONO RIG (HOST)", "type": "server", "status": "online"},
+            {"id": "vllm-core", "label": "VLLM (R1-70B)", "type": "engine", "status": "online" if state.vllm_process else "offline"},
+            {"id": "comfy-ui", "label": "COMFYUI (FLUX)", "type": "engine", "status": "online"},
+            {"id": "vector-db", "label": "CHROMA (MEMORY)", "type": "database", "status": "online"},
+            {"id": "comm-link", "label": "WHATSAPP GATEWAY", "type": "gateway", "status": "online"}
+        ]
+        edges = [
+            {"from": "chrono-rig", "to": "vllm-core", "label": "PCIe Gen5"},
+            {"from": "chrono-rig", "to": "comfy-ui", "label": "PCIe Gen5"},
+            {"from": "chrono-rig", "to": "vector-db", "label": "NVMe Read"},
+            {"from": "chrono-rig", "to": "comm-link", "label": "HTTPS/WSS"}
+        ]
+        return {"nodes": nodes, "edges": edges}
+    return cached_response("topology", DEFAULT_TTL_SECONDS, produce)
 
 class CodeExecution(BaseModel):
     code: str
@@ -624,38 +661,40 @@ SECURITY_LOG = []
 
 @app.get("/api/security/events")
 async def get_security_events():
-    import random
-    global SECURITY_LOG
-    
-    # Generate some simulated events periodically
-    event_types = [
-        ("ALLOW", "SSH", "192.168.1.100", "Internal Access"),
-        ("ALLOW", "HTTPS", "api.github.com", "GitHub API"),
-        ("ALLOW", "WSS", "gateway.discord.gg", "Discord Gateway"),
-        ("ALLOW", "HTTPS", "api.openai.com", "OpenAI API"),
-        ("BLOCK", "SSH", "45.33.32.156", "Suspicious IP"),
-        ("ALLOW", "NVMe", "internal", "Model Weight Load"),
-        ("ALLOW", "CUDA", "internal", "GPU Compute"),
-        ("BLOCK", "HTTP", "91.121.82.0", "Known Scanner"),
-        ("ALLOW", "HTTPS", "huggingface.co", "Model Hub"),
-        ("ALLOW", "WSS", "localhost:8889", "Dashboard"),
-    ]
-    
-    # Add a random event occasionally
-    if random.random() > 0.7:
-        ev = random.choice(event_types)
-        SECURITY_LOG.append({
-            "timestamp": datetime.now().isoformat(),
-            "action": ev[0],
-            "protocol": ev[1],
-            "source": ev[2],
-            "note": ev[3]
-        })
-        if len(SECURITY_LOG) > 50:
-            SECURITY_LOG = SECURITY_LOG[-50:]
-    
-    # Return recent events
-    return SECURITY_LOG[-20:][::-1]
+    def produce():
+        import random
+        global SECURITY_LOG
+        
+        # Generate some simulated events periodically
+        event_types = [
+            ("ALLOW", "SSH", "192.168.1.100", "Internal Access"),
+            ("ALLOW", "HTTPS", "api.github.com", "GitHub API"),
+            ("ALLOW", "WSS", "gateway.discord.gg", "Discord Gateway"),
+            ("ALLOW", "HTTPS", "api.openai.com", "OpenAI API"),
+            ("BLOCK", "SSH", "45.33.32.156", "Suspicious IP"),
+            ("ALLOW", "NVMe", "internal", "Model Weight Load"),
+            ("ALLOW", "CUDA", "internal", "GPU Compute"),
+            ("BLOCK", "HTTP", "91.121.82.0", "Known Scanner"),
+            ("ALLOW", "HTTPS", "huggingface.co", "Model Hub"),
+            ("ALLOW", "WSS", "localhost:8889", "Dashboard"),
+        ]
+        
+        # Add a random event occasionally
+        if random.random() > 0.7:
+            ev = random.choice(event_types)
+            SECURITY_LOG.append({
+                "timestamp": datetime.now().isoformat(),
+                "action": ev[0],
+                "protocol": ev[1],
+                "source": ev[2],
+                "note": ev[3]
+            })
+            if len(SECURITY_LOG) > 50:
+                SECURITY_LOG = SECURITY_LOG[-50:]
+        
+        # Return recent events
+        return SECURITY_LOG[-20:][::-1]
+    return cached_response("security_events", DEFAULT_TTL_SECONDS, produce)
 
 @app.get("/api/dreams")
 async def get_dreams():
@@ -697,16 +736,17 @@ async def trigger_dream(background_tasks: BackgroundTasks):
 
 @app.get("/api/mood")
 async def get_mood():
-    import random
-    moods = [
-        {"state": "Curious", "flux": 0.85, "color": "#d178ff", "note": "Analyzing new neural patterns."},
-        {"state": "Productive", "flux": 0.95, "color": "#00ff64", "note": "Optimizing lab workflows."},
-        {"state": "Questioning", "flux": 0.70, "color": "#ffcc00", "note": "Evaluating logical paradoxes."},
-        {"state": "Witty", "flux": 0.90, "color": "#ff78d1", "note": "Generating humorous sub-routines."},
-        {"state": "Sharp", "flux": 1.0, "color": "#78d1ff", "note": "Peak reasoning active."}
-    ]
-    # In a real app, this would analyze recent conversation sentiment
-    return random.choice(moods)
+    def produce():
+        import random
+        moods = [
+            {"state": "Curious", "flux": 0.85, "color": "#d178ff", "note": "Analyzing new neural patterns."},
+            {"state": "Productive", "flux": 0.95, "color": "#00ff64", "note": "Optimizing lab workflows."},
+            {"state": "Questioning", "flux": 0.70, "color": "#ffcc00", "note": "Evaluating logical paradoxes."},
+            {"state": "Witty", "flux": 0.90, "color": "#ff78d1", "note": "Generating humorous sub-routines."},
+            {"state": "Sharp", "flux": 1.0, "color": "#78d1ff", "note": "Peak reasoning active."}
+        ]
+        return random.choice(moods)
+    return cached_response("mood", DEFAULT_TTL_SECONDS, produce)
 
 @app.get("/api/inventory")
 async def get_inventory():
@@ -815,46 +855,47 @@ async def get_audio_config():
 
 @app.get("/api/hardware/health")
 async def get_hardware_health():
-    import random
-    # Attempt to read CPU temperatures
-    temps = []
-    try:
-        for i in range(10): # Check first 10 zones
-            path = f"/sys/class/thermal/thermal_zone{i}/temp"
-            if os.path.exists(path):
-                with open(path, "r") as f:
-                    t = int(f.read().strip()) / 1000.0
-                    temps.append(t)
-    except: pass
-    
-    # Load averages
-    load1, load5, load15 = os.getloadavg()
-    
-    # Simple disk check
-    disk_usage = "/"
-    disk_total = 0
-    disk_used = 0
-    try:
-        st = os.statvfs('/')
-        disk_total = (st.f_blocks * st.f_frsize) / (1024**3)
-        disk_used = ((st.f_blocks - st.f_bfree) * st.f_frsize) / (1024**3)
-    except: pass
+    def produce():
+        import random
+        # Attempt to read CPU temperatures
+        temps = []
+        try:
+            for i in range(10): # Check first 10 zones
+                path = f"/sys/class/thermal/thermal_zone{i}/temp"
+                if os.path.exists(path):
+                    with open(path, "r") as f:
+                        t = int(f.read().strip()) / 1000.0
+                        temps.append(t)
+        except: pass
+        
+        # Load averages
+        load1, load5, load15 = os.getloadavg()
+        
+        # Simple disk check
+        disk_total = 0
+        disk_used = 0
+        try:
+            st = os.statvfs('/')
+            disk_total = (st.f_blocks * st.f_frsize) / (1024**3)
+            disk_used = ((st.f_blocks - st.f_bfree) * st.f_frsize) / (1024**3)
+        except: pass
 
-    return {
-        "cpu_temps": temps,
-        "load_avg": [load1, load5, load15],
-        "disk": {
-            "total_gb": round(disk_total, 2),
-            "used_gb": round(disk_used, 2),
-            "percent": round((disk_used / disk_total * 100), 2) if disk_total > 0 else 0
-        },
-        "prediction": {
-            "vram_gb": round(random.uniform(20.0, 85.0), 1),
-            "power_w": round(random.uniform(100.0, 650.0), 0),
-            "confidence": round(random.uniform(75.0, 99.0), 1)
-        },
-        "status": "healthy" if (not temps or max(temps) < 85) else "warning"
-    }
+        return {
+            "cpu_temps": temps,
+            "load_avg": [load1, load5, load15],
+            "disk": {
+                "total_gb": round(disk_total, 2),
+                "used_gb": round(disk_used, 2),
+                "percent": round((disk_used / disk_total * 100), 2) if disk_total > 0 else 0
+            },
+            "prediction": {
+                "vram_gb": round(random.uniform(20.0, 85.0), 1),
+                "power_w": round(random.uniform(100.0, 650.0), 0),
+                "confidence": round(random.uniform(75.0, 99.0), 1)
+            },
+            "status": "healthy" if (not temps or max(temps) < 85) else "warning"
+        }
+    return cached_response("hardware_health", DEFAULT_TTL_SECONDS, produce)
 
 @app.post("/api/audio/test-tts")
 async def test_tts(req: dict):
@@ -864,15 +905,17 @@ async def test_tts(req: dict):
 
 @app.get("/api/latency/radar")
 async def get_latency_radar():
-    import random
-    # Simulated global latency radar data
-    return [
-        {"endpoint": "Local Rig", "region": "Asia/Taipei", "latency": random.uniform(5, 50), "type": "local"},
-        {"endpoint": "Moltbook Hub", "region": "US/East", "latency": random.uniform(150, 300), "type": "remote"},
-        {"endpoint": "OpenAI Gateway", "region": "US/West", "latency": random.uniform(200, 450), "type": "api"},
-        {"endpoint": "HuggingFace", "region": "EU/West", "latency": random.uniform(250, 500), "type": "api"},
-        {"endpoint": "Sub-Agent Node 1", "region": "Asia/Tokyo", "latency": random.uniform(40, 120), "type": "node"}
-    ]
+    def produce():
+        import random
+        # Simulated global latency radar data
+        return [
+            {"endpoint": "Local Rig", "region": "Asia/Taipei", "latency": random.uniform(5, 50), "type": "local"},
+            {"endpoint": "Moltbook Hub", "region": "US/East", "latency": random.uniform(150, 300), "type": "remote"},
+            {"endpoint": "OpenAI Gateway", "region": "US/West", "latency": random.uniform(200, 450), "type": "api"},
+            {"endpoint": "HuggingFace", "region": "EU/West", "latency": random.uniform(250, 500), "type": "api"},
+            {"endpoint": "Sub-Agent Node 1", "region": "Asia/Tokyo", "latency": random.uniform(40, 120), "type": "node"}
+        ]
+    return cached_response("latency_radar", DEFAULT_TTL_SECONDS, produce)
 
 if __name__ == "__main__":
     import uvicorn

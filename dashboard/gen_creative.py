@@ -7,15 +7,19 @@ import sys
 
 COMFY_URL = "http://127.0.0.1:8188"
 
-def generate_creative(lora_name, prompt, filename):
-    workflow_path = "/home/the_host/clawd/workflows/workflow_lora_detail.json"
+def generate_creative(lora_name, prompt, filename, base_model=None):
+    workflow_path = "/home/rocketegg/clawd/workflows/workflow_lora_detail.json"
     with open(workflow_path, "r") as f:
         workflow = json.load(f)
     
     # Update prompt
     workflow["6"]["inputs"]["text"] = prompt
+    # Update base model
+    if base_model:
+        workflow["4"]["inputs"]["ckpt_name"] = base_model
     # Update LoRA
-    workflow["12"]["inputs"]["lora_name"] = lora_name
+    if lora_name:
+        workflow["12"]["inputs"]["lora_name"] = lora_name
     # Random seed
     workflow["3"]["inputs"]["seed"] = random.randint(0, 10**16)
     
@@ -23,15 +27,22 @@ def generate_creative(lora_name, prompt, filename):
     data = json.dumps(p).encode('utf-8')
     
     try:
-        response = requests.post(f"{COMFY_URL}/prompt", data=data)
+        response = requests.post(f"{COMFY_URL}/prompt", data=data, timeout=5)
         if response.status_code != 200:
-            print(f"Error: ComfyUI returned {response.status_code}")
+            print(f"Error: ComfyUI returned {response.status_code}: {response.text}")
             return
-            
-        prompt_id = response.json()['prompt_id']
+        
+        prompt_id = response.json().get('prompt_id')
+        if not prompt_id:
+            print("Error: Missing prompt_id from ComfyUI")
+            return
         print(f"Generation started: {prompt_id}")
         
+        start = time.time()
         while True:
+            if time.time() - start > 180:
+                print("Error: Generation timed out")
+                return
             history_resp = requests.get(f"{COMFY_URL}/history/{prompt_id}")
             history = history_resp.json()
             if prompt_id in history:
@@ -52,4 +63,5 @@ if __name__ == "__main__":
     l_name = sys.argv[1]
     p_text = sys.argv[2]
     out_file = sys.argv[3]
-    generate_creative(l_name, p_text, out_file)
+    base_model = sys.argv[4] if len(sys.argv) > 4 else None
+    generate_creative(l_name, p_text, out_file, base_model)

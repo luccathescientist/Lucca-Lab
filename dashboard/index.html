@@ -787,7 +787,14 @@
                         <textarea id="prompt-input" placeholder="Enter test prompt for the local model..." style="width: 100%; height: 80px; margin-bottom: 0.5rem; resize: none;"></textarea>
                         <button id="run-btn" onclick="runInference()" style="width: 100%; background: var(--gold); color: black;">EXECUTE CORE</button>
                     </div>
-                    <div id="inference-stream" style="margin-top: 1rem; font-size: 0.85rem; color: #e0e0f0; min-height: 100px; max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 1rem; border-radius: 4px; white-space: pre-wrap; border-left: 2px solid var(--gold);"></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; font-size: 0.65rem; color: var(--gold);">
+                        <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                            <input type="checkbox" id="show-system-logs" checked style="accent-color: var(--gold);">
+                            Show system logs
+                        </label>
+                        <span id="inf-stream-mode" style="opacity: 0.7;">MODE: RAW</span>
+                    </div>
+                    <div id="inference-stream" style="margin-top: 0.5rem; font-size: 0.85rem; color: #e0e0f0; min-height: 100px; max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 1rem; border-radius: 4px; white-space: pre-wrap; border-left: 2px solid var(--gold);"></div>
                 </div>
 
                 <!-- NETWORK TOPOLOGY VISUALIZATION -->
@@ -1172,12 +1179,15 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                 <!-- CREATIVE LABORATORY -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2 style="color: var(--accent-color);">Creative Laboratory</h2>
-                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                        <select id="lora-select" style="flex: 1; border-color: var(--accent-color);">
-                            <option value="flux1-schnell-fp8.safetensors">Flux.1 Schnell (Native)</option>
-                            <option value="hassaku_xl_illustrious.safetensors">Hassaku XL (Illustrious)</option>
-                            <option value="pony_diffusion_v6_xl.safetensors">Pony Diffusion V6</option>
-                            <option value="realDream_sdxlPony15.safetensors">RealDream Pony 1.5</option>
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <select id="base-model-select" style="border-color: var(--accent-color);">
+                            <option value="flux1-schnell-fp8.safetensors">flux1-schnell-fp8.safetensors</option>
+                        </select>
+                        <button onclick="loadBaseModels()" style="background: rgba(255, 215, 0, 0.2); border: 1px solid var(--gold); color: var(--gold); font-size: 0.6rem;">REFRESH</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; margin-bottom: 1rem;">
+                        <select id="lora-select" style="border-color: var(--accent-color);">
+                            <option value="">Loading LoRAs...</option>
                         </select>
                         <button onclick="loadLoras()" style="background: var(--accent-color); font-size: 0.6rem;">REFRESH</button>
                     </div>
@@ -1279,6 +1289,9 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         let lastMessageCount = 0;
         let socket, infSocket;
         let thermalChart, archiveChart;
+        let inferenceActive = false;
+        let inferenceRawBuffer = '';
+        let inferenceCleanBuffer = '';
 
         function showDebugBanner(text) {
             const existing = document.getElementById('debug-banner');
@@ -1710,6 +1723,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             infSocket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 const streamDiv = document.getElementById('inference-stream');
+                const showLogs = document.getElementById('show-system-logs')?.checked;
                 if (data.type === 'token') {
                     if (tokenCount === 0) {
                         startTime = performance.now();
@@ -1717,7 +1731,12 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                         document.getElementById('perf-latency').innerHTML = `${latency}<span style="font-size: 0.7rem; color: #888; margin-left: 0.3rem;">MS</span>`;
                     }
                     tokenCount++;
-                    streamDiv.textContent += data.text;
+                    const text = data.text || '';
+                    inferenceRawBuffer += text;
+                    if (!text.startsWith('[SYSTEM]') && !text.startsWith('[ERROR]')) {
+                        inferenceCleanBuffer += text;
+                    }
+                    streamDiv.textContent = showLogs ? inferenceRawBuffer : inferenceCleanBuffer;
                     streamDiv.scrollTop = streamDiv.scrollHeight;
                     
                     const duration = (performance.now() - startTime) / 1000;
@@ -1731,10 +1750,12 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     document.getElementById('inf-model-status').textContent = "STATUS: ACTIVE / RESIDENT";
                     addLog(`[INF] Generation complete. ${tokenCount} tokens synthesized.`);
                     tokenCount = 0;
+                    inferenceActive = false;
                 }
             };
 
             infSocket.onclose = () => {
+                inferenceActive = false;
                 setTimeout(connectInfWS, 2000);
             };
         }
@@ -1763,10 +1784,13 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             const prompt = document.getElementById('prompt-input').value.trim();
             if (!prompt) return;
 
+            inferenceRawBuffer = '';
+            inferenceCleanBuffer = '';
             document.getElementById('inference-stream').textContent = '';
             document.getElementById('run-btn').disabled = true;
             document.getElementById('run-btn').textContent = "SYNTHESIZING...";
             document.getElementById('inf-model-status').textContent = "STATUS: HANDSHAKING / ACTIVE";
+            inferenceActive = true;
             
             window.inferenceStartTime = performance.now();
             document.getElementById('perf-tps').innerHTML = `0.0<span style="font-size: 0.7rem; color: #888; margin-left: 0.3rem;">TPS</span>`;
@@ -1906,8 +1930,30 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                 const response = await fetch('/api/creative/loras');
                 const loras = await response.json();
                 const select = document.getElementById('lora-select');
+                if (!loras || loras.length === 0) {
+                    select.innerHTML = '<option value="">No LoRAs found</option>';
+                    document.getElementById('creative-status').textContent = '[WARN] No LoRAs detected.';
+                    return;
+                }
                 select.innerHTML = loras.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
-            } catch (err) {}
+            } catch (err) {
+                document.getElementById('creative-status').textContent = '[ERROR] Failed to load LoRAs.';
+            }
+        }
+
+        async function loadBaseModels() {
+            try {
+                const response = await fetch('/api/creative/checkpoints');
+                const models = await response.json();
+                const select = document.getElementById('base-model-select');
+                if (!models || models.length === 0) {
+                    select.innerHTML = '<option value="">No checkpoints found</option>';
+                    return;
+                }
+                select.innerHTML = models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            } catch (err) {
+                document.getElementById('creative-status').textContent = '[ERROR] Failed to load checkpoints.';
+            }
         }
 
         function sendCreativePayload(payload) {
@@ -1931,15 +1977,16 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
 
         function runCreative() {
             const lora = document.getElementById('lora-select').value;
+            const baseModel = document.getElementById('base-model-select')?.value;
             const prompt = document.getElementById('creative-prompt').value.trim();
             if (!prompt) return;
 
             document.getElementById('creative-btn').disabled = true;
             document.getElementById('creative-btn').textContent = "FORGING...";
             document.getElementById('creative-status').textContent = "Calibrating neural arrays...";
-            addLog(`[CREATIVE] Forging image with style: ${lora}`);
+            addLog(`[CREATIVE] Forging image with base: ${baseModel || 'default'} | LoRA: ${lora}`);
 
-            sendCreativePayload({ lora: lora, prompt: prompt });
+            sendCreativePayload({ lora: lora, prompt: prompt, base_model: baseModel });
         }
 
         function addLog(text) {
@@ -2408,6 +2455,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         }
 
         async function updateTopology() {
+            if (inferenceActive) return;
             try {
                 const response = await fetch('/api/network/topology');
                 const data = await response.json();
@@ -2429,6 +2477,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         }
 
         async function updateMood() {
+            if (inferenceActive) return;
             try {
                 const response = await fetch('/api/mood');
                 const data = await response.json();
@@ -3068,10 +3117,10 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'rig') updateStats(); }, 3000);
         setInterval(() => { if (currentTab === 'memory') updateMemory(); }, 30000);
         setInterval(() => { if (currentTab === 'llm') updateModelLoadout(); }, 20000);
-        setInterval(() => { if (currentTab === 'llm') updateTopology(); }, 10000);
-        setInterval(() => { if (currentTab === 'rig') updateSecurityMonitor(); }, 10000);
+        setInterval(() => { if (currentTab === 'llm' && !inferenceActive) updateTopology(); }, 15000);
+        setInterval(() => { if (currentTab === 'rig' && !inferenceActive) updateSecurityMonitor(); }, 10000);
         setInterval(() => { if (currentTab === 'tools') updateDreams(); }, 60000);
-        setInterval(updateMood, 15000);
+        setInterval(updateMood, 20000);
         setInterval(() => { if (currentTab === 'rig') updateMilestones(); }, 120000);
         setInterval(() => { if (currentTab === 'rig') updateAgentActivity(); }, 15000);
         setInterval(() => { if (currentTab === 'rig') updateHardwareHealth(); }, 10000);
@@ -3088,10 +3137,10 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         initNeuralFabric();
         initTabs();
         updateStats();
-        updateWeather();
-        updateMood();
-        updateMilestones();
-        updateChronoTimeline();
+        setTimeout(updateWeather, 1500);
+        setTimeout(updateMood, 2000);
+        setTimeout(updateMilestones, 2500);
+        setTimeout(updateChronoTimeline, 3000);
         updateAmbient();
         updateLatencyRadar();
         checkNightMode();
@@ -3100,9 +3149,17 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         loadInitialMessages();
         updateWeatherBadge();
         showDebugBanner('Dashboard JS loaded');
+        const logToggle = document.getElementById('show-system-logs');
+        if (logToggle) {
+            logToggle.addEventListener('change', () => {
+                document.getElementById('inf-stream-mode').textContent = logToggle.checked ? 'MODE: RAW' : 'MODE: CLEAN';
+                document.getElementById('inference-stream').textContent = logToggle.checked ? inferenceRawBuffer : inferenceCleanBuffer;
+            });
+        }
         connectWS();
         connectInfWS();
         connectCreativeWS();
+        loadBaseModels();
         loadLoras();
     </script>
 </body>
