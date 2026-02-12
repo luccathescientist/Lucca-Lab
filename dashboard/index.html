@@ -1146,6 +1146,25 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- NEURAL SYNAPSE MAP -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Synapse Map
+                        <span id="synapse-count" style="font-size: 0.6rem; opacity: 0.7;">0 Active Synapses</span>
+                    </h2>
+                    <div id="synapse-map-container" style="height: 350px; background: rgba(0,0,0,0.5); border-radius: 4px; position: relative;">
+                        <!-- Three.js will render here -->
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.65rem; color: #888;">
+                        <span id="synapse-status">LINK STABLE</span>
+                        <div style="display: flex; gap: 10px;">
+                            <span style="color: var(--accent-color);">● Agent</span>
+                            <span style="color: var(--gold);">● Memory</span>
+                            <span style="color: #00ff64);">● Output</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1356,6 +1375,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             addToTab('llm', '#security-events');
             addToTab('llm', '#merge-status-log');
             addToTab('llm', '#schematic-container');
+            addToTab('llm', '#synapse-map-container');
 
             // Image generation
             addToTab('image', '#creative-prompt');
@@ -1426,6 +1446,9 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                 (tabGroups[tab] || []).forEach(el => el.classList.remove('tab-hidden'));
                 tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
                 loadTabData(tab);
+                if (tab === 'llm' && typeof initSynapseMap === 'function') {
+                    initSynapseMap();
+                }
             };
 
             tabButtons.forEach(btn => {
@@ -1491,6 +1514,74 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     cell.style.boxShadow = 'none';
                 }
             }
+        }
+
+        function initSynapseMap() {
+            const container = document.getElementById('synapse-map-container');
+            if (!container || container.querySelector('canvas')) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            const particles = new THREE.Group();
+            scene.add(particles);
+
+            const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const materials = [
+                new THREE.MeshBasicMaterial({ color: 0xd178ff }), // Agent
+                new THREE.MeshBasicMaterial({ color: 0xffd700 }), // Memory
+                new THREE.MeshBasicMaterial({ color: 0x00ff64 })  // Output
+            ];
+
+            const nodes = [];
+            for (let i = 0; i < 50; i++) {
+                const material = materials[Math.floor(Math.random() * materials.length)];
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10
+                );
+                mesh.velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.02,
+                    (Math.random() - 0.5) * 0.02,
+                    (Math.random() - 0.5) * 0.02
+                );
+                particles.add(mesh);
+                nodes.push(mesh);
+            }
+
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0xd178ff, transparent: true, opacity: 0.2 });
+            const connections = [];
+
+            camera.position.z = 8;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.002;
+                particles.rotation.x += 0.001;
+
+                nodes.forEach((node, i) => {
+                    node.position.add(node.velocity);
+                    if (Math.abs(node.position.x) > 5) node.velocity.x *= -1;
+                    if (Math.abs(node.position.y) > 5) node.velocity.y *= -1;
+                    if (Math.abs(node.position.z) > 5) node.velocity.z *= -1;
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+            document.getElementById('synapse-count').textContent = `50 Active Synapses`;
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
         }
 
         function initChart() {
