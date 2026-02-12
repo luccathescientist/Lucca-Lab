@@ -1,0 +1,7 @@
+{
+    "baseline_avg_consistency": 0.6766501161373943,
+    "anchored_avg_consistency": 0.9197402550759648,
+    "baseline_avg_latency_ms": 12.060834818178432,
+    "anchored_avg_latency_ms": 16.798943287252264,
+    "improvement_pct": 35.925529773974176
+}
