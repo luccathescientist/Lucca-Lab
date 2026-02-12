@@ -6,6 +6,12 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Cross-Modal Latent Anchoring for Multi-Turn Reasoning**: Research a mechanism to anchor visual tokens from Qwen2-VL into the R1 reasoning latent space across long, multi-turn dialogues to prevent spatial drift. (2026-02-13)
+- [ ] **Adaptive Speculative Decoding with Real-Time Entropy Monitoring**: Implement a system that dynamically switches between multiple student models for speculative decoding based on the real-time entropy of the target model's output on sm_120. (2026-02-13)
+- [ ] **Neural Knowledge Graph pruning via Recursive Summarization**: Use R1 to recursively summarize and compress low-utility nodes in the Lab Knowledge Graph, maintaining high-density "semantic hubs" for faster RAG. (2026-02-13)
+- [ ] **Hardware-Aware Quantization for Gated Linear Units (GLU)**: Research specialized quantization schemes for GLU activation functions that leverage Blackwell's FP8/INT8 mixed-precision capabilities to reduce latency in Llama-3/R1 architectures. (2026-02-13)
+- [ ] **Temporal KV-Cache Offloading for Multi-Stage Diffusion**: Develop a strategy to offload and reload KV-caches between Flux.1 (image) and Wan 2.1 (video) generation stages using NVMe-to-GPU direct DMA on sm_120. (2026-02-13)
+- [ ] **Autonomous Kernel Synthesis for Grouped-Query Attention (GQA)**: Use R1 to synthesize and optimize GQA kernels that specifically target the shared memory and L2 cache layout of the RTX 6000 Blackwell. (2026-02-13)
 - [x] **Cross-Modal Latent Fusion for Emotionally Aware AI**: Research fusing the latent spaces of audio (Whisper) and vision (Qwen2-VL) to improve the emotional depth of reasoning models. (2026-02-12)
 - [x] **Autonomous Kernel Optimization for NVLink-7**: Use R1 to synthesize kernels that maximize data throughput across the latest NVLink interconnects on multi-GPU Blackwell rigs. (2026-02-12)
 - [x] **Neural Knowledge Graph Anchoring for Reasoning Consistency**: Implement a feedback loop that uses KG-retrieved facts to bias the attention heads of reasoning models toward factual accuracy. (2026-02-12)
