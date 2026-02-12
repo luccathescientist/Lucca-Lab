@@ -199,6 +199,42 @@
             margin-bottom: 2rem;
         }
 
+        .tab-bar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: rgba(209, 120, 255, 0.12);
+            color: var(--text-color);
+            border: 1px solid rgba(209, 120, 255, 0.4);
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: #0d0d12;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .tab-hidden {
+            display: none !important;
+        }
+
         .card {
             background: var(--panel-bg);
             border: 1px solid rgba(209, 120, 255, 0.2);
@@ -474,28 +510,6 @@
 <body>
     <canvas id="neural-fabric"></canvas>
     <div id="gate-overlay"></div>
-    <div id="model-comparison-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; backdrop-filter: blur(10px); justify-content: center; align-items: center;">
-        <div class="card" style="width: 90%; max-width: 800px; border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);">
-            <h2 style="color: var(--gold); font-size: 1.2rem; border-bottom: 1px solid var(--gold); padding-bottom: 0.5rem; margin-bottom: 1rem;">[MODEL COMPARISON MATRIX]</h2>
-            <div id="comparison-matrix-container" style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
-                    <thead style="background: rgba(255, 215, 0, 0.1); color: var(--gold);">
-                        <tr>
-                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">MODEL</th>
-                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">TPS (AVG)</th>
-                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">LATENCY</th>
-                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">VRAM</th>
-                            <th style="padding: 10px; border-bottom: 1px solid var(--gold);">LOGIC</th>
-                        </tr>
-                    </thead>
-                    <tbody id="comparison-matrix-body">
-                        <!-- Data populated via JS -->
-                    </tbody>
-                </table>
-            </div>
-            <button onclick="toggleComparisonMatrix()" style="width: 100%; margin-top: 2rem; background: var(--gold); color: black;">CLOSE MATRIX</button>
-        </div>
-    </div>
     <div class="container">
         <header>
             <div class="header-left">
@@ -507,6 +521,13 @@
 
         <div class="main-layout">
             <div class="left-col">
+                <div class="tab-bar" id="lab-tab-bar">
+                    <button class="tab-btn active" data-tab="rig">Rig Stats</button>
+                    <button class="tab-btn" data-tab="llm">LLM Inference</button>
+                    <button class="tab-btn" data-tab="image">Image Gen</button>
+                    <button class="tab-btn" data-tab="memory">Memory & Research</button>
+                    <button class="tab-btn" data-tab="tools">Tools & Ops</button>
+                </div>
                 <div class="dashboard-grid">
                     <div class="card">
                         <h2>Thermal Core</h2>
@@ -569,7 +590,7 @@
                 </div>
 
                 <!-- QUICK MACROS -->
-                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                <div class="card" id="quick-macros" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2>Quick Macros</h2>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
                         <button onclick="runMacro('clear-cache')" style="background: rgba(209, 120, 255, 0.2); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.5rem;">PURGE CACHE</button>
@@ -1170,7 +1191,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
-                <div class="telepod-indicator">
+                <div class="telepod-indicator" id="telepod-indicator">
                     <div class="telepod-overlay"></div>
                     <div class="telepod-text">EPOCH READY</div>
                 </div>
@@ -1213,12 +1234,8 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
-                <div class="card" style="margin-top: 1rem; text-align: center; cursor: pointer; border-style: dashed; opacity: 0.7;" onclick="toggleTechSpecs()">
+                <div class="card" id="tech-specs-trigger" style="margin-top: 1rem; text-align: center; cursor: pointer; border-style: dashed; opacity: 0.7;" onclick="toggleTechSpecs()">
                     <span style="font-size: 0.8rem; color: var(--accent-color);">📡 VIEW CHRONO RIG TECH SPECS</span>
-                </div>
-
-                <div class="card" style="margin-top: 1rem; text-align: center; cursor: pointer; border-style: dashed; opacity: 0.7; border-color: var(--gold);" onclick="toggleComparisonMatrix()">
-                    <span style="font-size: 0.8rem; color: var(--gold);">📊 OPEN MODEL COMPARISON MATRIX</span>
                 </div>
 
                 <!-- VOICE COMMAND VISUALIZER -->
@@ -1262,9 +1279,148 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         let lastMessageCount = 0;
         let socket, infSocket;
         let thermalChart, archiveChart;
+
+        function showDebugBanner(text) {
+            const existing = document.getElementById('debug-banner');
+            if (existing) {
+                existing.textContent = text;
+                return;
+            }
+            const banner = document.createElement('div');
+            banner.id = 'debug-banner';
+            banner.style.position = 'fixed';
+            banner.style.bottom = '10px';
+            banner.style.right = '10px';
+            banner.style.background = 'rgba(0,0,0,0.7)';
+            banner.style.color = '#ffd700';
+            banner.style.padding = '6px 10px';
+            banner.style.border = '1px solid #ffd700';
+            banner.style.borderRadius = '6px';
+            banner.style.fontSize = '0.65rem';
+            banner.style.zIndex = '9999';
+            banner.textContent = text;
+            document.body.appendChild(banner);
+        }
         const maxDataPoints = 30;
         const thermalData = [];
         const thermalLabels = [];
+
+        let currentTab = 'rig';
+
+        function initTabs() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabGroups = { rig: [], llm: [], image: [], memory: [], tools: [] };
+
+            const addToTab = (tab, selector, mode = 'card') => {
+                const el = document.querySelector(selector);
+                if (!el) return;
+                const target = mode === 'card' ? (el.closest('.card') || el) : el;
+                if (target && !tabGroups[tab].includes(target)) tabGroups[tab].push(target);
+            };
+
+            // Rig stats
+            addToTab('rig', '.dashboard-grid', 'self');
+            addToTab('rig', '#log-container');
+            addToTab('rig', '#archive-chart');
+            addToTab('rig', '#thermal-chart');
+            addToTab('rig', '#stress-results-list');
+            addToTab('rig', '#quick-macros');
+            addToTab('rig', '#benchmark-results-container');
+            addToTab('rig', '#hologram-container');
+            addToTab('rig', '#quantum-pulse-container');
+            addToTab('rig', '#radar-container');
+            addToTab('rig', '#milestones-list');
+            addToTab('rig', '#chrono-timeline-container');
+            addToTab('rig', '#mood-state');
+            addToTab('rig', '#health-cpu-temp');
+            addToTab('rig', '#camera-container');
+
+            // LLM inference
+            addToTab('llm', '#perf-tps');
+            addToTab('llm', '#model-select');
+            addToTab('llm', '#inference-stream');
+            addToTab('llm', '#topology-container');
+            addToTab('llm', '#security-events');
+            addToTab('llm', '#merge-status-log');
+            addToTab('llm', '#schematic-container');
+
+            // Image generation
+            addToTab('image', '#creative-prompt');
+            addToTab('image', '#generated-img');
+            addToTab('image', '#telepod-indicator', 'self');
+
+            // Memory & research
+            addToTab('memory', '#moltbook-feed-container');
+            addToTab('memory', '.memory-panel', 'self');
+            addToTab('memory', '#long-term-mem');
+            addToTab('memory', '#daily-stream');
+            addToTab('memory', '#plan-container', 'self');
+            addToTab('memory', '#search-input');
+            addToTab('memory', '#search-results');
+            addToTab('memory', '#time-travel-indicator', 'self');
+
+            // Tools & ops
+            addToTab('tools', '#code-editor');
+            addToTab('tools', '#identity-label');
+            addToTab('tools', '#dream-content');
+            addToTab('tools', '#file-explorer-container');
+            addToTab('tools', '#ambient-name');
+            addToTab('tools', '#agent-heatmap-container');
+            addToTab('tools', '#audio-status');
+            addToTab('tools', '#visualizer');
+            addToTab('tools', '#inventory-container');
+            addToTab('tools', '#tech-specs-trigger');
+            addToTab('tools', '#voice-status');
+
+            const allTargets = Object.values(tabGroups).flat();
+
+            const loadTabData = (tab) => {
+                if (tab === 'rig') {
+                    updateStats();
+                    updateBenchmarks();
+                    updateBenchmarkArchive();
+                    updateStressResults();
+                    updateLatencyRadar();
+                    updateMilestones();
+                    updateChronoTimeline();
+                    updateHardwareHealth();
+                    updateSecurityMonitor();
+                    updateAgentActivity();
+                }
+                if (tab === 'llm') {
+                    updateModelLoadout();
+                    updateTopology();
+                }
+                if (tab === 'image') {
+                    loadLoras();
+                }
+                if (tab === 'memory') {
+                    updateMemory();
+                    updateMoltbookFeed();
+                }
+                if (tab === 'tools') {
+                    updateInventory();
+                    updateFileExplorer();
+                    updateAmbient();
+                    updateDreams();
+                    updateSupplyChain();
+                }
+            };
+
+            const setActiveTab = (tab) => {
+                currentTab = tab;
+                allTargets.forEach(el => el.classList.add('tab-hidden'));
+                (tabGroups[tab] || []).forEach(el => el.classList.remove('tab-hidden'));
+                tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+                loadTabData(tab);
+            };
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+            });
+
+            setActiveTab('rig');
+        }
 
         async function updateWeatherBadge() {
             try {
@@ -1535,8 +1691,19 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
 
         function connectInfWS() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            showDebugBanner('Connecting inference WS...');
             infSocket = new WebSocket(`${protocol}//${window.location.host}/ws/inference`);
             
+            infSocket.onopen = () => {
+                showDebugBanner('Inference WS connected');
+                console.log('[INF] WebSocket connected');
+            };
+
+            infSocket.onerror = (err) => {
+                showDebugBanner('Inference WS error');
+                console.error('[INF] WebSocket error', err);
+            };
+
             let startTime;
             let tokenCount = 0;
 
@@ -1572,10 +1739,29 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             };
         }
 
+        function sendInferencePayload(payload) {
+            if (!infSocket || infSocket.readyState === WebSocket.CLOSED) {
+                connectInfWS();
+            }
+
+            if (!infSocket) return;
+
+            if (infSocket.readyState === WebSocket.OPEN) {
+                infSocket.send(JSON.stringify(payload));
+            } else if (infSocket.readyState === WebSocket.CONNECTING) {
+                infSocket.addEventListener('open', () => {
+                    infSocket.send(JSON.stringify(payload));
+                }, { once: true });
+            } else {
+                connectInfWS();
+                setTimeout(() => sendInferencePayload(payload), 500);
+            }
+        }
+
         function runInference() {
             const model = document.getElementById('model-select').value;
             const prompt = document.getElementById('prompt-input').value.trim();
-            if (!prompt || !infSocket) return;
+            if (!prompt) return;
 
             document.getElementById('inference-stream').textContent = '';
             document.getElementById('run-btn').disabled = true;
@@ -1588,7 +1774,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
 
             addLog(`[INF] Running ${model}...`);
 
-            infSocket.send(JSON.stringify({ model: model, prompt: prompt }));
+            sendInferencePayload({ model: model, prompt: prompt });
         }
 
         async function unloadModel() {
@@ -1724,17 +1910,36 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+        function sendCreativePayload(payload) {
+            if (!creativeSocket || creativeSocket.readyState === WebSocket.CLOSED) {
+                connectCreativeWS();
+            }
+
+            if (!creativeSocket) return;
+
+            if (creativeSocket.readyState === WebSocket.OPEN) {
+                creativeSocket.send(JSON.stringify(payload));
+            } else if (creativeSocket.readyState === WebSocket.CONNECTING) {
+                creativeSocket.addEventListener('open', () => {
+                    creativeSocket.send(JSON.stringify(payload));
+                }, { once: true });
+            } else {
+                connectCreativeWS();
+                setTimeout(() => sendCreativePayload(payload), 500);
+            }
+        }
+
         function runCreative() {
             const lora = document.getElementById('lora-select').value;
             const prompt = document.getElementById('creative-prompt').value.trim();
-            if (!prompt || !creativeSocket) return;
+            if (!prompt) return;
 
             document.getElementById('creative-btn').disabled = true;
             document.getElementById('creative-btn').textContent = "FORGING...";
             document.getElementById('creative-status').textContent = "Calibrating neural arrays...";
             addLog(`[CREATIVE] Forging image with style: ${lora}`);
 
-            creativeSocket.send(JSON.stringify({ lora: lora, prompt: prompt }));
+            sendCreativePayload({ lora: lora, prompt: prompt });
         }
 
         function addLog(text) {
@@ -1799,11 +2004,9 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                 }
 
                 // Update Quantum Pulse
-                const clockResponse = await fetch('/api/stats/clocks');
-                const clockData = await clockResponse.json();
-                if (clockData.clock) {
-                    document.getElementById('gpu-clock-label').textContent = `${clockData.clock} MHz`;
-                    const speed = Math.max(0.2, 2.0 - (clockData.clock / 2000));
+                if (data.clock) {
+                    document.getElementById('gpu-clock-label').textContent = `${data.clock} MHz`;
+                    const speed = Math.max(0.2, 2.0 - (data.clock / 2000));
                     document.documentElement.style.setProperty('--pulse-speed', `${speed}s`);
                 }
 
@@ -2023,43 +2226,6 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         function toggleTechSpecs() {
             const modal = document.getElementById('tech-specs-modal');
             modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
-        }
-
-        async function toggleComparisonMatrix() {
-            const modal = document.getElementById('model-comparison-modal');
-            if (modal.style.display === 'none' || modal.style.display === '') {
-                modal.style.display = 'flex';
-                updateComparisonMatrix();
-            } else {
-                modal.style.display = 'none';
-            }
-        }
-
-        async function updateComparisonMatrix() {
-            const body = document.getElementById('comparison-matrix-body');
-            body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--gold); animation: pulse 1s infinite;">[QUERYING NEURAL PERFORMANCE DATA...]</td></tr>';
-            
-            try {
-                const response = await fetch('/api/models/comparison');
-                const data = await response.json();
-                
-                body.innerHTML = data.map(m => `
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 12px; font-weight: bold; color: white;">${m.name}</td>
-                        <td style="padding: 12px; color: #00ff64;">${m.tps} <span style="font-size: 0.6rem; color: #666;">TPS</span></td>
-                        <td style="padding: 12px;">${m.latency}s</td>
-                        <td style="padding: 12px; color: var(--accent-color);">${m.vram}</td>
-                        <td style="padding: 12px;">
-                            <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px;">
-                                <div style="width: ${m.logic_score}%; height: 100%; background: var(--gold); box-shadow: 0 0 5px var(--gold);"></div>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
-                addLog("[SYSTEM] Model comparison matrix updated.");
-            } catch (err) {
-                body.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--danger-color);">[ERROR: NEURAL DATA UNREACHABLE]</td></tr>';
-            }
         }
 
         async function toggleTimeTravel() {
@@ -2825,11 +2991,13 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             requestAnimationFrame(drawSchematic);
         }
 
-        async function snapCamera() {
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = "CAPTURING...";
+        async function snapCamera(evt) {
+            const btn = evt?.target || document.querySelector('#camera-container button') || document.querySelector('button[onclick="snapCamera()"]');
+            const originalText = btn ? btn.textContent : null;
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "CAPTURING...";
+            }
             addLog("[CAMERA] Requesting optical snapshot...");
             
             try {
@@ -2879,8 +3047,10 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {
                 addLog("[ERROR] Optical link failure.");
             } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
             }
         }
 
@@ -2894,49 +3064,42 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateCameraTime, 1000);
         setInterval(snapCamera, 30000); // Auto-refresh every 30s
 
-        setInterval(updateLatencyRadar, 10000);
-        setInterval(updateStats, 2000);
-        setInterval(updateMemory, 10000);
-        setInterval(updateModelLoadout, 15000);
-        setInterval(updateTopology, 5000);
-        setInterval(updateSecurityMonitor, 5000);
-        setInterval(updateDreams, 30000);
-        setInterval(updateMood, 10000);
-        setInterval(updateMilestones, 60000);
-        setInterval(updateAgentActivity, 10000);
-        setInterval(updateHardwareHealth, 5000);
-        setInterval(updateMoltbookFeed, 60000 * 5); // Every 5 mins
-        setInterval(updateAmbient, 45000);
-        setInterval(updateSupplyChain, 60000 * 30); // Every 30 mins
+        setInterval(() => { if (currentTab === 'rig') updateLatencyRadar(); }, 15000);
+        setInterval(() => { if (currentTab === 'rig') updateStats(); }, 3000);
+        setInterval(() => { if (currentTab === 'memory') updateMemory(); }, 30000);
+        setInterval(() => { if (currentTab === 'llm') updateModelLoadout(); }, 20000);
+        setInterval(() => { if (currentTab === 'llm') updateTopology(); }, 10000);
+        setInterval(() => { if (currentTab === 'rig') updateSecurityMonitor(); }, 10000);
+        setInterval(() => { if (currentTab === 'tools') updateDreams(); }, 60000);
+        setInterval(updateMood, 15000);
+        setInterval(() => { if (currentTab === 'rig') updateMilestones(); }, 120000);
+        setInterval(() => { if (currentTab === 'rig') updateAgentActivity(); }, 15000);
+        setInterval(() => { if (currentTab === 'rig') updateHardwareHealth(); }, 10000);
+        setInterval(() => { if (currentTab === 'memory') updateMoltbookFeed(); }, 60000 * 10); // Every 10 mins
+        setInterval(() => { if (currentTab === 'tools') updateAmbient(); }, 60000);
+        setInterval(() => { if (currentTab === 'rig') updateBenchmarks(); }, 60000);
+        setInterval(() => { if (currentTab === 'rig') updateBenchmarkArchive(); }, 60000);
+        setInterval(() => { if (currentTab === 'rig') updateStressResults(); }, 60000);
+        setInterval(() => { if (currentTab === 'tools') updateInventory(); }, 60000);
+        setInterval(() => { if (currentTab === 'tools') updateFileExplorer(); }, 60000);
+        setInterval(() => { if (currentTab === 'tools') updateSupplyChain(); }, 60000 * 30); // Every 30 mins
         setInterval(checkNightMode, 60000);
         initChart();
         initNeuralFabric();
+        initTabs();
         updateStats();
-        updateMemory();
-        updateModelLoadout();
         updateWeather();
-        updateTopology();
-        updateSecurityMonitor();
-        updateDreams();
-        updateFileExplorer();
-        updateBenchmarks();
-        updateBenchmarkArchive();
-        updateStressResults();
-        updateInventory();
-        updateSupplyChain();
-        updateAgentActivity();
-        updateHardwareHealth();
-        updateMoltbookFeed();
         updateMood();
-        updateAmbient();
         updateMilestones();
         updateChronoTimeline();
+        updateAmbient();
         updateLatencyRadar();
         checkNightMode();
         drawSchematic();
         initVramHeatmap();
         loadInitialMessages();
         updateWeatherBadge();
+        showDebugBanner('Dashboard JS loaded');
         connectWS();
         connectInfWS();
         connectCreativeWS();

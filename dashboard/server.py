@@ -23,7 +23,7 @@ app = FastAPI()
 
 # Configuration
 PORT = 8889
-CHROMA_PATH = "/home/rocketegg/clawd/deep-wisdom/db"
+CHROMA_PATH = os.getenv("LUCCA_LAB_CHROMA_PATH", "/home/rocketegg/clawd/deep-wisdom/db")
 MODEL_NAME = "all-MiniLM-L6-v2"
 VLLM_URL = "http://localhost:8001/v1"
 INACTIVITY_LIMIT = 300 # 5 minutes
@@ -220,6 +220,12 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 _embeddings = None
+_vector_db = None
+_memory_cache = {"memory_md": "", "latest_daily": "", "memory_mtime": 0, "daily_mtime": 0, "last_check": 0}
+_session_cache = {"sessions": [], "last_check": 0}
+_stats_cache = {"data": None, "ts": 0}
+CACHE_TTL_SECONDS = 10
+STATS_TTL_SECONDS = 2
 
 def get_embeddings():
     global _embeddings
@@ -229,12 +235,49 @@ def get_embeddings():
         _embeddings = HuggingFaceEmbeddings(model_name=MODEL_NAME)
     return _embeddings
 
+def get_vector_db():
+    global _vector_db
+    if _vector_db is None:
+        embeddings = get_embeddings()
+        _vector_db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+    return _vector_db
+
+def get_memory_payload():
+    now = time.time()
+    if now - _memory_cache["last_check"] < CACHE_TTL_SECONDS:
+        return {"memory_md": _memory_cache["memory_md"], "latest_daily": _memory_cache["latest_daily"]}
+
+    memory_path = "/home/rocketegg/clawd/MEMORY.md"
+    daily_files = sorted(glob.glob("/home/rocketegg/clawd/memory/2026-*.md"))
+    latest_daily_path = daily_files[-1] if daily_files else None
+
+    if os.path.exists(memory_path):
+        memory_mtime = os.path.getmtime(memory_path)
+        if memory_mtime != _memory_cache["memory_mtime"]:
+            with open(memory_path, "r") as f:
+                _memory_cache["memory_md"] = f.read()
+            _memory_cache["memory_mtime"] = memory_mtime
+
+    if latest_daily_path and os.path.exists(latest_daily_path):
+        daily_mtime = os.path.getmtime(latest_daily_path)
+        if daily_mtime != _memory_cache["daily_mtime"]:
+            with open(latest_daily_path, "r") as f:
+                _memory_cache["latest_daily"] = f.read()
+            _memory_cache["daily_mtime"] = daily_mtime
+
+    _memory_cache["last_check"] = now
+    return {"memory_md": _memory_cache["memory_md"], "latest_daily": _memory_cache["latest_daily"]}
+
 def get_gpu_stats():
+    now = time.time()
+    if _stats_cache["data"] and (now - _stats_cache["ts"]) < STATS_TTL_SECONDS:
+        return _stats_cache["data"]
+
     try:
         cmd = "nvidia-smi --query-gpu=name,temperature.gpu,utilization.gpu,utilization.memory,memory.total,memory.used,power.draw,clocks.current.graphics --format=csv,noheader,nounits"
-        result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
+        result = subprocess.check_output(cmd, shell=True, timeout=1.5).decode('utf-8').strip()
         parts = [p.strip() for p in result.split(',')]
-        return {
+        data = {
             "name": parts[0],
             "temp": float(parts[1]),
             "util_gpu": float(parts[2]),
@@ -244,7 +287,12 @@ def get_gpu_stats():
             "power": float(parts[6]),
             "clock": float(parts[7])
         }
+        _stats_cache["data"] = data
+        _stats_cache["ts"] = now
+        return data
     except Exception as e:
+        if _stats_cache["data"]:
+            return _stats_cache["data"]
         return {"error": str(e)}
 
 @app.get("/api/benchmarks/archive")
@@ -266,18 +314,6 @@ async def get_benchmarks_archive():
                     except: pass
     return results
 
-@app.get("/api/models/comparison")
-async def get_model_comparison():
-    # Performance metrics for comparison matrix
-    # In a real setup, these would be aggregated from historical stress_test_results.jsonl
-    return [
-        {"name": "DeepSeek-R1-70B (FP8)", "tps": 22.5, "latency": 0.85, "vram": "70.8 GB", "logic_score": 98},
-        {"name": "DeepSeek-R1-32B (BF16)", "tps": 45.2, "latency": 0.42, "vram": "64.2 GB", "logic_score": 92},
-        {"name": "Llama-3.1-70B (INT4)", "tps": 38.1, "latency": 0.55, "vram": "40.5 GB", "logic_score": 88},
-        {"name": "Qwen2.5-72B (FP8)", "tps": 28.4, "latency": 0.72, "vram": "72.1 GB", "logic_score": 90},
-        {"name": "Qwen2.5-7B (Native)", "tps": 145.0, "latency": 0.08, "vram": "15.2 GB", "logic_score": 75}
-    ]
-
 @app.get("/")
 async def get():
     return FileResponse("/home/rocketegg/clawd/dashboard/index.html", headers={"Cache-Control": "no-cache"})
@@ -289,19 +325,16 @@ async def stats():
 @app.get("/api/memory")
 async def memory():
     try:
-        with open("/home/rocketegg/clawd/MEMORY.md", "r") as f:
-            memory_md = f.read()
-        daily_files = sorted(glob.glob("/home/rocketegg/clawd/memory/2026-*.md"))
-        latest_daily = ""
-        if daily_files:
-            with open(daily_files[-1], "r") as f:
-                latest_daily = f.read()
-        return {"memory_md": memory_md, "latest_daily": latest_daily}
+        return get_memory_payload()
     except Exception as e:
         return {"error": str(e)}
 
 @app.get("/api/memory/sessions")
 async def list_sessions():
+    now = time.time()
+    if now - _session_cache["last_check"] < CACHE_TTL_SECONDS:
+        return _session_cache["sessions"]
+
     daily_files = sorted(glob.glob("/home/rocketegg/clawd/memory/2026-*.md"), reverse=True)
     sessions = []
     for f in daily_files:
@@ -309,6 +342,8 @@ async def list_sessions():
             "name": os.path.basename(f).replace(".md", ""),
             "path": f
         })
+    _session_cache["sessions"] = sessions
+    _session_cache["last_check"] = now
     return sessions
 
 @app.get("/api/memory/session")
@@ -345,6 +380,10 @@ async def creative_websocket(websocket: WebSocket):
             # Use a specialized script for image generation
             filename = f"dashboard/assets/gen_{int(time.time())}.png"
             
+            env = os.environ.copy()
+            env.setdefault("HF_HOME", "/home/rocketegg/.cache/huggingface")
+            env.setdefault("TRANSFORMERS_CACHE", "/home/rocketegg/.cache/huggingface")
+            env.setdefault("HF_HUB_OFFLINE", "1")
             process = subprocess.Popen(
                 [
                     "/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3",
@@ -356,7 +395,8 @@ async def creative_websocket(websocket: WebSocket):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
-                bufsize=1
+                bufsize=1,
+                env=env
             )
             
             await manager.set_responding(True)
@@ -380,8 +420,7 @@ async def creative_websocket(websocket: WebSocket):
 @app.get("/api/search")
 async def search(q: str):
     try:
-        embeddings = get_embeddings()
-        vector_db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
+        vector_db = get_vector_db()
         results = vector_db.similarity_search(q, k=5)
         return [{"content": r.page_content, "metadata": r.metadata} for r in results]
     except Exception as e:
@@ -423,6 +462,7 @@ async def inference_websocket(websocket: WebSocket):
             req = json.loads(data)
             model_id = req.get("model")
             prompt = req.get("prompt")
+            print(f"[INF] Request received: model={model_id} prompt_len={len(prompt) if prompt else 0}")
             
             await manager.set_responding(True)
             state.last_activity = datetime.now()
@@ -460,14 +500,22 @@ async def inference_websocket(websocket: WebSocket):
                     await websocket.send_json({"type": "token", "text": f"[ERROR] Transmission Failure: {str(e)}\n"})
             else:
                 # Fallback to subprocess for other models
+                await websocket.send_json({"type": "token", "text": "[SYSTEM] Loading model weights (first run can take a few minutes)...\n"})
+                env = os.environ.copy()
+                env.setdefault("HF_HOME", "/home/rocketegg/.cache/huggingface")
+                env.setdefault("TRANSFORMERS_CACHE", "/home/rocketegg/.cache/huggingface")
+                env.setdefault("HF_HUB_OFFLINE", "1")
                 process = subprocess.Popen(
                     ["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "/home/rocketegg/clawd/dashboard/run_inf.py", model_id, prompt],
-                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1,
+                    env=env
                 )
                 for line in iter(process.stdout.readline, ''):
                     if line: await websocket.send_json({"type": "token", "text": line})
                 process.stdout.close()
                 process.wait()
+                if process.returncode not in (0, None):
+                    await websocket.send_json({"type": "token", "text": f"[ERROR] Inference process exited with code {process.returncode}\n"})
             
             state.last_activity = datetime.now()
             await manager.set_responding(False)
