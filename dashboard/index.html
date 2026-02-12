@@ -897,6 +897,29 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- LABORATORY SUPPLY CHAIN -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--gold);">
+                    <h2 style="color: var(--gold); display: flex; justify-content: space-between; align-items: center;">
+                        Laboratory Supply Chain
+                        <span onclick="updateSupplyChain()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="supply-chain-container">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 4px; border-bottom: 2px solid var(--gold);">
+                                <div style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase;">Storage Capacity</div>
+                                <div id="supply-storage" style="font-size: 1.1rem; font-family: 'Orbitron';">-- / -- GB</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 4px; border-bottom: 2px solid var(--gold);">
+                                <div style="font-size: 0.6rem; color: var(--gold); text-transform: uppercase;">Main Credit</div>
+                                <div id="supply-credits" style="font-size: 1.1rem; font-family: 'Orbitron';">$0.00</div>
+                            </div>
+                        </div>
+                        <div id="credits-list" style="font-size: 0.7rem; color: #aaa; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 4px;">
+                            [SYSTEM] Scanning provider balances...
+                        </div>
+                    </div>
+                </div>
+
                 <!-- HARDWARE HEALTH DASHBOARD -->
                 <div class="card" style="margin-bottom: 2rem; border-color: #00ff64;">
                     <h2 style="color: #00ff64; display: flex; justify-content: space-between; align-items: center;">
@@ -2203,6 +2226,31 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+        async function updateSupplyChain() {
+            try {
+                const response = await fetch('/api/lab/supply-chain');
+                const data = await response.json();
+                
+                if (data.storage) {
+                    document.getElementById('supply-storage').textContent = `${data.storage.used_gb} / ${data.storage.total_gb} GB`;
+                }
+                
+                if (data.credits) {
+                    const mainVal = data.credits.DeepSeek || 0;
+                    document.getElementById('supply-credits').textContent = `$${mainVal.toFixed(2)}`;
+                    
+                    const list = document.getElementById('credits-list');
+                    list.innerHTML = Object.entries(data.credits).map(([name, val]) => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                            <span>${name.toUpperCase()}</span>
+                            <span style="color: var(--gold);">${typeof val === 'number' && val > 1000 ? (val/1000).toFixed(1) + 'k' : val}</span>
+                        </div>
+                    `).join('');
+                }
+                addLog("[SYSTEM] Supply chain logistics updated.");
+            } catch (err) {}
+        }
+
         async function updateHardwareHealth() {
             try {
                 const response = await fetch('/api/hardware/health');
@@ -2783,6 +2831,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateHardwareHealth, 5000);
         setInterval(updateMoltbookFeed, 60000 * 5); // Every 5 mins
         setInterval(updateAmbient, 45000);
+        setInterval(updateSupplyChain, 60000 * 30); // Every 30 mins
         setInterval(checkNightMode, 60000);
         initChart();
         initNeuralFabric();
@@ -2798,6 +2847,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateBenchmarkArchive();
         updateStressResults();
         updateInventory();
+        updateSupplyChain();
         updateAgentActivity();
         updateHardwareHealth();
         updateMoltbookFeed();

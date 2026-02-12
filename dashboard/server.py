@@ -695,6 +695,15 @@ async def get_moltbook_feed():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/api/lab/supply-chain")
+async def get_supply_chain():
+    # Use the utility script to fetch capacity and credits
+    try:
+        result = subprocess.check_output(["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "/home/rocketegg/clawd/dashboard/supply_chain.py"])
+        return json.loads(result)
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/api/project/timeline")
 async def get_project_timeline():
     return [
