@@ -231,7 +231,7 @@ def get_embeddings():
 
 def get_gpu_stats():
     try:
-        cmd = "nvidia-smi --query-gpu=name,temperature.gpu,utilization.gpu,utilization.memory,memory.total,memory.used,power.draw --format=csv,noheader,nounits"
+        cmd = "nvidia-smi --query-gpu=name,temperature.gpu,utilization.gpu,utilization.memory,memory.total,memory.used,power.draw,clocks.current.graphics --format=csv,noheader,nounits"
         result = subprocess.check_output(cmd, shell=True).decode('utf-8').strip()
         parts = [p.strip() for p in result.split(',')]
         return {
@@ -241,7 +241,8 @@ def get_gpu_stats():
             "util_mem": float(parts[3]),
             "mem_total": float(parts[4]),
             "mem_used": float(parts[5]),
-            "power": float(parts[6])
+            "power": float(parts[6]),
+            "clock": float(parts[7])
         }
     except Exception as e:
         return {"error": str(e)}
@@ -316,7 +317,7 @@ async def list_loras():
         files = glob.glob(os.path.join(lora_dir, "*.safetensors"))
         for f in files:
             name = os.path.basename(f)
-            loras.append({"id": f"flux/{name}", "name": name.replace(".safetensors", "").replace("_", " ").title()})
+            loras.append({"id": f"flux/${name}", "name": name.replace(".safetensors", "").replace("_", " ").title()})
     return loras
 
 @app.websocket("/ws/creative")
