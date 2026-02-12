@@ -1,0 +1,32 @@
+[
+    {
+        "iteration": 0,
+        "r1_raw_acc": 0.78,
+        "hallucination_rate": 0.25,
+        "corrected_acc": 0.97
+    },
+    {
+        "iteration": 1,
+        "r1_raw_acc": 0.850824481251726,
+        "hallucination_rate": 0.128354279758148,
+        "corrected_acc": 0.9483737338679186
+    },
+    {
+        "iteration": 2,
+        "r1_raw_acc": 0.8937817005891404,
+        "hallucination_rate": 0.06589928452893169,
+        "corrected_acc": 0.9438651568311285
+    },
+    {
+        "iteration": 3,
+        "r1_raw_acc": 0.9198365711732827,
+        "hallucination_rate": 0.033833820809153176,
+        "corrected_acc": 0.9455502749882391
+    },
+    {
+        "iteration": 4,
+        "r1_raw_acc": 0.9356396490174097,
+        "hallucination_rate": 0.017370862805700386,
+        "corrected_acc": 0.948841504749742
+    }
+]
