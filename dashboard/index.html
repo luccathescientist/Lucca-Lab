@@ -1240,6 +1240,19 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         const thermalData = [];
         const thermalLabels = [];
 
+        async function updateWeatherBadge() {
+            try {
+                const response = await fetch('/api/weather');
+                const data = await response.json();
+                const badge = document.getElementById('weather-badge');
+                if (data.data) {
+                    badge.textContent = data.data;
+                    badge.style.borderColor = 'var(--gold)';
+                    badge.style.color = 'var(--gold)';
+                }
+            } catch (err) {}
+        }
+
         function initVramHeatmap() {
             const container = document.getElementById('vram-heatmap-container');
             container.innerHTML = '';
@@ -2860,6 +2873,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         drawSchematic();
         initVramHeatmap();
         loadInitialMessages();
+        updateWeatherBadge();
         connectWS();
         connectInfWS();
         connectCreativeWS();

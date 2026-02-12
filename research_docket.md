@@ -14,7 +14,7 @@
 - [x] **Neural Plasticity for Continuous Edge Adaptation**: Implement a lightweight mechanism for online weight updates on Blackwell to adapt to local sensor data in real-time. (2026-02-12)
 - [x] **Speculative Multi-Modal Decoding with Latent Projections**: Research using a small vision model to speculate text tokens for a larger multimodal reasoning model by projecting visual features into the text latent space. (2026-02-12)
 - [x] **Hierarchical MoE Routing for 1T+ Parameter Models**: Develop a tiered gating mechanism to manage extreme sparsity and VRAM residency for trillion-parameter models on a single RTX 6000. (2026-02-12)
-- [ ] **Quantum-Inspired Neural Architecture Search for sm_120**: Use quantum-inspired algorithms to optimize the topology of transformer blocks specifically for Blackwell's cache hierarchy. (2026-02-12)
+- [x] **Quantum-Inspired Neural Architecture Search for sm_120**: Use quantum-inspired algorithms to optimize the topology of transformer blocks specifically for Blackwell's cache hierarchy. (2026-02-12)
 - [ ] **Hardware-Aware DPO for Sub-INT4 Precision**: Research adapting preference optimization to maintain logical consistency during the fine-tuning of 2-bit and 3-bit models on Blackwell. (2026-02-12)
 - [ ] **Self-Correcting Multimodal Prompts via Visual Feedback**: Build a closed-loop system where the model critiques its own vision-language prompts based on the generated image/video quality. (2026-02-12)
 
