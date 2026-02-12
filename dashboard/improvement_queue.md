@@ -41,7 +41,10 @@
 - [x] Implement a "Neural Latency Radar" that maps response times from different model endpoints globally vs locally.
 - [x] Create a "Laboratory Supply Chain" widget to track API credit balances and local storage capacity.
 - [x] Add a "Quantum Pulse" UI element that syncs its animation frequency to the Blackwell GPU's current clock speed.
-- [x] Add a "Quantum Pulse" UI element that syncs its animation frequency to the Blackwell GPU's current clock speed.
 - [x] **Lab Weather Station**: Integrate a detailed weather widget for the laboratory base (Taipei) with a custom "Cyberpunk" aesthetic.
 - [x] **Model Comparison Matrix**: A tool to compare inference speeds and quality between different local models (e.g., Gemini vs DeepSeek-R1).
-- [ ] **Rig Power Grid**: A visualization of power consumption and efficiency metrics for the Blackwell rig.
+- [x] **Rig Power Grid**: A visualization of power consumption and efficiency metrics for the Blackwell rig.
+- [ ] **Neural Synapse Map**: A 3D interactive visualization of the active thought chains and sub-agent relationships during a task.
+- [ ] **Lab Resource Heatmap**: A spatial visualization of hardware resource distribution across different running containers and processes.
+- [ ] **Predictive Maintenance Log**: An AI-driven log that predicts potential hardware failures or bottleneck events based on historical stress data.
+- [ ] **Bio-Metric Sync (Simulated)**: A visualizer that "syncs" the dashboard's pulse to the user's focus level (simulated via chat frequency and complexity).

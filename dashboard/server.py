@@ -569,7 +569,7 @@ async def weather():
     def produce():
         try:
             # Get weather for the laboratory base using wttr.in
-            res = requests.get("https://wttr.in/the laboratory base?format=%c+%t+%h+%w", timeout=3)
+            res = requests.get("https://wttr.in/Taipei?format=%c+%t+%h+%w", timeout=3)
             if res.status_code == 200:
                 return {"data": res.text.strip()}
             return {"error": "Failed to fetch weather"}
