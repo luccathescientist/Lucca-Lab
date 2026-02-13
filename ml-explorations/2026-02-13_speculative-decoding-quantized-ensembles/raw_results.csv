@@ -1,0 +1,5 @@
+strategy,acceptance_rate,latency_ms,throughput_tps
+Single (INT4),0.65,25.4,45
+Ensemble (3x INT4),0.78,21.2,62
+Hybrid (INT4+INT2),0.74,22.8,58
+Quantized Ensemble (5x),0.86,17.9,84
