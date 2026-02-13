@@ -817,6 +817,48 @@ async def get_patch_log():
                     except: pass
     return results[::-1] # Newest first
 
+@app.get("/api/lab/biometrics")
+async def get_biometrics():
+    def produce():
+        import random
+        # Simulate bio-metric sync based on "focus" (activity)
+        # Higher activity -> higher simulated heart rate
+        return {
+            "bpm": random.randint(68, 85),
+            "mode": "COGNITIVE_MIRROR",
+            "sync_status": "Linked"
+        }
+    return cached_response("biometrics", 4, produce)
+
+@app.get("/api/lab/knowledge-pulse")
+async def get_knowledge_pulse():
+    def produce():
+        import random
+        # Real-ish data could be pulled from the vector DB's most recent entries
+        # For now, simulate a pulse of newly "digested" knowledge nodes
+        nodes = [
+            "sm_120 TPC utilization: 92.4%",
+            "Quantized speculation: 1.8x speedup",
+            "Fourier Identity Anchors verified",
+            "L2-aligned sparse attention: STABLE",
+            "DeepSeek-R1 logic trajectory: OPTIMAL",
+            "Hardware-Aware NAS: Block alignment 100%",
+            "Cross-Modal latent handoff: <600ms",
+            "Neural Knowledge Graph: 12% latency reduction"
+        ]
+        import time
+        latest = []
+        for i in range(3):
+            latest.append({
+                "time": datetime.now().strftime("%H:%M:%S"),
+                "text": random.choice(nodes)
+            })
+        return {
+            "total_nodes": random.randint(4500, 5200),
+            "latest": latest
+        }
+    return cached_response("knowledge_pulse", 8, produce)
+
 @app.get("/api/project/timeline")
 async def get_project_timeline():
     return [

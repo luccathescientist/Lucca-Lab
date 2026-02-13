@@ -1211,6 +1211,49 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- BIO-METRIC SYNC -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden; position: relative;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Bio-Metric Sync (Simulated)
+                        <span id="sync-status-label" style="font-size: 0.6rem; opacity: 0.7;">LINKED</span>
+                    </h2>
+                    <div style="display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0;">
+                        <div id="heart-rate-visual" style="position: relative; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 32 32" style="width: 100%; height: 100%; fill: var(--accent-color); filter: drop-shadow(0 0 8px var(--accent-glow)); animation: heart-beat var(--heart-speed, 1s) infinite ease-in-out;">
+                                <path d="M16 28.5L14.1 26.8C7.4 20.7 3 16.7 3 11.8C3 7.8 6.1 4.7 10.1 4.7C12.4 4.7 14.6 5.8 16 7.5C17.4 5.8 19.6 4.7 21.9 4.7C25.9 4.7 29 7.8 29 11.8C29 16.7 24.6 20.7 17.9 26.8L16 28.5Z" />
+                            </svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                <span id="bpm-val" style="font-family: 'Orbitron'; font-size: 1.8rem; color: white;">--</span>
+                                <span style="font-size: 0.7rem; color: #888;">BPM (FOCUS)</span>
+                            </div>
+                            <div id="sync-mode" style="font-size: 0.65rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px;">MODE: COGNITIVE_MIRROR</div>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes heart-beat {
+                            0%, 100% { transform: scale(1); opacity: 0.8; }
+                            15% { transform: scale(1.2); opacity: 1; }
+                            30% { transform: scale(1.1); opacity: 0.9; }
+                            45% { transform: scale(1.25); opacity: 1; }
+                        }
+                    </style>
+                </div>
+
+                <!-- NEURAL KNOWLEDGE PULSE -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Knowledge Pulse
+                        <span id="knowledge-count" style="font-size: 0.6rem; opacity: 0.7;">0 Nodes Digested</span>
+                    </h2>
+                    <div id="knowledge-pulse-container" style="height: 150px; overflow-y: hidden; background: rgba(0,0,0,0.4); border-radius: 4px; padding: 0.8rem; font-family: 'Fira Code', monospace; font-size: 0.7rem; position: relative;">
+                        <div id="knowledge-stream" style="display: flex; flex-direction: column; gap: 6px; position: absolute; bottom: 10px; left: 10px; right: 10px;">
+                            <div style="color: #666;">[IDLE] Waiting for ingest...</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1515,6 +1558,36 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     badge.textContent = data.data;
                     badge.style.borderColor = 'var(--gold)';
                     badge.style.color = 'var(--gold)';
+                }
+            } catch (err) {}
+        }
+
+        async function updateBioMetrics() {
+            try {
+                const response = await fetch('/api/lab/biometrics');
+                const data = await response.json();
+                document.getElementById('bpm-val').textContent = data.bpm;
+                document.getElementById('sync-mode').textContent = `MODE: ${data.mode}`;
+                const speed = 60 / data.bpm;
+                document.documentElement.style.setProperty('--heart-speed', `${speed}s`);
+            } catch (err) {}
+        }
+
+        async function updateKnowledgePulse() {
+            try {
+                const response = await fetch('/api/lab/knowledge-pulse');
+                const data = await response.json();
+                const stream = document.getElementById('knowledge-stream');
+                const count = document.getElementById('knowledge-count');
+                
+                count.textContent = `${data.total_nodes} Nodes Digested`;
+                
+                if (data.latest && data.latest.length > 0) {
+                    stream.innerHTML = data.latest.map(node => `
+                        <div style="color: #00ff64; animation: slide-up 0.5s ease-out; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid #00ff64; padding-left: 6px;">
+                            <span style="color: #888;">[${node.time}]</span> ${node.text}
+                        </div>
+                    `).join('');
                 }
             } catch (err) {}
         }
@@ -3377,6 +3450,8 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'tools') updateFileExplorer(); }, 60000);
         setInterval(() => { if (currentTab === 'tools') updatePatchLog(); }, 60000);
         setInterval(() => { if (currentTab === 'tools') updateSupplyChain(); }, 60000 * 30); // Every 30 mins
+        setInterval(updateBioMetrics, 5000);
+        setInterval(updateKnowledgePulse, 10000);
         setInterval(checkNightMode, 60000);
         initChart();
         initNeuralFabric();
@@ -3393,6 +3468,8 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         drawSchematic();
         initVramHeatmap();
         updateMaintenanceLog();
+        updateBioMetrics();
+        updateKnowledgePulse();
         loadInitialMessages();
         updateWeatherBadge();
         showDebugBanner('Dashboard JS loaded');
