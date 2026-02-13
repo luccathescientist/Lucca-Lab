@@ -1303,6 +1303,9 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                         <textarea id="creative-prompt" placeholder="Describe your masterpiece..." style="width: 100%; height: 60px; margin-bottom: 0.5rem; resize: none; border-color: var(--accent-glow);"></textarea>
                         <button id="creative-btn" onclick="runCreative()" style="width: 100%; background: var(--accent-color); color: white;">FORGE IMAGE</button>
                     </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <button onclick="loadBaseModels()" style="flex: 1; background: rgba(209, 120, 255, 0.15); border: 1px solid var(--accent-color); font-size: 0.6rem; padding: 0.6rem;">RELOAD MODELS</button>
+                    </div>
                     <div id="creative-status" style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--gold);"></div>
                     <div id="creative-output" style="margin-top: 1rem; text-align: center;">
                         <img id="generated-img" style="max-width: 100%; border-radius: 8px; box-shadow: 0 0 20px var(--accent-glow); display: none;">
@@ -2218,12 +2221,14 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                 const response = await fetch('/api/creative/loras');
                 const loras = await response.json();
                 const select = document.getElementById('lora-select');
+                const options = ['<option value="">(No LoRA)</option>'];
                 if (!loras || loras.length === 0) {
-                    select.innerHTML = '<option value="">No LoRAs found</option>';
-                    document.getElementById('creative-status').textContent = '[WARN] No LoRAs detected.';
+                    select.innerHTML = options.join('');
+                    document.getElementById('creative-status').textContent = '[WARN] No valid LoRAs detected.';
                     return;
                 }
-                select.innerHTML = loras.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+                loras.forEach(l => options.push(`<option value="${l.id}">${l.name}</option>`));
+                select.innerHTML = options.join('');
             } catch (err) {
                 document.getElementById('creative-status').textContent = '[ERROR] Failed to load LoRAs.';
             }
@@ -2276,6 +2281,9 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
 
             sendCreativePayload({ lora: lora, prompt: prompt, base_model: baseModel });
         }
+
+
+        // UI creative test removed (use server-side tests instead)
 
         function addLog(text) {
             const container = document.getElementById('log-container');

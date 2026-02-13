@@ -374,8 +374,13 @@ async def list_loras():
     if os.path.exists(lora_dir):
         files = glob.glob(os.path.join(lora_dir, "*.safetensors"))
         for f in files:
+            try:
+                if os.path.getsize(f) < 1024 * 1024:
+                    continue
+            except Exception:
+                continue
             name = os.path.basename(f)
-            loras.append({"id": f"flux/${name}", "name": name.replace(".safetensors", "").replace("_", " ").title()})
+            loras.append({"id": f"flux/{name}", "name": name.replace(".safetensors", "").replace("_", " ").title()})
     return loras
 
 @app.get("/api/creative/checkpoints")
@@ -390,6 +395,46 @@ async def list_checkpoints():
                 continue
             checkpoints.append({"id": name, "name": name})
     return checkpoints
+
+@app.post("/api/creative/test")
+async def creative_test():
+    base_model = "hassaku_xl_illustrious.safetensors"
+    prompt = "test image of a cat"
+    filename = f"/home/rocketegg/clawd/dashboard/assets/test_ui_{int(time.time())}.png"
+
+    env = os.environ.copy()
+    env.setdefault("HF_HOME", "/home/rocketegg/.cache/huggingface")
+    env.setdefault("TRANSFORMERS_CACHE", "/home/rocketegg/.cache/huggingface")
+    env.setdefault("HF_HUB_OFFLINE", "1")
+
+    process = subprocess.Popen(
+        [
+            "/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3",
+            "/home/rocketegg/clawd/dashboard/gen_creative.py",
+            "",
+            prompt,
+            filename,
+            base_model
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+        env=env
+    )
+
+    log_lines = []
+    for line in iter(process.stdout.readline, ''):
+        if line:
+            log_lines.append(line.rstrip())
+    process.stdout.close()
+    process.wait()
+
+    return {
+        "status": "ok" if os.path.exists(filename) else "error",
+        "file": filename if os.path.exists(filename) else None,
+        "log": log_lines[-50:]
+    }
 
 @app.websocket("/ws/creative")
 async def creative_websocket(websocket: WebSocket):
