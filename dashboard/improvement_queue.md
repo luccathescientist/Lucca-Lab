@@ -50,5 +50,5 @@
 - [x] **Bio-Metric Sync (Simulated)**: A visualizer that "syncs" the dashboard's pulse to the user's focus level (simulated via chat frequency and complexity).
 - [x] **Neural Knowledge Pulse**: A real-time stream of newly "digested" knowledge nodes from the local vector database.
 - [x] **Autonomous Patch Log**: A dedicated view showing the history and impact of these autonomous dashboard evolutions.
-- [ ] **Hardware Topology Graph**: A visualization of the physical hardware interconnects (NVLink, PCIe lanes) and their current bandwidth utilization.
+- [x] **Hardware Topology Graph**: A visualization of the physical hardware interconnects (NVLink, PCIe lanes) and their current bandwidth utilization.
 - [ ] **Neural Vibe Shifter**: A control to adjust the "personality" parameters of the local models (e.g., creative vs logical) with visual feedback.

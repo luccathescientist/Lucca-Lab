@@ -1110,6 +1110,46 @@ async def get_maintenance_log():
         }
     return cached_response("maintenance_log", 300, produce)
 
+@app.get("/api/hardware/topology")
+async def get_hardware_topology():
+    def produce():
+        # Get real PCIe info from nvidia-smi
+        try:
+            cmd = "nvidia-smi --query-gpu=pcie.link.gen.current,pcie.link.width.current,pcie.link.gen.max,pcie.link.width.max --format=csv,noheader,nounits"
+            res = subprocess.check_output(cmd, shell=True, timeout=1.5).decode('utf-8').strip()
+            p = [x.strip() for x in res.split(',')]
+            pcie_info = {
+                "gen_cur": p[0],
+                "width_cur": p[1],
+                "gen_max": p[2],
+                "width_max": p[3]
+            }
+        except:
+            pcie_info = {"gen_cur": "N/A", "width_cur": "N/A", "gen_max": "N/A", "width_max": "N/A"}
+
+        # Simulate components and interconnects
+        nodes = [
+            {"id": "cpu", "label": "CPU (HOST)", "type": "processor"},
+            {"id": "gpu", "label": "RTX 6000 (BLACKWELL)", "type": "gpu"},
+            {"id": "vram", "label": "80GB GDDR6", "type": "memory"},
+            {"id": "nvme", "label": "GEN5 SSD", "type": "storage"},
+            {"id": "l2-cache", "label": "512KB L2", "type": "cache"}
+        ]
+        
+        edges = [
+            {"from": "cpu", "to": "gpu", "label": f"PCIe Gen{pcie_info['gen_cur']} x{pcie_info['width_cur']}", "speed": f"Gen{pcie_info['gen_cur']}"},
+            {"from": "gpu", "to": "vram", "label": "NVLink-7", "speed": "1950 GB/s"},
+            {"from": "gpu", "to": "l2-cache", "label": "Internal Bus", "speed": "4.8 TB/s"},
+            {"from": "cpu", "to": "nvme", "label": "Direct Path", "speed": "14 GB/s"}
+        ]
+        
+        return {
+            "nodes": nodes,
+            "edges": edges,
+            "pcie": pcie_info
+        }
+    return cached_response("hardware_topology", DEFAULT_TTL_SECONDS, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

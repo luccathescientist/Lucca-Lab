@@ -1062,6 +1062,20 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- HARDWARE TOPOLOGY GRAPH -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Hardware Topology Graph
+                        <span onclick="updateHardwareTopology()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="hw-topology-container" style="height: 300px; background: rgba(0,0,0,0.4); border-radius: 4px; position: relative; overflow: hidden;">
+                        <canvas id="hw-topology-canvas" style="width: 100%; height: 100%;"></canvas>
+                        <div id="hw-topology-overlay" style="position: absolute; bottom: 10px; right: 10px; font-size: 0.6rem; color: var(--accent-color); background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; border: 1px solid var(--accent-color);">
+                            PCIE: --
+                        </div>
+                    </div>
+                </div>
+
                 <!-- RIG CAMERA FEED -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
                     <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
@@ -1512,6 +1526,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateSecurityMonitor();
                     updateAgentActivity();
                     updateResourceHeatmap();
+                    updateHardwareTopology();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -3361,6 +3376,83 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             }
             
             requestAnimationFrame(drawSchematic);
+        }
+
+        async function updateHardwareTopology() {
+            try {
+                const response = await fetch('/api/hardware/topology');
+                const data = await response.json();
+                drawHardwareTopology(data);
+                const overlay = document.getElementById('hw-topology-overlay');
+                if (overlay) overlay.textContent = `PCIE: Gen${data.pcie.gen_cur} x${data.pcie.width_cur} (MAX: Gen${data.pcie.gen_max} x${data.pcie.width_max})`;
+            } catch (err) {}
+        }
+
+        function drawHardwareTopology(data) {
+            const canvas = document.getElementById('hw-topology-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            const nodes = data.nodes;
+            const edges = data.edges;
+            const positions = {};
+
+            // Layout nodes
+            nodes.forEach((node, i) => {
+                // Manual layout for a more "hardware schematic" feel
+                const xMap = { "cpu": 0.2, "gpu": 0.5, "vram": 0.8, "nvme": 0.2, "l2-cache": 0.8 };
+                const yMap = { "cpu": 0.3, "gpu": 0.5, "vram": 0.5, "nvme": 0.7, "l2-cache": 0.3 };
+                
+                positions[node.id] = {
+                    x: canvas.width * (xMap[node.id] || 0.5),
+                    y: canvas.height * (yMap[node.id] || 0.5),
+                    label: node.label,
+                    type: node.type
+                };
+            });
+
+            // Draw edges
+            edges.forEach(edge => {
+                const start = positions[edge.from];
+                const end = positions[edge.to];
+                if (start && end) {
+                    ctx.strokeStyle = 'rgba(209, 120, 255, 0.4)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(start.x, start.y);
+                    ctx.lineTo(end.x, end.y);
+                    ctx.stroke();
+                    
+                    // Label edge
+                    ctx.fillStyle = '#888';
+                    ctx.font = '8px Fira Code';
+                    const midX = (start.x + end.x) / 2;
+                    const midY = (start.y + end.y) / 2;
+                    ctx.fillText(edge.label, midX, midY - 5);
+                }
+            });
+
+            // Draw nodes
+            Object.keys(positions).forEach(id => {
+                const pos = positions[id];
+                const color = pos.type === 'gpu' ? 'var(--accent-color)' : pos.type === 'processor' ? 'var(--gold)' : '#888';
+                
+                // Box
+                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.rect(pos.x - 35, pos.y - 20, 70, 40);
+                ctx.fill();
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = 'white';
+                ctx.font = '8px Orbitron';
+                ctx.textAlign = 'center';
+                ctx.fillText(pos.label, pos.x, pos.y + 5);
+            });
         }
 
         async function snapCamera(evt) {
