@@ -805,6 +805,18 @@ async def get_supply_chain():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/api/lab/patch-log")
+async def get_patch_log():
+    log_path = "/home/rocketegg/clawd/dashboard/patch_log.jsonl"
+    results = []
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    try: results.append(json.loads(line))
+                    except: pass
+    return results[::-1] # Newest first
+
 @app.get("/api/project/timeline")
 async def get_project_timeline():
     return [
