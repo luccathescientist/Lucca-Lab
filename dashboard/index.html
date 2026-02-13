@@ -578,6 +578,29 @@
                     </div>
                 </div>
 
+                <!-- LAB RESOURCE HEATMAP -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Lab Resource Heatmap
+                        <span onclick="updateResourceHeatmap()" style="cursor: pointer; opacity: 0.7; font-size: 0.7rem;">🔄</span>
+                    </h2>
+                    <div style="display: grid; grid-template-columns: 240px 1fr; gap: 1rem; align-items: start;">
+                        <div>
+                            <div id="resource-heatmap-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px;">
+                                <!-- cells injected by JS -->
+                            </div>
+                            <div style="margin-top: 0.6rem; display: flex; justify-content: space-between; font-size: 0.6rem; color: #888;">
+                                <span>COOL</span>
+                                <span>HOT</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.6rem; color: #888; margin-bottom: 0.4rem;">TOP PROCESSES (CPU/MEM/GPU)</div>
+                            <div id="resource-heatmap-list" style="max-height: 220px; overflow-y: auto; font-size: 0.7rem; background: rgba(0,0,0,0.25); padding: 0.5rem; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- NEURAL STRESS RESULTS -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--danger-color);">
                     <h2 style="color: var(--danger-color); display: flex; justify-content: space-between;">
@@ -1430,6 +1453,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateHardwareHealth();
                     updateSecurityMonitor();
                     updateAgentActivity();
+                    updateResourceHeatmap();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -1936,6 +1960,82 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {
                 addLog(`[ERROR] Macro ${type} failed.`);
             }
+        }
+
+        function initResourceHeatmap() {
+            const grid = document.getElementById('resource-heatmap-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            // 6x6 grid = 36 cells
+            for (let i = 0; i < 36; i++) {
+                const cell = document.createElement('div');
+                cell.id = `res-cell-${i}`;
+                cell.style.aspectRatio = '1/1';
+                cell.style.background = '#1a1a2e';
+                cell.style.border = '1px solid #333';
+                cell.style.borderRadius = '2px';
+                cell.style.transition = 'all 0.3s ease';
+                cell.title = 'idle';
+                grid.appendChild(cell);
+            }
+        }
+
+        function scoreToColor(t) {
+            // t in [0,1]
+            const clamp = Math.max(0, Math.min(1, t));
+            if (clamp < 0.33) return 'rgba(0,255,100,0.20)';
+            if (clamp < 0.66) return 'rgba(255,204,0,0.25)';
+            return 'rgba(255,62,62,0.30)';
+        }
+
+        async function updateResourceHeatmap() {
+            try {
+                const response = await fetch('/api/resources/heatmap');
+                const data = await response.json();
+                const procs = data.processes || [];
+
+                const list = document.getElementById('resource-heatmap-list');
+                const maxScore = Math.max(...procs.map(p => p.score || 0), 1);
+
+                // Update grid
+                for (let i = 0; i < 36; i++) {
+                    const cell = document.getElementById(`res-cell-${i}`);
+                    if (!cell) continue;
+                    const p = procs[i];
+                    if (!p) {
+                        cell.style.background = '#1a1a2e';
+                        cell.style.boxShadow = 'none';
+                        cell.title = 'idle';
+                        continue;
+                    }
+                    const t = (p.score || 0) / maxScore;
+                    cell.style.background = scoreToColor(t);
+                    cell.style.boxShadow = t > 0.66 ? '0 0 8px rgba(255,62,62,0.25)' : t > 0.33 ? '0 0 6px rgba(255,204,0,0.2)' : '0 0 6px rgba(0,255,100,0.12)';
+                    const gpuGb = (p.gpu_mem_mb || 0) / 1024;
+                    cell.title = `${p.name} (pid ${p.pid}) | CPU ${p.cpu.toFixed(1)}% | MEM ${p.mem.toFixed(1)}% | GPU ${gpuGb.toFixed(2)}GB`;
+                }
+
+                // Update list
+                if (list) {
+                    if (procs.length === 0) {
+                        list.innerHTML = '<div style="color: #666; text-align: center; padding: 1rem;">[NO DATA]</div>';
+                    } else {
+                        list.innerHTML = procs.slice(0, 12).map(p => {
+                            const gpuGb = (p.gpu_mem_mb || 0) / 1024;
+                            return `
+                                <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: white;">
+                                        ${p.name} <span style="color:#666; font-size:0.6rem;">(pid ${p.pid})</span>
+                                    </div>
+                                    <div style="color: var(--accent-color); font-family: 'Orbitron'; font-size: 0.6rem; text-align:right;">
+                                        ${p.cpu.toFixed(1)}% CPU · ${p.mem.toFixed(1)}% MEM · ${gpuGb.toFixed(2)}GB GPU
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (err) {}
         }
 
         async function updateStressResults() {
@@ -3244,6 +3344,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(snapCamera, 30000); // Auto-refresh every 30s
 
         setInterval(() => { if (currentTab === 'rig') updateLatencyRadar(); }, 15000);
+        setInterval(() => { if (currentTab === 'rig') updateResourceHeatmap(); }, 5000);
         setInterval(() => { if (currentTab === 'rig') updateStats(); }, 3000);
         setInterval(() => { if (currentTab === 'memory') updateMemory(); }, 30000);
         setInterval(() => { if (currentTab === 'llm') updateModelLoadout(); }, 20000);
@@ -3266,6 +3367,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(checkNightMode, 60000);
         initChart();
         initNeuralFabric();
+        initResourceHeatmap();
         initTabs();
         updateStats();
         setTimeout(updateWeather, 1500);

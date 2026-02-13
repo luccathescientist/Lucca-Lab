@@ -915,6 +915,77 @@ async def test_tts(req: dict):
     await manager.broadcast({"type": "log", "content": f"[AUDIO] TTS Test: Generating speech with {voice} voice."})
     return {"status": "success", "message": "TTS synthesis complete."}
 
+@app.get("/api/resources/heatmap")
+async def get_resource_heatmap():
+    def produce():
+        # Returns top processes + optional GPU memory per PID. No extra deps.
+        procs = []
+        try:
+            # pid, command, cpu%, mem%
+            out = subprocess.check_output(
+                "ps -eo pid,comm,%cpu,%mem --sort=-%cpu | head -n 16",
+                shell=True,
+                text=True,
+                timeout=1.5,
+            )
+            lines = [l.strip() for l in out.splitlines() if l.strip()]
+            for line in lines[1:]:
+                parts = line.split(None, 3)
+                if len(parts) < 4:
+                    continue
+                pid, comm, cpu, mem = parts[0], parts[1], parts[2], parts[3]
+                procs.append(
+                    {
+                        "pid": int(pid),
+                        "name": comm,
+                        "cpu": float(cpu),
+                        "mem": float(mem),
+                        "gpu_mem_mb": 0.0,
+                    }
+                )
+        except Exception:
+            procs = []
+
+        # GPU memory by PID if available
+        gpu_by_pid = {}
+        try:
+            smi = subprocess.check_output(
+                "nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader,nounits",
+                shell=True,
+                text=True,
+                timeout=1.5,
+            ).strip()
+            if smi:
+                for row in smi.splitlines():
+                    row = row.strip()
+                    if not row:
+                        continue
+                    p = [x.strip() for x in row.split(",")]
+                    if len(p) >= 2:
+                        try:
+                            gpu_by_pid[int(p[0])] = float(p[1])
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+
+        for p in procs:
+            if p["pid"] in gpu_by_pid:
+                p["gpu_mem_mb"] = gpu_by_pid[p["pid"]]
+
+        # Normalize score for heatmap intensity
+        # score ~ cpu + mem*2 + gpu_mem_gb*8
+        for p in procs:
+            p["score"] = p["cpu"] + (p["mem"] * 2.0) + ((p["gpu_mem_mb"] / 1024.0) * 8.0)
+
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "processes": sorted(procs, key=lambda x: x.get("score", 0), reverse=True)[:15],
+        }
+
+    return cached_response("resource_heatmap", 2, produce)
+
+
 @app.get("/api/latency/radar")
 async def get_latency_radar():
     def produce():
