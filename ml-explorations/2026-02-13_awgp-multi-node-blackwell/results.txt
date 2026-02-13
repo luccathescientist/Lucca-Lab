@@ -1,0 +1,3 @@
+Sequential: 55.56 ms
+AWGP: 50.00 ms
+Speedup: 1.11x
