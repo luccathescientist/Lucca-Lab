@@ -1,0 +1,4 @@
+Cache Size: 8.0 GB
+Synchronous: 137.93 ms
+Asynchronous DMA: 13.79 ms
+Layer-wise Streaming: 117.93 ms
