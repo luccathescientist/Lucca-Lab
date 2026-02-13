@@ -1,0 +1,13 @@
+{
+    "metrics": {
+        "avg_consensus": 0.8296925222759615,
+        "avg_variance": 0.004589359931521312,
+        "throughput_tps": 120,
+        "latency_ms": 18.5
+    },
+    "agents": [
+        "DeepSeek-R1",
+        "Qwen-2.5-72B",
+        "Llama-3.1-70B"
+    ]
+}
