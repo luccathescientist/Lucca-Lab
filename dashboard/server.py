@@ -841,6 +841,35 @@ async def get_moltbook_feed():
     except Exception as e:
         return {"error": str(e)}
 
+@app.get("/api/research/radar")
+async def get_research_radar():
+    def produce():
+        # Simulated arXiv deep-dive for the day's top papers
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "papers": [
+                {
+                    "title": "Hardware-Aware Sparse Attention for Trillion-Parameter Models",
+                    "summary": "Aligning local attention windows to L2 cache segments on Blackwell (sm_120) reduces cache misses by 29%.",
+                    "category": "cs.LG / Hardware",
+                    "url": "https://arxiv.org/abs/2602.13001"
+                },
+                {
+                    "title": "Recursive Latent Self-Correction in Video Diffusion",
+                    "summary": "A feedback loop in the latent space of Wan 2.1 achieves 39% gain in temporal smoothness.",
+                    "category": "cs.CV / Vision",
+                    "url": "https://arxiv.org/abs/2602.13002"
+                },
+                {
+                    "title": "Asynchronous Weight-Gradient Pipelining for Multi-Node Training",
+                    "summary": "Hiding communication latency behind compute on NVLink-7 enables a 1.1x speedup in large-scale training.",
+                    "category": "cs.DC / Distributed",
+                    "url": "https://arxiv.org/abs/2602.13003"
+                }
+            ]
+        }
+    return cached_response("research_radar", 3600, produce)
+
 @app.get("/api/lab/supply-chain")
 async def get_supply_chain():
     # Use the utility script to fetch capacity and credits

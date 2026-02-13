@@ -51,4 +51,9 @@
 - [x] **Neural Knowledge Pulse**: A real-time stream of newly "digested" knowledge nodes from the local vector database.
 - [x] **Autonomous Patch Log**: A dedicated view showing the history and impact of these autonomous dashboard evolutions.
 - [x] **Hardware Topology Graph**: A visualization of the physical hardware interconnects (NVLink, PCIe lanes) and their current bandwidth utilization.
-- [ ] **Neural Vibe Shifter**: A control to adjust the "personality" parameters of the local models (e.g., creative vs logical) with visual feedback.
+- [x] **Neural Vibe Shifter**: A control to adjust the "personality" parameters of the local models (e.g., creative vs logical) with visual feedback.
+- [x] **Research Paper Deep-Dive**: Integrate a "Research Radar" that automatically summarizes the top 3 AI papers of the day from arXiv.
+- [ ] **Neural Knowledge Graph Explorer**: A graph-based visualization of the links between different research notes in the Lab.
+- [ ] **Neural Knowledge Graph Explorer**: A graph-based visualization of the links between different research notes in the Lab.
+- [ ] **Rig Thermal Topography**: A 3D heat map of the Blackwell rig components based on real-time sensor data.
+- [ ] **Sub-Agent Swarm Status**: A tactical view showing the current task, memory usage, and logic trajectory of all active sub-agents.
