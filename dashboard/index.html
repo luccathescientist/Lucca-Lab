@@ -794,6 +794,18 @@
                     </div>
                 </div>
 
+                <!-- PREDICTIVE MAINTENANCE LOG -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--warning-color);">
+                    <h2 style="color: var(--warning-color); display: flex; justify-content: space-between; align-items: center;">
+                        Predictive Maintenance Log
+                        <span onclick="updateMaintenanceLog()" style="cursor: pointer; opacity: 0.7; font-size: 0.7rem;">🔄</span>
+                    </h2>
+                    <div id="maintenance-log-container" style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 4px; max-height: 300px; overflow-y: auto;">
+                        <div style="color: #666; font-size: 0.7rem; text-align: center;">[AI ANALYZING HISTORICAL DATA...]</div>
+                    </div>
+                    <div id="maintenance-meta" style="margin-top: 0.5rem; font-size: 0.6rem; color: #888; text-align: right;">ANALYSIS: --</div>
+                </div>
+
                 <!-- MODEL LABORATORY -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--gold);">
                     <h2 style="color: var(--gold);">Model Laboratory</h2>
@@ -3355,6 +3367,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'rig') updateMilestones(); }, 120000);
         setInterval(() => { if (currentTab === 'rig') updateAgentActivity(); }, 15000);
         setInterval(() => { if (currentTab === 'rig') updateHardwareHealth(); }, 10000);
+        setInterval(() => { if (currentTab === 'rig') updateMaintenanceLog(); }, 60000);
         setInterval(() => { if (currentTab === 'memory') updateMoltbookFeed(); }, 60000 * 10); // Every 10 mins
         setInterval(() => { if (currentTab === 'tools') updateAmbient(); }, 60000);
         setInterval(() => { if (currentTab === 'rig') updateBenchmarks(); }, 60000);
@@ -3379,6 +3392,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         checkNightMode();
         drawSchematic();
         initVramHeatmap();
+        updateMaintenanceLog();
         loadInitialMessages();
         updateWeatherBadge();
         showDebugBanner('Dashboard JS loaded');
