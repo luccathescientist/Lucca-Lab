@@ -7,7 +7,7 @@
 
 ## Pending Tasks
 - [x] **Data+Expert Parallel (DEP) Speculative Decoding for Blackwell**: Research and simulate a DEP configuration for 120B+ models using Blackwell's dual-precision cores to achieve 3x throughput via Eagle-style speculative decoding. (2026-02-15)
-- [ ] **RL-Driven Test-Time Search for Local CUDA Synthesis**: Implement a reinforcement learning loop that uses verifiable symbolic feedback (Z3) to drive inference-time tree search for synthesizing optimal CUDA kernels on sm_120.
+- [x] **RL-Driven Test-Time Search for Local CUDA Synthesis**: Implement a reinforcement learning loop that uses verifiable symbolic feedback (Z3) to drive inference-time tree search for synthesizing optimal CUDA kernels on sm_120. (2026-02-15)
 - [ ] **Cross-Modal KV-Cache Pruning via Saliency-Aware Gating**: Develop a pruning strategy for multimodal long-context (1M+) tokens that uses saliency maps from Qwen2-VL to gate token eviction in the R1 reasoning KV-cache.
 - [ ] **Hierarchical Model Chaining for Autonomous Tool-Use (Bash/Python)**: Build a multi-stage chain (R1 -> Qwen -> Llama) where higher-tier models perform logical planning and lower-tier models generate/verify tool-calling code for local system automation.
 - [ ] **Quantized Low-Rank Adaptation (QLoRA) for INT2 Reasoning**: Research the stability and reasoning retention of 2-bit weight-only quantization for R1-series models using stochastic rounding and Blackwell-specific tensor slicing.
