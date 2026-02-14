@@ -1206,6 +1206,22 @@ async def get_swarm_status():
         return agent_data
     return cached_response("swarm_status", DEFAULT_TTL_SECONDS, produce)
 
+@app.get("/api/nodes/global")
+async def get_nodes_global():
+    def produce():
+        import random
+        # Map paired nodes to global locations
+        # This could eventually pull from the 'nodes' tool data
+        nodes = [
+            {"id": "main-rig", "name": "CHRONO RIG (HOST)", "lat": 25.0330, "lng": 121.5654, "city": "Taipei", "status": "online", "load": 0.45},
+            {"id": "node-alpha", "name": "NODE ALPHA (Pi-5)", "lat": 35.6762, "lng": 139.6503, "city": "Tokyo", "status": "online", "load": 0.12},
+            {"id": "node-beta", "name": "NODE BETA (Jetson)", "lat": 37.7749, "lng": -122.4194, "city": "San Francisco", "status": "offline", "load": 0.0},
+            {"id": "node-gamma", "name": "NODE GAMMA (VPS)", "lat": 52.5200, "lng": 13.4050, "city": "Berlin", "status": "online", "load": 0.05},
+            {"id": "node-delta", "name": "NODE DELTA (Laptop)", "lat": -33.8688, "lng": 151.2093, "city": "Sydney", "status": "online", "load": 0.22}
+        ]
+        return nodes
+    return cached_response("nodes_global", DEFAULT_TTL_SECONDS, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

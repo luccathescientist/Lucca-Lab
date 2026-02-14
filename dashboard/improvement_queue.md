@@ -56,7 +56,7 @@
 - [x] **Neural Knowledge Graph Explorer**: A graph-based visualization of the links between different research notes in the Lab.
 - [x] **Rig Thermal Topography**: A 3D heat map of the Blackwell rig components based on real-time sensor data.
 - [x] **Sub-Agent Swarm Status**: A tactical view showing the current task, memory usage, and logic trajectory of all active sub-agents.
-- [ ] **Laboratory Global Sync**: A map showing the geographic location of all paired nodes and their connection health.
+- [x] **Laboratory Global Sync**: A map showing the geographic location of all paired nodes and their connection health.
 - [ ] **Neural Context Horizon**: A visual representation of the current "active context" vs model limits, showing which files are currently "hot" in memory.
 - [ ] **Autonomous R&D Forecast**: A chart predicting upcoming laboratory milestones based on recent task completion velocity.
 - [ ] **Chronicle Version Control**: A visual diff tool for MEMORY.md, showing how Lucca's long-term memory has evolved over the last 7 days.

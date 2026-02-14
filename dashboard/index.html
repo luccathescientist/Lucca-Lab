@@ -528,6 +528,7 @@
             <div class="left-col">
                 <div class="tab-bar" id="lab-tab-bar">
                     <button class="tab-btn active" data-tab="rig">Rig Stats</button>
+                    <button class="tab-btn" data-tab="nodes">Global Nodes</button>
                     <button class="tab-btn" data-tab="llm">LLM Inference</button>
                     <button class="tab-btn" data-tab="image">Image Gen</button>
                     <button class="tab-btn" data-tab="memory">Memory & Research</button>
@@ -760,6 +761,35 @@
                         <span>0°C (IDLE)</span>
                         <div style="flex: 1; height: 10px; margin: 0 1rem; background: linear-gradient(90deg, #00ffff, #00ff00, #ffff00, #ff0000); border-radius: 5px; opacity: 0.6;"></div>
                         <span>100°C (CRITICAL)</span>
+                    </div>
+                </div>
+
+                <!-- LABORATORY GLOBAL SYNC -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Laboratory Global Sync
+                        <span onclick="updateNodesGlobal()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="global-map-container" style="height: 400px; background: rgba(0,0,0,0.5); border-radius: 4px; position: relative; overflow: hidden; border: 1px solid rgba(209, 120, 255, 0.1);">
+                        <canvas id="global-map-canvas" style="width: 100%; height: 100%;"></canvas>
+                        <div id="node-detail-panel" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent-color); border-radius: 4px; padding: 10px; font-size: 0.65rem; width: 180px; display: none; z-index: 10;">
+                            <div style="color: var(--gold); font-family: 'Orbitron'; margin-bottom: 5px;" id="node-detail-name"></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                                <span>STATUS:</span>
+                                <span id="node-detail-status"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                                <span>LOCATION:</span>
+                                <span id="node-detail-city"></span>
+                            </div>
+                            <div style="margin-top: 5px;">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.5rem; color: #888; margin-bottom: 2px;">
+                                    <span>NODE LOAD</span>
+                                    <span id="node-detail-load-val">0%</span>
+                                </div>
+                                <div class="progress-bar" style="height: 4px;"><div class="progress-fill" id="node-detail-load-fill" style="width: 0%;"></div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -3754,6 +3784,106 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
     let graphNodes = [];
     let graphEdges = [];
     let selectedNode = null;
+    let globalNodes = [];
+
+    async function updateNodesGlobal() {
+        try {
+            const response = await fetch('/api/nodes/global');
+            globalNodes = await response.json();
+            drawGlobalMap();
+        } catch (err) {}
+    }
+
+    function drawGlobalMap() {
+        const canvas = document.getElementById('global-map-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        // Draw simplified world map background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Mercator-ish projection for background dots
+        ctx.fillStyle = 'rgba(209, 120, 255, 0.03)';
+        for(let i=0; i<500; i++) {
+            ctx.beginPath();
+            ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 1, 0, Math.PI*2);
+            ctx.fill();
+        }
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        globalNodes.forEach(node => {
+            // lat/lng to x/y mapping
+            const x = centerX + (node.lng * (canvas.width / 360));
+            const y = centerY - (node.lat * (canvas.height / 180));
+            
+            const isOnline = node.status === 'online';
+            const color = isOnline ? 'var(--accent-color)' : 'var(--danger-color)';
+
+            // Connection line to host
+            if (node.id !== 'main-rig' && isOnline) {
+                const host = globalNodes.find(n => n.id === 'main-rig');
+                if (host) {
+                    const hx = centerX + (host.lng * (canvas.width / 360));
+                    const hy = centerY - (host.lat * (canvas.height / 180));
+                    
+                    ctx.strokeStyle = 'rgba(209, 120, 255, 0.15)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(hx, hy);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+
+            // Node dot
+            ctx.fillStyle = color;
+            ctx.shadowBlur = isOnline ? 10 : 0;
+            ctx.shadowColor = color;
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Label
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.font = '8px Fira Code';
+            ctx.textAlign = 'center';
+            ctx.fillText(node.city.toUpperCase(), x, y + 15);
+        });
+
+        canvas.onclick = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            
+            const clicked = globalNodes.find(n => {
+                const x = centerX + (n.lng * (canvas.width / 360));
+                const y = centerY - (n.lat * (canvas.height / 180));
+                const dx = x - mx;
+                const dy = y - my;
+                return Math.sqrt(dx*dx + dy*dy) < 15;
+            });
+
+            const panel = document.getElementById('node-detail-panel');
+            if (clicked) {
+                document.getElementById('node-detail-name').textContent = clicked.name;
+                document.getElementById('node-detail-status').textContent = clicked.status.toUpperCase();
+                document.getElementById('node-detail-status').style.color = clicked.status === 'online' ? '#00ff64' : 'var(--danger-color)';
+                document.getElementById('node-detail-city').textContent = clicked.city;
+                document.getElementById('node-detail-load-val').textContent = `${Math.round(clicked.load * 100)}%`;
+                document.getElementById('node-detail-load-fill').style.width = `${clicked.load * 100}%`;
+                panel.style.display = 'block';
+            } else {
+                panel.style.display = 'none';
+            }
+        };
+    }
 
     function initKnowledgeGraph() {
         const container = document.getElementById('knowledge-graph-container');
