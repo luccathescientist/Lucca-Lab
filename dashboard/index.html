@@ -53,6 +53,11 @@
             animation: spark-fly 0.8s ease-out forwards;
         }
 
+        @keyframes swarm-scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
         @keyframes spark-fly {
             0% { transform: scale(1) translate(0, 0); opacity: 1; }
             100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
@@ -684,6 +689,17 @@
                         .pulse-bar:nth-child(6) { animation-delay: 0.1s; }
                         .pulse-bar:nth-child(7) { animation-delay: 0.0s; }
                     </style>
+                </div>
+
+                <!-- SUB-AGENT SWARM STATUS -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Sub-Agent Swarm Status
+                        <span onclick="updateSwarmStatus()" style="cursor: pointer; opacity: 0.7; font-size: 0.7rem;">🔄</span>
+                    </h2>
+                    <div id="swarm-container" style="display: grid; grid-template-columns: 1fr; gap: 0.8rem;">
+                        <div style="color: #666; text-align: center; padding: 1rem;">[CONNECTING TO SWARM HIVE...]</div>
+                    </div>
                 </div>
 
                 <!-- MODEL LOADOUT -->
@@ -2656,6 +2672,33 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             }
         }
 
+        async function updateSwarmStatus() {
+            try {
+                const response = await fetch('/api/agents/swarm');
+                const data = await response.json();
+                const container = document.getElementById('swarm-container');
+                
+                container.innerHTML = data.map(agent => {
+                    const statusColor = agent.status === 'busy' ? 'var(--danger-color)' : agent.status === 'active' ? 'var(--accent-color)' : agent.status === 'resident' ? '#00ff64' : '#666';
+                    return `
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 4px; border-left: 3px solid ${statusColor}; position: relative; overflow: hidden;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                <div>
+                                    <div style="font-weight: bold; color: white; font-size: 0.85rem;">${agent.name}</div>
+                                    <div style="font-size: 0.6rem; color: ${statusColor}; text-transform: uppercase;">${agent.status} // ${agent.logic}</div>
+                                </div>
+                                <div style="font-family: 'Orbitron'; font-size: 0.75rem; color: var(--gold);">${agent.vram}</div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #aaa; line-height: 1.4;">
+                                <span style="color: var(--gold); font-weight: bold;">TASK:</span> ${agent.task}
+                            </div>
+                            ${agent.status === 'busy' ? '<div style="position: absolute; bottom: 0; left: 0; height: 2px; width: 100%; background: linear-gradient(90deg, transparent, var(--danger-color), transparent); animation: swarm-scan 2s infinite linear;"></div>' : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {}
+        }
+
         async function updateModelLoadout() {
             try {
                 const container = document.getElementById('model-loadout-list');
@@ -3657,6 +3700,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(updateCameraTime, 1000);
         setInterval(snapCamera, 30000); // Auto-refresh every 30s
 
+        setInterval(() => { if (currentTab === 'rig') updateSwarmStatus(); }, 10000);
         setInterval(() => { if (currentTab === 'rig') updateLatencyRadar(); }, 15000);
         setInterval(() => { if (currentTab === 'rig') updateResourceHeatmap(); }, 5000);
         setInterval(() => { if (currentTab === 'rig') updateStats(); }, 3000);
@@ -3694,6 +3738,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setTimeout(updateMilestones, 2500);
         setTimeout(updateChronoTimeline, 3000);
         updateAmbient();
+        updateSwarmStatus();
         updateLatencyRadar();
         checkNightMode();
         drawSchematic();

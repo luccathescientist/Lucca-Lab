@@ -54,9 +54,8 @@
 - [x] **Neural Vibe Shifter**: A control to adjust the "personality" parameters of the local models (e.g., creative vs logical) with visual feedback.
 - [x] **Research Paper Deep-Dive**: Integrate a "Research Radar" that automatically summarizes the top 3 AI papers of the day from arXiv.
 - [x] **Neural Knowledge Graph Explorer**: A graph-based visualization of the links between different research notes in the Lab.
-- [x] **Neural Knowledge Graph Explorer**: A graph-based visualization of the links between different research notes in the Lab.
 - [x] **Rig Thermal Topography**: A 3D heat map of the Blackwell rig components based on real-time sensor data.
-- [ ] **Sub-Agent Swarm Status**: A tactical view showing the current task, memory usage, and logic trajectory of all active sub-agents.
+- [x] **Sub-Agent Swarm Status**: A tactical view showing the current task, memory usage, and logic trajectory of all active sub-agents.
 - [ ] **Laboratory Global Sync**: A map showing the geographic location of all paired nodes and their connection health.
 - [ ] **Neural Context Horizon**: A visual representation of the current "active context" vs model limits, showing which files are currently "hot" in memory.
 - [ ] **Autonomous R&D Forecast**: A chart predicting upcoming laboratory milestones based on recent task completion velocity.

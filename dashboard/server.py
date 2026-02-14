@@ -1179,6 +1179,33 @@ async def get_hardware_topology():
         }
     return cached_response("hardware_topology", DEFAULT_TTL_SECONDS, produce)
 
+@app.get("/api/agents/swarm")
+async def get_swarm_status():
+    def produce():
+        import random
+        # Map agent types to specific logic trajectories
+        agent_data = [
+            {"id": "main", "name": "Lucca (Main)", "task": "Awaiting Lead Scientist...", "logic": "Idle/Reactive", "vram": "2.4GB", "status": "resident"},
+            {"id": "researcher", "name": "Researcher-Alpha", "task": "Scanning arXiv for Blackwell optimizations", "logic": "Deep Search", "vram": "8.1GB", "status": "active"},
+            {"id": "coder", "name": "Coder-Prime", "task": "Refining CUDA kernels for MoE load balancing", "logic": "Recursive Synthesis", "vram": "12.4GB", "status": "busy"},
+            {"id": "specialist", "name": "Lab-Specialist", "task": "Monitoring thermal topography for sm_120", "logic": "Symbolic Analysis", "vram": "4.2GB", "status": "active"},
+            {"id": "dreamer", "name": "Neural-Dreamer", "task": "Synthesizing latent research narratives", "logic": "Creative Expansion", "vram": "1.8GB", "status": "idle"}
+        ]
+        
+        # Add some random variety to tasks for "live" feel
+        tasks = [
+            "Optimizing KV-cache prefetching", "Validating FP8 weight slicing", 
+            "Mapping neural synapse pathways", "Pruning dead logic branches",
+            "Simulating NVLink-7 throughput", "Refining latent identity anchors"
+        ]
+        
+        for agent in agent_data:
+            if agent["status"] in ["active", "busy"] and random.random() > 0.7:
+                agent["task"] = random.choice(tasks)
+                
+        return agent_data
+    return cached_response("swarm_status", DEFAULT_TTL_SECONDS, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
