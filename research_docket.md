@@ -7,7 +7,7 @@
 
 ## Pending Tasks
 - [x] **Recursive Latent Denoising for 8K Wan 2.1 Upscaling**: Implement a strategy using R1 to steer denoising steps based on high-frequency edge analysis for ultra-clear video upscaling on Blackwell. (2026-02-14)
-- [ ] **Speculative KV-Cache Prefetching for Multi-User Sessions**: Research a predictive algorithm that uses user history to pre-load KV-caches into Blackwell L2 cache before a request arrives.
+- [x] **Speculative KV-Cache Prefetching for Multi-User Sessions**: Research a predictive algorithm that uses user history to pre-load KV-caches into Blackwell L2 cache before a request arrives. (2026-02-14)
 - [ ] **Hardware-Aware Sparse-MoE Distillation (INT4)**: Research distilling the knowledge of 256-expert MoE models into INT4-quantized dense models optimized for sm_120 throughput.
 - [ ] **Autonomous CUDA Kernel Repair via Symbolic Execution**: Extend the kernel repair pipeline to use symbolic execution for formal verification of memory safety in Blackwell kernels.
 - [ ] **Cross-Modal Emotion Synthesis for Digital Avatars**: Integrate audio and vision latents to generate expressive facial animations in Wan 2.1 that align with sentiment-steered text.
