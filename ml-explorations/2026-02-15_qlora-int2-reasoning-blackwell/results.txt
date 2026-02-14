@@ -1,0 +1,4 @@
+INT2 Throughput Gain: 7.20x
+Reasoning Retention (Standard): 62.0%
+Reasoning Retention (Stochastic): 81.0%
+Optimal L2 Tile Size: 1024K (8% Miss Rate)
