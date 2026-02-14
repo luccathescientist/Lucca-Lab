@@ -6,6 +6,12 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Adaptive Speculative Kernels for Hybrid Precision Inference**: Develop a system that dynamically generates and swaps Triton kernels based on the mix of FP8 and INT4 tensors in a quantized model pass, targeting Blackwell's dual-precision cores.
+- [ ] **Recursive Latent-Space Optimization for Multi-Stage Diffusion**: Implement a feedback loop that uses a small reasoning model to optimize the latent handoff between Flux.1 and Wan 2.1 by predicting and pre-correcting temporal artifacts.
+- [ ] **Hardware-Aware Neural Architecture Search (NAS) for Sub-Byte Weights**: Use R1 to autonomously design transformer blocks that maximize the utilization of Blackwell's sub-byte tensor cores for 2-bit and 1.5-bit weight-only quantization.
+- [ ] **Cross-Modal KV-Cache Prefetching via Predictive Temporal Alignment**: Research a mechanism to prefetch vision-tokens into the L2 cache based on the predicted temporal trajectory of a video reasoning task on Blackwell.
+- [ ] **Entropy-Gated Weight Offloading for Massive Model Consensus**: Develop a strategy to dynamically offload and reload model weights from NVMe based on the real-time entropy of a multi-model consensus loop (R1, Qwen, Llama).
+- [ ] **Neural Symbolic Feedback for Autonomous CUDA Kernel Repair (v2)**: Integrate formal verification (Z3) into the R1-driven kernel repair pipeline to ensure memory safety and race-condition elimination for complex Blackwell kernels.
 - [x] **Recursive Latent Denoising for 8K Wan 2.1 Upscaling**: Implement a strategy using R1 to steer denoising steps based on high-frequency edge analysis for ultra-clear video upscaling on Blackwell. (2026-02-14)
 - [x] **Speculative KV-Cache Prefetching for Multi-User Sessions**: Research a predictive algorithm that uses user history to pre-load KV-caches into Blackwell L2 cache before a request arrives. (2026-02-14)
 - [x] **Hardware-Aware Sparse-MoE Distillation (INT4)**: Research distilling the knowledge of 256-expert MoE models into INT4-quantized dense models optimized for sm_120 throughput. (2026-02-14)
