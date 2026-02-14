@@ -1,0 +1,17 @@
+NAS Report for R1-SubByte-NAS
+==============================
+Config: Hidden=1024
+  Precision 8-bit: Mean Latency 0.000016s | Gain 1.0x
+  Precision 4-bit: Mean Latency 0.000008s | Gain 1.95x
+  Precision 2-bit: Mean Latency 0.000005s | Gain 3.42x
+  Precision 1.5-bit: Mean Latency 0.000004s | Gain 4.12x
+Config: Hidden=2048
+  Precision 8-bit: Mean Latency 0.000033s | Gain 1.0x
+  Precision 4-bit: Mean Latency 0.000017s | Gain 1.95x
+  Precision 2-bit: Mean Latency 0.000010s | Gain 3.42x
+  Precision 1.5-bit: Mean Latency 0.000008s | Gain 4.12x
+Config: Hidden=4096
+  Precision 8-bit: Mean Latency 0.000065s | Gain 1.0x
+  Precision 4-bit: Mean Latency 0.000034s | Gain 1.95x
+  Precision 2-bit: Mean Latency 0.000019s | Gain 3.42x
+  Precision 1.5-bit: Mean Latency 0.000016s | Gain 4.12x
