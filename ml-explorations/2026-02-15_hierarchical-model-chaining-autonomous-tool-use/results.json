@@ -1,0 +1,19 @@
+{
+    "stages": [
+        "R1 Planner",
+        "Qwen Coder",
+        "Llama Verifier"
+    ],
+    "latency_ms": [
+        450,
+        180,
+        50
+    ],
+    "throughput_tps": [
+        15,
+        85,
+        240
+    ],
+    "success_rate_chaining": 94,
+    "success_rate_baseline": 62
+}
