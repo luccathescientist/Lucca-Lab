@@ -1357,6 +1357,24 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- NEURAL CONTEXT HORIZON -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Context Horizon
+                        <span onclick="updateContextHorizon()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #888; margin-bottom: 0.3rem;">
+                            <span>CONTEXT UTILIZATION (EST)</span>
+                            <span id="context-util-label">0 / 8192 TOKENS</span>
+                        </div>
+                        <div class="progress-bar" style="height: 8px;"><div class="progress-fill" id="context-util-fill" style="width: 0%;"></div></div>
+                    </div>
+                    <div id="hot-files-list" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 0.5rem; font-family: 'Fira Code', monospace; font-size: 0.7rem;">
+                        <div style="color: #666; text-align: center; padding: 1rem;">[SCANNING HOT MEMORY...]</div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1627,6 +1645,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                 if (tab === 'memory') {
                     updateMemory();
                     updateMoltbookFeed();
+                    updateContextHorizon();
                 }
                 if (tab === 'tools') {
                     updateInventory();
@@ -1657,6 +1676,32 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             });
 
             setActiveTab('rig');
+        }
+
+        async function updateContextHorizon() {
+            try {
+                const response = await fetch('/api/context/horizon');
+                const data = await response.json();
+                
+                document.getElementById('context-util-label').textContent = `${data.est_tokens} / ${data.limit} TOKENS`;
+                document.getElementById('context-util-fill').style.width = `${data.utilization * 100}%`;
+                
+                const list = document.getElementById('hot-files-list');
+                if (data.hot_files && data.hot_files.length > 0) {
+                    list.innerHTML = data.hot_files.map(f => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.05); border-left: 2px solid var(--accent-color); margin-bottom: 2px; background: rgba(209,120,255,0.03);">
+                            <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">
+                                <span style="color: var(--accent-color);">FILE:</span> ${f.name}
+                            </div>
+                            <div style="color: #888; font-size: 0.6rem; margin-left: 10px;">
+                                ${f.size_kb}KB
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<div style="color: #666; text-align: center; padding: 1rem;">[NO HOT FILES]</div>';
+                }
+            } catch (err) {}
         }
 
         async function updateWeatherBadge() {
@@ -3735,6 +3780,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'rig') updateResourceHeatmap(); }, 5000);
         setInterval(() => { if (currentTab === 'rig') updateStats(); }, 3000);
         setInterval(() => { if (currentTab === 'memory') updateMemory(); }, 30000);
+        setInterval(() => { if (currentTab === 'memory') updateContextHorizon(); }, 30000);
         setInterval(() => { if (currentTab === 'llm') updateModelLoadout(); }, 20000);
         setInterval(() => { if (currentTab === 'llm' && !inferenceActive) updateTopology(); }, 15000);
         setInterval(() => { if (currentTab === 'rig' && !inferenceActive) updateSecurityMonitor(); }, 10000);
@@ -3764,6 +3810,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateStats();
         setTimeout(updateWeather, 1500);
         setTimeout(updateResearchRadar, 1800);
+        setTimeout(updateContextHorizon, 1900);
         setTimeout(updateMood, 2000);
         setTimeout(updateMilestones, 2500);
         setTimeout(updateChronoTimeline, 3000);

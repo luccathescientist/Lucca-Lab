@@ -1222,6 +1222,60 @@ async def get_nodes_global():
         return nodes
     return cached_response("nodes_global", DEFAULT_TTL_SECONDS, produce)
 
+@app.get("/api/context/horizon")
+async def get_context_horizon():
+    def produce():
+        # Identify "hot" files in memory by looking at recently modified 
+        # or accessed research files in the workspace.
+        root_dir = "/home/rocketegg/clawd"
+        hot_files = []
+        
+        # Scan for .md files in the root and memory/
+        search_paths = [
+            os.path.join(root_dir, "*.md"),
+            os.path.join(root_dir, "memory/*.md"),
+            os.path.join(root_dir, "deep-wisdom/*.md")
+        ]
+        
+        all_files = []
+        for pattern in search_paths:
+            all_files.extend(glob.glob(pattern))
+            
+        # Get stats for these files
+        file_stats = []
+        for f in all_files:
+            try:
+                stat = os.stat(f)
+                file_stats.append({
+                    "name": os.path.basename(f),
+                    "path": os.path.relpath(f, root_dir),
+                    "size_kb": round(stat.st_size / 1024, 2),
+                    "mtime": stat.st_mtime,
+                    "atime": stat.st_atime
+                })
+            except: pass
+            
+        # Sort by mtime (most recently modified first)
+        file_stats.sort(key=lambda x: x["mtime"], reverse=True)
+        
+        # Take top 10 as "hot"
+        hot_files = file_stats[:10]
+        
+        # Calculate context utilization (simulated based on size of hot files vs an 8k context limit)
+        total_size_kb = sum(f["size_kb"] for f in hot_files)
+        # Assuming 1KB ~ 250 tokens for markdown
+        est_tokens = total_size_kb * 250
+        utilization = min(1.0, est_tokens / 8192)
+        
+        return {
+            "hot_files": hot_files,
+            "utilization": utilization,
+            "est_tokens": int(est_tokens),
+            "limit": 8192,
+            "timestamp": datetime.now().isoformat()
+        }
+    return cached_response("context_horizon", 30, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
