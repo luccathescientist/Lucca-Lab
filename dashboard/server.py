@@ -210,6 +210,20 @@ async def get_research_forecast():
         }
     return cached_response("research_forecast", 3600, produce)
 
+@app.get("/api/lab/memory-diff")
+async def get_memory_diff():
+    def produce():
+        # Visual diff for MEMORY.md evolution (simulated for now)
+        # In a real setup, we would read git history
+        return [
+            {"date": "2026-02-15", "changes": "+ Bit-Level Speculative Decoding, + Recursive Self-Correction, + Predictive Prefetching", "type": "research"},
+            {"date": "2026-02-14", "changes": "+ Hardware-Aware NAS, + Recursive Latent Optimization, + Adaptive Speculative Kernels", "type": "research"},
+            {"date": "2026-02-13", "changes": "+ Multi-Agent Reward Modeling, + Temporal KV-Cache Compression", "type": "logic"},
+            {"date": "2026-02-12", "changes": "+ Cross-Modal Identity Anchoring, + Fourier Embedding v2", "type": "vision"},
+            {"date": "2026-02-11", "changes": "+ Autonomous Patch Protocol v1, + Dashboard Evolution Hook", "type": "system"}
+        ]
+    return cached_response("memory_diff", 3600, produce)
+
 # Mount assets
 os.makedirs("/home/rocketegg/clawd/dashboard/assets", exist_ok=True)
 app.mount("/assets", StaticFiles(directory="/home/rocketegg/clawd/dashboard/assets"), name="assets")

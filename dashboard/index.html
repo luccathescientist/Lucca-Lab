@@ -1395,6 +1395,17 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- CHRONICLE VERSION CONTROL -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Chronicle Version Control
+                        <span onclick="updateMemoryDiff()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="memory-diff-container" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 0.8rem; font-family: 'Fira Code', monospace; font-size: 0.7rem;">
+                        <div style="color: #666; text-align: center; padding: 1rem;">[CALCULATING MEMORY DRIFT...]</div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1675,6 +1686,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateDreams();
                     updateSupplyChain();
                     updatePatchLog();
+                    updateMemoryDiff();
                 }
             };
 
@@ -3821,6 +3833,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'tools') updateInventory(); }, 60000);
         setInterval(() => { if (currentTab === 'tools') updateFileExplorer(); }, 60000);
         setInterval(() => { if (currentTab === 'tools') updatePatchLog(); }, 60000);
+        setInterval(() => { if (currentTab === 'memory') updateMemoryDiff(); }, 60000);
         setInterval(() => { if (currentTab === 'tools') updateSupplyChain(); }, 60000 * 30); // Every 30 mins
         setInterval(updateBioMetrics, 5000);
         setInterval(updateKnowledgePulse, 10000);
@@ -3839,6 +3852,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateAmbient();
         updateSwarmStatus();
         updateLatencyRadar();
+        updateMemoryDiff();
         checkNightMode();
         drawSchematic();
         initVramHeatmap();
@@ -3868,6 +3882,23 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                         </div>
                         <span style="font-size: 0.6rem; color: #888; white-space: nowrap;">${Math.round(f.probability * 100)}% CONFIDENCE</span>
                     </div>
+                </div>
+            `).join('');
+        } catch (err) {}
+    }
+
+    async function updateMemoryDiff() {
+        try {
+            const response = await fetch('/api/lab/memory-diff');
+            const data = await response.json();
+            const container = document.getElementById('memory-diff-container');
+            container.innerHTML = data.map(entry => `
+                <div style="margin-bottom: 0.8rem; border-left: 2px solid ${entry.type === 'research' ? 'var(--accent-color)' : 'var(--gold)'}; padding-left: 0.6rem; background: rgba(255,255,255,0.02); padding-top: 4px; padding-bottom: 4px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #888; margin-bottom: 2px;">
+                        <span>${entry.date}</span>
+                        <span style="text-transform: uppercase;">${entry.type}</span>
+                    </div>
+                    <div style="color: #ccc; line-height: 1.4;">${entry.changes}</div>
                 </div>
             `).join('');
         } catch (err) {}
