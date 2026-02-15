@@ -1,0 +1,4 @@
+Average Latency: 0.0462 ms
+FP8 Kernels: 300
+INT4 Kernels: 700
+Throughput Gain (vs Static FP8): 0.04x
