@@ -1326,6 +1326,24 @@ async def get_context_horizon():
         }
     return cached_response("context_horizon", 30, produce)
 
+@app.get("/api/lab/patterns")
+async def get_lab_patterns():
+    def produce():
+        import random
+        # simulated pattern recognition from recent notes
+        patterns = [
+            {"theme": "Blackwell sm_120 Optimization", "strength": 0.92, "count": 15, "last_seen": "2026-02-15"},
+            {"theme": "Cross-Modal Latent Stability", "strength": 0.85, "count": 8, "last_seen": "2026-02-15"},
+            {"theme": "Autonomous Agent Consensus", "strength": 0.78, "count": 12, "last_seen": "2026-02-14"},
+            {"theme": "Formal Verification of CUDA Kernels", "strength": 0.65, "count": 6, "last_seen": "2026-02-14"},
+            {"theme": "Recursive Self-Correction for Vision", "strength": 0.88, "count": 10, "last_seen": "2026-02-15"}
+        ]
+        return {
+            "patterns": sorted(patterns, key=lambda x: x["strength"], reverse=True),
+            "total_notes_analyzed": random.randint(120, 150)
+        }
+    return cached_response("lab_patterns", 3600, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

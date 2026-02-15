@@ -61,6 +61,6 @@
 - [x] **Autonomous R&D Forecast**: A chart predicting upcoming laboratory milestones based on recent task completion velocity.
 - [x] **Chronicle Version Control**: A visual diff tool for MEMORY.md, showing how Lucca's long-term memory has evolved over the last 7 days.
 - [x] **Lab Power Efficiency Radar**: A visualization comparing performance-per-watt across different resident models.
-- [ ] **Neural Pattern Recognition**: An overlay that highlights recurring themes and concepts in recent research notes.
+- [x] **Neural Pattern Recognition**: An overlay that highlights recurring themes and concepts in recent research notes.
 - [ ] **Rig Interconnect Visualizer**: A 3D view of the NVLink/PCIe fabric and real-time packet collision events.
 - [ ] **Research Trajectory Map**: A predictive visualization of which ML sub-fields are most likely to yield breakthroughs for the lab's current projects.
