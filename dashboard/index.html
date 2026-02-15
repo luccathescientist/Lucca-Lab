@@ -576,6 +576,17 @@
                     </div>
                 </div>
 
+                <!-- LAB POWER EFFICIENCY RADAR -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Lab Power Efficiency Radar
+                        <span onclick="updatePowerEfficiency()" style="cursor: pointer; opacity: 0.7; font-size: 0.7rem;">🔄</span>
+                    </h2>
+                    <div id="efficiency-radar-container" style="height: 300px; position: relative;">
+                        <canvas id="efficiency-radar-chart"></canvas>
+                    </div>
+                </div>
+
                 <!-- BLACKWELL VITALS -->
                 <div class="card" style="margin-bottom: 2rem;">
                     <h2>Blackwell Vitals (Thermal History)</h2>
@@ -1551,7 +1562,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
     <script>
         let lastMessageCount = 0;
         let socket, infSocket;
-        let thermalChart, archiveChart;
+        let thermalChart, archiveChart, efficiencyChart;
         let inferenceActive = false;
         let inferenceRawBuffer = '';
         let inferenceCleanBuffer = '';
@@ -1666,6 +1677,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateResourceHeatmap();
                     updateHardwareTopology();
                     updateResearchForecast();
+                    updatePowerEfficiency();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -1709,6 +1721,61 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             });
 
             setActiveTab('rig');
+        }
+
+        async function updatePowerEfficiency() {
+            try {
+                const response = await fetch('/api/lab/power-efficiency');
+                const data = await response.json();
+                
+                if (!efficiencyChart) {
+                    const ctx = document.getElementById('efficiency-radar-chart').getContext('2d');
+                    efficiencyChart = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['Speed', 'Logic', 'Vision', 'Power Efficiency'],
+                            datasets: data.map((d, i) => ({
+                                label: d.model,
+                                data: [d.speed, d.logic, d.vision, d.efficiency],
+                                borderColor: i === 0 ? 'var(--accent-color)' : i === 1 ? 'var(--gold)' : i === 2 ? '#00ff64' : '#888',
+                                backgroundColor: i === 0 ? 'var(--accent-glow)' : 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 2
+                            }))
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#888', font: { size: 10 } },
+                                    position: 'bottom'
+                                }
+                            },
+                            scales: {
+                                r: {
+                                    angleLines: { color: 'rgba(255, 255, 255, 0.05)' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                    pointLabels: { color: '#888', font: { size: 10 } },
+                                    ticks: { display: false },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    efficiencyChart.data.datasets = data.map((d, i) => ({
+                        label: d.model,
+                        data: [d.speed, d.logic, d.vision, d.efficiency],
+                        borderColor: i === 0 ? 'var(--accent-color)' : i === 1 ? 'var(--gold)' : i === 2 ? '#00ff64' : '#888',
+                        backgroundColor: i === 0 ? 'var(--accent-glow)' : 'transparent',
+                        borderWidth: 2,
+                        pointRadius: 2
+                    }));
+                    efficiencyChart.update();
+                }
+            } catch (err) {}
         }
 
         async function updateContextHorizon() {
@@ -3812,6 +3879,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'rig') updateLatencyRadar(); }, 15000);
         setInterval(() => { if (currentTab === 'rig') updateResourceHeatmap(); }, 5000);
         setInterval(() => { if (currentTab === 'rig') updateStats(); }, 3000);
+        setInterval(() => { if (currentTab === 'rig') updatePowerEfficiency(); }, 30000);
         setInterval(() => { if (currentTab === 'memory') updateMemory(); }, 30000);
         setInterval(() => { if (currentTab === 'memory') updateContextHorizon(); }, 30000);
         setInterval(() => { if (currentTab === 'llm') updateModelLoadout(); }, 20000);
