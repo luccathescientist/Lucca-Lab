@@ -8,7 +8,7 @@
 ## Pending Tasks
 - [x] **Cross-Modal Attention Steerability via Residual Latent Shifting**: Research a mechanism to steer R1's reasoning focus by injecting residual attention biases derived from Qwen2-VL's visual saliency maps directly into the L2-resident hidden states. (2026-02-16)
 - [x] **Recursive Self-Correction for Multimodal Hallucinations in 8K Upscaling**: Implement a feedback loop where Qwen2-VL identifies artifacts in Wan 2.1 upscaled frames and R1 generates corrective latent masks for a second denoising pass. (2026-02-16)
-- [ ] **Bit-Level Speculative Decoding with Bit-Slicing Tensor Kernels**: Research predicting sub-INT4 weight components to speculate FP8 tensors, utilizing Blackwell's unique bit-manipulation throughput for faster reasoning. (2026-02-16)
+- [x] **Bit-Level Speculative Decoding with Bit-Slicing Tensor Kernels**: Research predicting sub-INT4 weight components to speculate FP8 tensors, utilizing Blackwell's unique bit-manipulation throughput for faster reasoning. (2026-02-16)
 - [ ] **Temporal KV-Cache Compression for Long-Horizon Autonomous Planning**: Develop a hierarchical compression strategy for the KV-cache of reasoning agents involved in hours-long, multi-step autonomous tasks. (2026-02-16)
 - [ ] **Neural Knowledge Graph Anchoring for Reasoning Consistency (v2)**: Build a feedback loop that uses KG-retrieved triplets to bias the attention heads of R1 toward factual accuracy in technical domains. (2026-02-16)
 - [ ] **Bio-Inspired Neural Plasticity for Online Edge Adaptation on sm_120**: Research a mechanism for real-time, low-rank weight updates on Blackwell to adapt to local sensor data streams without full backpropagation. (2026-02-16)
