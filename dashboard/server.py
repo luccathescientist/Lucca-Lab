@@ -970,6 +970,19 @@ async def get_knowledge_pulse():
         }
     return cached_response("knowledge_pulse", 8, produce)
 
+@app.get("/api/lab/power-efficiency")
+async def get_power_efficiency():
+    def produce():
+        # Performance-per-watt comparison for resident models
+        # Simulated metrics: speed, logic, vision, and overall power efficiency
+        return [
+            {"model": "DeepSeek-R1-70B", "speed": 12, "logic": 95, "vision": 85, "efficiency": 45},
+            {"model": "DeepSeek-R1-8B", "speed": 45, "logic": 82, "vision": 70, "efficiency": 88},
+            {"model": "Qwen-1.5B", "speed": 98, "logic": 45, "vision": 30, "efficiency": 95},
+            {"model": "Flux.1-Schnell", "speed": 5, "logic": 20, "vision": 98, "efficiency": 30}
+        ]
+    return cached_response("power_efficiency", 30, produce)
+
 @app.get("/api/project/timeline")
 async def get_project_timeline():
     return [
