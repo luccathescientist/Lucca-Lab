@@ -187,6 +187,29 @@ async def get_benchmarks():
                     except: pass
     return results[::-1] # Newest first
 
+@app.get("/api/research/forecast")
+async def get_research_forecast():
+    def produce():
+        import random
+        from datetime import datetime, timedelta
+        
+        # Simulate velocity-based forecasting
+        # Base velocity of 2.4 milestones per week
+        velocity = 2.4 + random.uniform(-0.5, 0.5)
+        
+        forecasts = [
+            {"milestone": "Neural Latent Compression v2", "probability": 0.85, "estimated_date": (datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d")},
+            {"milestone": "Autonomous Swarm Consensus Protocol", "probability": 0.65, "estimated_date": (datetime.now() + timedelta(days=8)).strftime("%Y-%m-%d")},
+            {"milestone": "Blackwell sm_120 Thermal Balancing", "probability": 0.92, "estimated_date": (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")},
+            {"milestone": "Cross-Modal Identity Stability (Wan 2.1)", "probability": 0.70, "estimated_date": (datetime.now() + timedelta(days=12)).strftime("%Y-%m-%d")}
+        ]
+        
+        return {
+            "velocity": round(velocity, 2),
+            "forecasts": sorted(forecasts, key=lambda x: x["estimated_date"])
+        }
+    return cached_response("research_forecast", 3600, produce)
+
 # Mount assets
 os.makedirs("/home/rocketegg/clawd/dashboard/assets", exist_ok=True)
 app.mount("/assets", StaticFiles(directory="/home/rocketegg/clawd/dashboard/assets"), name="assets")
