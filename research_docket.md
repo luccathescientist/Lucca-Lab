@@ -6,6 +6,26 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Cross-Modal Attention Steerability via Residual Latent Shifting**: Research a mechanism to steer R1's reasoning focus by injecting residual attention biases derived from Qwen2-VL's visual saliency maps directly into the L2-resident hidden states. (2026-02-15)
+- [ ] **Recursive Self-Correction for Multimodal Hallucinations in 8K Upscaling**: Implement a feedback loop where Qwen2-VL identifies artifacts in Wan 2.1 upscaled frames and R1 generates corrective latent masks for a second denoising pass. (2026-02-15)
+- [ ] **Bit-Level Speculative Decoding with Bit-Slicing Tensor Kernels**: Research predicting sub-INT4 weight components to speculate FP8 tensors, utilizing Blackwell's unique bit-manipulation throughput for faster reasoning. (2026-02-15)
+- [ ] **Temporal KV-Cache Compression for Long-Horizon Autonomous Planning**: Develop a hierarchical compression strategy for the KV-cache of reasoning agents involved in hours-long, multi-step autonomous tasks. (2026-02-15)
+- [ ] **Neural Knowledge Graph Anchoring for Reasoning Consistency (v2)**: Build a feedback loop that uses KG-retrieved triplets to bias the attention heads of R1 toward factual accuracy in technical domains. (2026-02-15)
+- [ ] **Bio-Inspired Neural Plasticity for Online Edge Adaptation on sm_120**: Research a mechanism for real-time, low-rank weight updates on Blackwell to adapt to local sensor data streams without full backpropagation. (2026-02-15)
+- [ ] **Adaptive Speculative Kernels for Hybrid Precision Inference**: Develop a system that dynamically generates and swaps Triton kernels based on the mix of FP8 and INT4 tensors in a quantized model pass, targeting Blackwell's dual-precision cores.
+- [ ] **Recursive Latent-Space Optimization for Multi-Stage Diffusion**: Implement a feedback loop that uses a small reasoning model to optimize the latent handoff between Flux.1 and Wan 2.1 by predicting and pre-correcting temporal artifacts. (2026-02-14)
+- [ ] **Hardware-Aware Neural Architecture Search (NAS) for Sub-Byte Weights**: Use R1 to autonomously design transformer blocks that maximize the utilization of Blackwell's sub-byte tensor cores for 2-bit and 1.5-bit weight-only quantization. (2026-02-14)
+- [ ] **Cross-Modal KV-Cache Prefetching via Predictive Temporal Alignment**: Research a mechanism to prefetch vision-tokens into the L2 cache based on the predicted temporal trajectory of a video reasoning task on Blackwell.
+- [ ] **Entropy-Gated Weight Offloading for Massive Model Consensus**: Develop a strategy to dynamically offload and reload model weights from NVMe based on the real-time entropy of a multi-model consensus loop (R1, Qwen, Llama). (2026-02-15)
+- [ ] **Neural Symbolic Feedback for Autonomous CUDA Kernel Repair (v2)**: Integrate formal verification (Z3) into the R1-driven kernel repair pipeline to ensure memory safety and race-condition elimination for complex Blackwell kernels. (2026-02-15)
+- [ ] **Recursive Latent Denoising for 8K Wan 2.1 Upscaling**: Implement a strategy using R1 to steer denoising steps based on high-frequency edge analysis for ultra-clear video upscaling on Blackwell. (2026-02-14)
+- [ ] **Speculative KV-Cache Prefetching for Multi-User Sessions**: Research a predictive algorithm that uses user history to pre-load KV-caches into Blackwell L2 cache before a request arrives. (2026-02-14)
+- [ ] **Hardware-Aware Sparse-MoE Distillation (INT4)**: Research distilling the knowledge of 256-expert MoE models into INT4-quantized dense models optimized for sm_120 throughput. (2026-02-14)
+- [ ] **Autonomous CUDA Kernel Repair via Symbolic Execution**: Extend the kernel repair pipeline to use symbolic execution for formal verification of memory safety in Blackwell kernels. (2026-02-14)
+- [ ] **Cross-Modal Emotion Synthesis for Digital Avatars**: Integrate audio and vision latents to generate expressive facial animations in Wan 2.1 that align with sentiment-steered text. (2026-02-14)
+- [ ] **Dynamic Precision Switching for Real-Time Physics Sim**: Research a pipeline that switches between FP32 and FP8 for physics-based world models based on collision complexity. (2026-02-14)
+
+## Completed Tasks
 - [x] **Data+Expert Parallel (DEP) Speculative Decoding for Blackwell**: Research and simulate a DEP configuration for 120B+ models using Blackwell's dual-precision cores to achieve 3x throughput via Eagle-style speculative decoding. (2026-02-15)
 - [x] **RL-Driven Test-Time Search for Local CUDA Synthesis**: Implement a reinforcement learning loop that uses verifiable symbolic feedback (Z3) to drive inference-time tree search for synthesizing optimal CUDA kernels on sm_120. (2026-02-15)
 - [x] **Cross-Modal KV-Cache Pruning via Saliency-Aware Gating**: Develop a pruning strategy for multimodal long-context (1M+) tokens that uses saliency maps from Qwen2-VL to gate token eviction in the R1 reasoning KV-cache. (2026-02-15)
@@ -24,8 +44,6 @@
 - [x] **Autonomous CUDA Kernel Repair via Symbolic Execution**: Extend the kernel repair pipeline to use symbolic execution for formal verification of memory safety in Blackwell kernels. (2026-02-14)
 - [x] **Cross-Modal Emotion Synthesis for Digital Avatars**: Integrate audio and vision latents to generate expressive facial animations in Wan 2.1 that align with sentiment-steered text. (2026-02-14)
 - [x] **Dynamic Precision Switching for Real-Time Physics Sim**: Research a pipeline that switches between FP32 and FP8 for physics-based world models based on collision complexity. (2026-02-14)
-
-## Completed Tasks
 - [x] **Autonomous Prompt Evolution for Multimodal Logic**: Develop a system where R1 evolves its own prompt templates for Qwen2-VL by observing successful vs. failed spatial reasoning turns. (2026-02-14)
 - [x] **Neural Symbolic Feedback for Autonomous CUDA Kernel Repair**: Build a system where CUDA kernels generated by R1 are compiled, profiled, and then "repaired" based on symbolic analysis of performance bottlenecks. (2026-02-14)
 - [x] **Asynchronous Weight-Gradient Pipelining (AWGP) for Multi-Node Blackwell**: Research a training strategy that overlaps weight updates with the next forward pass using custom CUDA streams to minimize idle tensor core time across multiple GPUs. (2026-02-14)
