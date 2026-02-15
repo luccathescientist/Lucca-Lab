@@ -63,4 +63,4 @@
 - [x] **Lab Power Efficiency Radar**: A visualization comparing performance-per-watt across different resident models.
 - [x] **Neural Pattern Recognition**: An overlay that highlights recurring themes and concepts in recent research notes.
 - [x] **Rig Interconnect Visualizer**: A 3D view of the NVLink/PCIe fabric and real-time packet collision events.
-- [ ] **Research Trajectory Map**: A predictive visualization of which ML sub-fields are most likely to yield breakthroughs for the lab's current projects.
+- [x] **Research Trajectory Map**: A predictive visualization of which ML sub-fields are most likely to yield breakthroughs for the lab's current projects.

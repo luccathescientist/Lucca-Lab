@@ -1344,6 +1344,24 @@ async def get_lab_patterns():
         }
     return cached_response("lab_patterns", 3600, produce)
 
+@app.get("/api/research/trajectory")
+async def get_research_trajectory():
+    def produce():
+        # Map sub-fields to current momentum and breakthrough probability
+        fields = [
+            {"field": "Sparse-MoE Scaling", "momentum": 0.92, "potential": 0.85, "active_projects": 3},
+            {"field": "Recursive Latent Denoising", "momentum": 0.78, "potential": 0.94, "active_projects": 2},
+            {"field": "Hardware-Aware NAS", "momentum": 0.65, "potential": 0.72, "active_projects": 1},
+            {"field": "Cross-Modal Identity Stability", "momentum": 0.88, "potential": 0.80, "active_projects": 2},
+            {"field": "Formal Kernel Verification", "momentum": 0.55, "potential": 0.98, "active_projects": 1},
+        ]
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "trajectories": sorted(fields, key=lambda x: x["potential"], reverse=True),
+        }
+
+    return cached_response("research_trajectory", 3600, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
