@@ -1433,6 +1433,23 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- RESEARCH TRAJECTORY MAP -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Research Trajectory Map
+                        <span onclick="updateResearchTrajectory()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="trajectory-container" style="background: rgba(0,0,0,0.3); border-radius: 4px; padding: 1rem; min-height: 150px;">
+                        <div id="trajectory-list" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="color: #666; text-align: center; padding: 1rem;">[SIMULATING TRAJECTORIES...]</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.8rem; font-size: 0.55rem; color: #666; display: flex; justify-content: space-between;">
+                        <span>POTENTIAL: LOW</span>
+                        <span>POTENTIAL: CRITICAL</span>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1637,6 +1654,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             addToTab('rig', '#mood-state');
             addToTab('rig', '#health-cpu-temp');
             addToTab('rig', '#camera-container');
+            addToTab('rig', '#trajectory-container');
 
             // LLM inference
             addToTab('llm', '#perf-tps');
@@ -1694,6 +1712,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateHardwareTopology();
                     updateResearchForecast();
                     updatePowerEfficiency();
+                    updateResearchTrajectory();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -4008,6 +4027,51 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
             `).join('');
+        } catch (err) {}
+    }
+
+    async function updateResearchTrajectory() {
+        try {
+            const res = await fetch('/api/research/trajectory');
+            const data = await res.json();
+            const list = document.getElementById('trajectory-list');
+            if (!list) return;
+            if (data.error || !data.trajectories) {
+                list.innerHTML = '<div style="color: #666; text-align: center; padding: 1rem;">[TRAJECTORY ENGINE OFFLINE]</div>';
+                return;
+            }
+
+            list.innerHTML = data.trajectories.map(t => {
+                const pot = Math.round((t.potential || 0) * 100);
+                const mom = Math.round((t.momentum || 0) * 100);
+                const potColor = pot >= 85 ? 'var(--accent-color)' : pot >= 70 ? 'var(--gold)' : '#666';
+                return `
+                    <div style="background: rgba(255,255,255,0.02); border-left: 2px solid ${potColor}; padding: 0.8rem; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px;">
+                            <div style="color: white; font-weight: bold; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.field}</div>
+                            <div style="color: #888; font-size: 0.6rem; white-space: nowrap;">${t.active_projects || 0} ACTIVE</div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.55rem; color: #888; margin-bottom: 4px;">
+                                <span>POTENTIAL</span>
+                                <span style="color: ${potColor};">${pot}%</span>
+                            </div>
+                            <div style="height: 6px; background: rgba(0,0,0,0.5); border-radius: 999px; overflow: hidden;">
+                                <div style="height: 100%; width: ${pot}%; background: linear-gradient(90deg, rgba(209,120,255,0.2), ${potColor});"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.55rem; color: #888; margin-bottom: 4px;">
+                                <span>MOMENTUM</span>
+                                <span style="color: #00ff64;">${mom}%</span>
+                            </div>
+                            <div style="height: 4px; background: rgba(0,0,0,0.5); border-radius: 999px; overflow: hidden;">
+                                <div style="height: 100%; width: ${mom}%; background: rgba(0,255,100,0.65);"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         } catch (err) {}
     }
 
