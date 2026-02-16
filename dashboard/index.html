@@ -587,6 +587,25 @@
                     </div>
                 </div>
 
+                <!-- BLACKWELL PRECISION MONITOR -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Blackwell Precision Monitor
+                        <span onclick="updatePrecisionMonitor()" style="cursor: pointer; opacity: 0.7; font-size: 0.7rem;">🔄</span>
+                    </h2>
+                    <div style="height: 250px; position: relative; display: flex; flex-direction: column; gap: 10px; padding: 10px;">
+                        <canvas id="precision-chart"></canvas>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <div style="font-size: 0.7rem; color: var(--accent-color); font-family: 'Orbitron';">
+                                GAIN: <span id="precision-gain-val">--</span>
+                            </div>
+                            <div style="font-size: 0.6rem; color: #888; text-transform: uppercase;" id="precision-mode-val">
+                                [SCANNING...]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- BLACKWELL VITALS -->
                 <div class="card" style="margin-bottom: 2rem;">
                     <h2>Blackwell Vitals (Thermal History)</h2>
@@ -2455,6 +2474,61 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             }
         }
 
+        function initPrecisionMonitor() {
+            const ctx = document.getElementById('precision-chart').getContext('2d');
+            window.precisionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['FP8', 'INT4', 'FP16', 'BF16'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            '#d178ff', // Purple
+                            '#00ff64', // Green
+                            '#ffcc00', // Yellow
+                            '#78d1ff'  // Blue
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#888',
+                                font: { size: 10, family: 'Fira Code' },
+                                boxWidth: 10
+                            }
+                        }
+                    },
+                    animation: { duration: 1000 }
+                }
+            });
+        }
+
+        async function updatePrecisionMonitor() {
+            try {
+                const res = await fetch('/api/hardware/precision');
+                const data = await res.json();
+                if (data.utilization) {
+                    window.precisionChart.data.datasets[0].data = [
+                        data.utilization.fp8,
+                        data.utilization.int4,
+                        data.utilization.fp16,
+                        data.utilization.bf16
+                    ];
+                    window.precisionChart.update();
+                    document.getElementById('precision-gain-val').textContent = data.sparsity_gain;
+                    document.getElementById('precision-mode-val').textContent = data.active_mode;
+                }
+            } catch (err) {}
+        }
+
         function initResourceHeatmap() {
             const grid = document.getElementById('resource-heatmap-grid');
             if (!grid) return;
@@ -3979,6 +4053,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'rig' && !inferenceActive) updateSecurityMonitor(); }, 10000);
         setInterval(() => { if (currentTab === 'tools') updateDreams(); }, 60000);
         setInterval(() => { if (currentTab === 'memory') updateResearchRadar(); }, 60000 * 60); // Every hour
+        setInterval(() => { if (currentTab === 'rig') updatePrecisionMonitor(); }, 15000);
         setInterval(updateMood, 20000);
         setInterval(() => { if (currentTab === 'rig') updateMilestones(); }, 120000);
         setInterval(() => { if (currentTab === 'rig') updateAgentActivity(); }, 15000);
@@ -4002,6 +4077,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         initChart();
         initNeuralFabric();
         initResourceHeatmap();
+        initPrecisionMonitor();
         initTabs();
         updateStats();
         setTimeout(updateWeather, 1500);
@@ -4021,6 +4097,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         updateMaintenanceLog();
         updateBioMetrics();
         updateKnowledgePulse();
+        updatePrecisionMonitor();
         loadInitialMessages();
         updateWeatherBadge();
         showDebugBanner('Dashboard JS loaded');

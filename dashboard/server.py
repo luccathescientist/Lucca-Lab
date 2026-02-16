@@ -1372,6 +1372,25 @@ async def get_knowledge_synthesis():
             return {"error": str(e)}
     return cached_response("knowledge_synthesis", 3600, produce)
 
+@app.get("/api/hardware/precision")
+async def get_precision_monitor():
+    def produce():
+        import random
+        # simulated Blackwell precision monitor for tensor cores
+        # sm_120 supports native FP8, INT8, INT4, and even INT2 with 2:4 sparsity
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "utilization": {
+                "fp8": random.uniform(40.0, 75.0),
+                "int4": random.uniform(10.0, 35.0),
+                "fp16": random.uniform(5.0, 15.0),
+                "bf16": random.uniform(10.0, 25.0)
+            },
+            "sparsity_gain": "2.4x",
+            "active_mode": "Hybrid-Quant (Blackwell Optimized)"
+        }
+    return cached_response("precision_monitor", 2, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
