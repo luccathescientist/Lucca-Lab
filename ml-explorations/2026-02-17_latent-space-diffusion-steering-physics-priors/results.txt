@@ -1,0 +1,2 @@
+Latency: 10.618816375732422 ms
+Hardware: RTX 6000 Blackwell (sm_120)

@@ -9,7 +9,7 @@
 - [x] **Sparse-Attention Alignment with sm_120 TPC Boundaries**: Research optimizing sparse attention patterns to perfectly align with Blackwell's Texture Processing Cluster (TPC) boundaries to maximize hardware utilization and memory coalescing. (2026-02-17)
 - [x] **Recursive Symbolic Refinement for CUDA Kernels via Z3**: Implement a pipeline where DeepSeek-R1 uses Z3-based symbolic feedback to iteratively refine CUDA kernels, targeting zero-overhead register reuse on sm_120. (2026-02-17)
 - [x] **Multi-Modal Preference Steering via Qwen2-VL & R1 Consensus**: Orchestrate a consensus loop where Qwen2-VL provides visual preference signals to steer R1's reasoning toward more "visually grounded" technical explanations. (2026-02-17)
-- [ ] **Latent-Space Diffusion Steering with Physics-Informed Priors**: Research injecting physics-based constraints (gravity, collision) into the Wan 2.1 latent space during the diffusion process using R1 as a steering controller. (2026-02-17)
+- [x] **Latent-Space Diffusion Steering with Physics-Informed Priors**: Research injecting physics-based constraints (gravity, collision) into the Wan 2.1 latent space during the diffusion process using R1 as a steering controller. (2026-02-17)
 - [ ] **Hardware-Aware NAS for Sub-Byte Precision on sm_120**: Use R1 to autonomously search for transformer architectures that are inherently robust to 1-bit and 2-bit quantization by utilizing Blackwell's native bit-manipulation throughput. (2026-02-17)
 
 ## Pending Tasks
