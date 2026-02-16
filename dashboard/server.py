@@ -1392,6 +1392,21 @@ async def get_lab_soundscape():
             return {"error": str(e)}
     return cached_response("lab_soundscape", 5, produce)
 
+@app.get("/api/model/entropy")
+async def get_model_entropy():
+    def produce():
+        import random
+        # Simulate model output entropy monitoring
+        # Entropy rises when model is "creative" or "unsure"
+        return {
+            "timestamp": datetime.now().isoformat(),
+            "entropy": random.uniform(0.1, 0.95),
+            "stability_score": random.uniform(0.7, 0.99),
+            "tokens_analyzed": random.randint(50, 200),
+            "mode": random.choice(["Logical", "Creative", "Stochastic", "Focused"])
+        }
+    return cached_response("model_entropy", 2, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

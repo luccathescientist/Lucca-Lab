@@ -1513,6 +1513,27 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- NEURAL ENTROPY MONITOR -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Entropy Monitor
+                        <span id="entropy-mode" style="font-size: 0.6rem; background: rgba(209,120,255,0.2); padding: 2px 6px; border-radius: 4px; color: var(--accent-color);">LOGICAL</span>
+                    </h2>
+                    <div style="height: 120px; display: flex; align-items: flex-end; gap: 4px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;">
+                        <canvas id="entropy-viz" style="width: 100%; height: 100%;"></canvas>
+                    </div>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px; border-bottom: 2px solid var(--accent-color);">
+                            <div style="font-size: 0.55rem; color: #888;">ENTROPY</div>
+                            <div id="entropy-val" style="font-family: 'Orbitron'; font-size: 1rem; color: white;">0.00</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px; border-bottom: 2px solid #00ff64;">
+                            <div style="font-size: 0.55rem; color: #888;">STABILITY</div>
+                            <div id="stability-val" style="font-family: 'Orbitron'; font-size: 1rem; color: white;">0%</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1658,7 +1679,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
     <script>
         let lastMessageCount = 0;
         let socket, infSocket;
-        let thermalChart, archiveChart, efficiencyChart;
+        let thermalChart, archiveChart, efficiencyChart, entropyChart;
         let inferenceActive = false;
         let inferenceRawBuffer = '';
         let inferenceCleanBuffer = '';
@@ -1779,6 +1800,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updatePowerEfficiency();
                     updateResearchTrajectory();
                     updateKnowledgeSynthesis();
+                    updateModelEntropy();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -3353,6 +3375,58 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             } catch (err) {}
         }
 
+
+        async function updateModelEntropy() {
+            try {
+                const res = await fetch('/api/model/entropy');
+                const data = await res.json();
+
+                const entEl = document.getElementById('entropy-val');
+                const stabEl = document.getElementById('stability-val');
+                const modeEl = document.getElementById('entropy-mode');
+                const canvas = document.getElementById('entropy-viz');
+                if (!entEl || !stabEl || !modeEl || !canvas) return;
+
+                entEl.textContent = Number(data.entropy ?? 0).toFixed(3);
+                stabEl.textContent = `${Math.round(Number(data.stability_score ?? 0) * 100)}%`;
+                modeEl.textContent = String(data.mode || 'Logical').toUpperCase();
+
+                const ctx = canvas.getContext('2d');
+                if (!entropyChart) {
+                    entropyChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: Array(20).fill(''),
+                            datasets: [{
+                                label: 'Entropy',
+                                data: Array(20).fill(0),
+                                borderColor: '#d178ff',
+                                backgroundColor: 'rgba(209, 120, 255, 0.12)',
+                                fill: true,
+                                tension: 0.35,
+                                pointRadius: 0,
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { display: false, min: 0, max: 1 }
+                            }
+                        }
+                    });
+                }
+
+                const arr = entropyChart.data.datasets[0].data;
+                arr.push(Number(data.entropy ?? 0));
+                while (arr.length > 20) arr.shift();
+                entropyChart.update('none');
+            } catch (err) {}
+        }
+
         async function updateAmbient() {
             try {
                 const response = await fetch('/api/ambient');
@@ -4083,6 +4157,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setInterval(() => { if (currentTab === 'tools') updateDreams(); }, 60000);
         setInterval(() => { if (currentTab === 'memory') updateResearchRadar(); }, 60000 * 60); // Every hour
         setInterval(() => { if (currentTab === 'rig') updatePrecisionMonitor(); }, 15000);
+        setInterval(() => { if (currentTab === 'rig') updateModelEntropy(); }, 5000);
         setInterval(updateMood, 20000);
         setInterval(() => { if (currentTab === 'rig') updateMilestones(); }, 120000);
         setInterval(() => { if (currentTab === 'rig') updateAgentActivity(); }, 15000);
@@ -4114,6 +4189,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         setTimeout(updateResearchRadar, 1800);
         setTimeout(updateContextHorizon, 1900);
         setTimeout(updateMood, 2000);
+        setTimeout(updateModelEntropy, 2100);
         setTimeout(updateMilestones, 2500);
         setTimeout(updateChronoTimeline, 3000);
         updateAmbient();
