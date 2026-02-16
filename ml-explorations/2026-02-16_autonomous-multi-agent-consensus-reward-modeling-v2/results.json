@@ -1,0 +1,7 @@
+{
+    "avg_consensus": 0.9076523525383446,
+    "avg_variance": 0.000507568013327275,
+    "throughput_tps": 180,
+    "vram_gb": 42,
+    "status": "Validated on Blackwell sm_120"
+}
