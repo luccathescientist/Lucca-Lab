@@ -1391,6 +1391,16 @@ async def get_precision_monitor():
         }
     return cached_response("precision_monitor", 2, produce)
 
+@app.get("/api/lab/soundscape")
+async def get_lab_soundscape():
+    def produce():
+        try:
+            result = subprocess.check_output(["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "/home/rocketegg/clawd/dashboard/get_ambient_generator.py"])
+            return json.loads(result)
+        except Exception as e:
+            return {"error": str(e)}
+    return cached_response("lab_soundscape", 5, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)
