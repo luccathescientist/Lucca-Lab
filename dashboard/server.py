@@ -1362,6 +1362,16 @@ async def get_research_trajectory():
         }
     return cached_response("research_trajectory", 3600, produce)
 
+@app.get("/api/research/knowledge-synthesis")
+async def get_knowledge_synthesis():
+    def produce():
+        try:
+            result = subprocess.check_output(["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "/home/rocketegg/clawd/dashboard/knowledge_synthesis.py"])
+            return json.loads(result)
+        except Exception as e:
+            return {"error": str(e)}
+    return cached_response("knowledge_synthesis", 3600, produce)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

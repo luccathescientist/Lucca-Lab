@@ -64,3 +64,7 @@
 - [x] **Neural Pattern Recognition**: An overlay that highlights recurring themes and concepts in recent research notes.
 - [x] **Rig Interconnect Visualizer**: A 3D view of the NVLink/PCIe fabric and real-time packet collision events.
 - [x] **Research Trajectory Map**: A predictive visualization of which ML sub-fields are most likely to yield breakthroughs for the lab's current projects.
+- [x] **Neural Knowledge Synthesis Dashboard**: A new view that uses DeepSeek-R1 to analyze recent MEMORY.md entries and propose "Cross-Pollination" research topics.
+- [ ] **Blackwell Precision Monitor**: A visualization of hybrid-precision (FP8/INT4) utilization across the GPU's tensor cores.
+- [ ] **Sub-Agent Logic Trace**: A real-time flowchart showing the "Chain of Thought" steps being executed by active sub-agents.
+- [ ] **Laboratory Soundscape Generator**: A dynamic ambient audio system that generates "data-driven" soundscapes based on system load and research activity.

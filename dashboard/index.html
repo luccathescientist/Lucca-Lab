@@ -1450,6 +1450,22 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 </div>
 
+                <!-- NEURAL KNOWLEDGE SYNTHESIS DASHBOARD -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Neural Knowledge Synthesis Dashboard
+                        <span onclick="updateKnowledgeSynthesis()" style="cursor: pointer; font-size: 0.7rem; opacity: 0.7;">🔄</span>
+                    </h2>
+                    <div id="synthesis-container" style="background: rgba(0,0,0,0.3); border-radius: 4px; padding: 1rem; min-height: 150px;">
+                        <div id="synthesis-list" style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="color: #666; text-align: center; padding: 1rem;">[SYNTHESIZING CROSS-POLLINATION TOPICS...]</div>
+                        </div>
+                    </div>
+                    <div id="synthesis-meta" style="margin-top: 0.8rem; font-size: 0.5rem; color: #555; text-align: right; font-style: italic;">
+                        Generated via DeepSeek-R1 core analysis of MEMORY.md.
+                    </div>
+                </div>
+
                 <div class="memory-panel">
                     <div class="card">
                         <h2>Chronicle Memory</h2>
@@ -1655,6 +1671,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
             addToTab('rig', '#health-cpu-temp');
             addToTab('rig', '#camera-container');
             addToTab('rig', '#trajectory-container');
+            addToTab('rig', '#synthesis-container');
 
             // LLM inference
             addToTab('llm', '#perf-tps');
@@ -1713,6 +1730,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateResearchForecast();
                     updatePowerEfficiency();
                     updateResearchTrajectory();
+                    updateKnowledgeSynthesis();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -4072,6 +4090,41 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 `;
             }).join('');
+        } catch (err) {}
+    }
+
+    async function updateKnowledgeSynthesis() {
+        try {
+            const res = await fetch('/api/research/knowledge-synthesis');
+            const data = await res.json();
+            const list = document.getElementById('synthesis-list');
+            if (!list) return;
+            if (data.error || !data.synthesis) {
+                list.innerHTML = '<div style="color: #666; text-align: center; padding: 1rem;">[SYNTHESIS CORE OFFLINE]</div>';
+                return;
+            }
+
+            list.innerHTML = data.synthesis.map(s => {
+                const synergy = Math.round((s.synergy_score || 0) * 100);
+                return `
+                    <div style="background: rgba(255,255,255,0.02); border-left: 2px solid var(--accent-color); padding: 0.8rem; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                            <div style="color: white; font-weight: bold; font-size: 0.75rem;">
+                                <span style="color: var(--accent-color);">${s.topic_a}</span>
+                                <span style="color: #666; margin: 0 5px;">×</span>
+                                <span style="color: var(--gold);">${s.topic_b}</span>
+                            </div>
+                            <div style="color: var(--accent-color); font-family: 'Orbitron'; font-size: 0.7rem;">${synergy}% SYNERGY</div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #aaa; line-height: 1.4; font-style: italic;">
+                            ${s.proposal}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            const meta = document.getElementById('synthesis-meta');
+            if (meta) meta.textContent = `Generated via DeepSeek-R1 core analysis at ${new Date(data.timestamp).toLocaleTimeString()}.`;
         } catch (err) {}
     }
 
