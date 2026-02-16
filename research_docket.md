@@ -11,7 +11,7 @@
 - [x] **Cross-Modal Attention Saliency-Gated KV-Cache Pruning**: Implement a pruning strategy for multimodal long-context (1M+) tokens that uses saliency maps from Qwen2-VL to gate token eviction in the R1 reasoning KV-cache. (2026-02-16)
 - [x] **Bit-Level Speculative Decoding with Bit-Slicing Tensor Kernels (v2)**: Research predicting sub-INT4 weight components to speculate FP8 tensors, utilizing Blackwell's unique bit-manipulation throughput for faster reasoning. (2026-02-16)
 - [x] **Autonomous Multi-Agent Consensus for High-Fidelity Reward Modeling (v2)**: Orchestrate a council of diverse reasoning models (R1, Qwen, Llama) to autonomously generate and rank preference pairs for specialized Blackwell-optimized DPO. (2026-02-16)
-- [ ] **Adaptive Sparsity-Aware Quantization for sm_120 Reasoning (v2)**: Research a quantization strategy that dynamically adjusts bit-widths (FP8 to INT2) based on the structural sparsity of R1 attention maps, targeting Blackwell's native sparsity-acceleration tensor cores.
+- [x] **Adaptive Sparsity-Aware Quantization for sm_120 Reasoning (v2)**: Research a quantization strategy that dynamically adjusts bit-widths (FP8 to INT2) based on the structural sparsity of R1 attention maps, targeting Blackwell's native sparsity-acceleration tensor cores.
 
 ## Completed Tasks
 - [x] **Cross-Modal Attention Steerability via Residual Latent Shifting**: Research a mechanism to steer R1's reasoning focus by injecting residual attention biases derived from Qwen2-VL's visual saliency maps directly into the L2-resident hidden states. (2026-02-15)
