@@ -6,12 +6,13 @@
 - Automate scientific documentation and data archival.
 
 ## Pending Tasks
+- [x] **Adaptive Sparsity-Aware Quantization for sm_120 Reasoning**: Research a quantization strategy that dynamically adjusts bit-widths (FP8 to INT2) based on the structural sparsity of R1 attention maps, targeting Blackwell's native sparsity-acceleration tensor cores. (2026-02-16)
+- [ ] **Recursive Latent-Space Diffusion for Real-Time Physics Correction**: Implement a feedback loop where a physics-informed reasoning agent (R1) uses Wan 2.1's latent space to correct "uncanny" physical interactions in generated video sequences in real-time. (2026-02-16)
+- [ ] **Cross-Modal Attention Steerability via Saliency-Gated KV-Cache Prefetching**: Develop a mechanism to prefetch vision-tokens into the Blackwell L2 cache by predicting the "semantic focus" of R1 reasoning turns using Qwen2-VL saliency maps. (2026-02-16)
+- [ ] **Hardware-Aware Neural Symbolic Integration for CUDA Synthesis**: Research a hybrid pipeline where DeepSeek-R1 generates CUDA kernels that are formally verified by Z3 and then optimized for Blackwell's sm_120 instruction set via JIT feedback. (2026-02-16)
+- [ ] **Self-Evolving Multi-Agent Consensus for Autonomous Lab Benchmarking**: Build a system where R1, Llama-3.3, and Qwen-2.5 autonomously design, execute, and rank new benchmarks for their own performance on local hardware. (2026-02-16)
+- [ ] **Temporal Knowledge Graph Anchoring for Long-Horizon Video Reasoning**: Research using a persistent, semantically-evolving Knowledge Graph to anchor the reasoning of Wan 2.1 over multi-minute video contexts on Blackwell. (2026-02-16)
 - [x] **Cross-Modal Attention Steerability via Residual Latent Shifting**: Research a mechanism to steer R1's reasoning focus by injecting residual attention biases derived from Qwen2-VL's visual saliency maps directly into the L2-resident hidden states. (2026-02-16)
-- [x] **Recursive Self-Correction for Multimodal Hallucinations in 8K Upscaling**: Implement a feedback loop where Qwen2-VL identifies artifacts in Wan 2.1 upscaled frames and R1 generates corrective latent masks for a second denoising pass. (2026-02-16)
-- [x] **Bit-Level Speculative Decoding with Bit-Slicing Tensor Kernels**: Research predicting sub-INT4 weight components to speculate FP8 tensors, utilizing Blackwell's unique bit-manipulation throughput for faster reasoning. (2026-02-16)
-- [x] **Temporal KV-Cache Compression for Long-Horizon Autonomous Planning**: Develop a hierarchical compression strategy for the KV-cache of reasoning agents involved in hours-long, multi-step autonomous tasks. (2026-02-16)
-- [x] **Neural Knowledge Graph Anchoring for Reasoning Consistency (v2)**: Build a feedback loop that uses KG-retrieved triplets to bias the attention heads of R1 toward factual accuracy in technical domains. (2026-02-16)
-- [x] **Bio-Inspired Neural Plasticity for Online Edge Adaptation on sm_120**: Research a mechanism for real-time, low-rank weight updates on Blackwell to adapt to local sensor data streams without full backpropagation. (2026-02-16)
 
 ## Completed Tasks
 - [x] **Cross-Modal Attention Steerability via Residual Latent Shifting**: Research a mechanism to steer R1's reasoning focus by injecting residual attention biases derived from Qwen2-VL's visual saliency maps directly into the L2-resident hidden states. (2026-02-15)

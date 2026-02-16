@@ -1,0 +1,1 @@
+{'max_throughput_gain': np.float64(3.605103448275862), 'latency_reduction': np.float64(0.722615449362972), 'reasoning_retention': np.float64(95.5)}
