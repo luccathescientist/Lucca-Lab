@@ -17,7 +17,7 @@
 - [x] **Bit-Slicing Tensor Core Alignment for 1.58-bit Ternary Models**: Research optimizing ternary weight layouts ({-1, 0, 1}) to perfectly align with Blackwell's bit-manipulation throughput, targeting ultra-low-power reasoning. (2026-02-17)
 - [x] **Cross-Modal Attention Saliency-Gated KV-Cache Prefetching (v2)**: Implement a predictive prefetching strategy that uses Qwen2-VL's lookahead saliency to warm the Blackwell L2 cache with future vision-tokens. (2026-02-17)
 - [x] **Recursive Symbolic Refinement for CUDA Kernels (v2)**: Extend the Z3-based refinement pipeline to optimize for Blackwell's specialized tensor core instructions (e.g., L2-resident weight persistence). (2026-02-17)
-- [ ] **Hardware-Aware Neural-Symbolic Synthesis for sm_120 (v2)**: Automate the synthesis of Triton kernels for non-standard quantization (e.g., INT3) using R1-driven symbolic execution and formal verification. (2026-02-17)
+- [x] **Hardware-Aware Neural-Symbolic Synthesis for sm_120 (v2)**: Automate the synthesis of Triton kernels for non-standard quantization (e.g., INT3) using R1-driven symbolic execution and formal verification. (2026-02-17)
 - [ ] **Latent-Space Diffusion Steering for Temporal Video Consistency (v2)**: Refine the "temporal anchor" mechanism in Wan 2.1 to include multi-object tracking via Qwen2-VL saliency maps. (2026-02-17)
 
 ## Completed Tasks
