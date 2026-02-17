@@ -1,0 +1,14 @@
+{
+    "sm120_fp8_throughput": {
+        "avg": 1.85,
+        "variance": 0.0006
+    },
+    "l2_cache_hit_rate": {
+        "avg": 88.27,
+        "variance": 0.6289
+    },
+    "kv_cache_eviction_latency": {
+        "avg": 12.6,
+        "variance": 0.14
+    }
+}
