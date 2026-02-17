@@ -10,7 +10,7 @@
 - [x] **Cross-Modal Attention Steerability via Visual Saliency Bias**: Implement a steering mechanism that uses Qwen2-VL saliency maps to dynamically bias R1's attention heads, forcing the reasoning engine to prioritize specific visual regions in real-time. (2026-02-17)
 - [x] **Hardware-Aware Neural-Symbolic Synthesis for INT1.58 Ternary Models**: Automate the generation of bit-sliced CUDA kernels for ternary weights ({-1, 0, 1}) that utilize Blackwell's native bit-manipulation instructions for ultra-fast, low-power reasoning. (2026-02-17)
 - [x] **Recursive Latent-Space Diffusion for Physics-Consistent Video**: Build a feedback loop where DeepSeek-R1 evaluates Wan 2.1 video latents for physical anomalies (e.g., gravity violations) and generates corrective steering vectors in the latent space. (2026-02-17)
-- [ ] **Saliency-Gated KV-Cache Tiering for 10M+ Token Context**: Develop a hierarchical memory management strategy that uses visual and text saliency to swap KV-cache blocks between Blackwell's L2, HBM3e, and system RAM, enabling ultra-long-context multimodal reasoning.
+- [x] **Saliency-Gated KV-Cache Tiering for 10M+ Token Context**: Develop a hierarchical memory management strategy that uses visual and text saliency to swap KV-cache blocks between Blackwell's L2, HBM3e, and system RAM, enabling ultra-long-context multimodal reasoning. (2026-02-17)
 - [ ] **Self-Evolving Multi-Agent Consensus for Autonomous Benchmarking**: Orchestrate a pipeline where R1, Qwen, and Llama collaboratively design, execute, and rank performance benchmarks on sm_120 to eliminate model-specific optimization biases.
 
 ## Completed Tasks
