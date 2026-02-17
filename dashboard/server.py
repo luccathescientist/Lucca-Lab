@@ -1407,6 +1407,27 @@ async def get_model_entropy():
         }
     return cached_response("model_entropy", 2, produce)
 
+@app.get("/api/lab/nas")
+async def get_nas_results():
+    results = []
+    log_path = "dashboard/nas_results.jsonl"
+    if os.path.exists(log_path):
+        with open(log_path, "r") as f:
+            for line in f:
+                if line.strip():
+                    try: results.append(json.loads(line))
+                    except: pass
+    return results[::-1]
+
+@app.post("/api/macro/run-nas")
+async def run_nas_macro():
+    await manager.broadcast({"type": "log", "content": "[NAS] Initiating Hardware-Aware Architecture Search..."})
+    def execute():
+        subprocess.run(["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "dashboard/run_nas.py"])
+    
+    asyncio.to_thread(execute)
+    return {"status": "success"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=PORT)

@@ -69,6 +69,6 @@
 - [x] **Sub-Agent Logic Trace**: A real-time flowchart showing the "Chain of Thought" steps being executed by active sub-agents.
 - [x] **Laboratory Soundscape Generator**: A dynamic ambient audio system that generates "data-driven" soundscapes based on system load and research activity.
 - [x] **Neural Entropy Monitor**: A visualization of model output entropy to detect when reasoning paths are becoming unstable or creative.
-- [ ] **Hardware-Aware NAS Dashboard**: A view showing the results of autonomous Neural Architecture Search optimized for Blackwell sm_120.
+- [x] **Hardware-Aware NAS Dashboard**: A view showing the results of autonomous Neural Architecture Search optimized for Blackwell sm_120.
 - [ ] **Cross-Modal Identity Anchor Visualizer**: A specialized tool to monitor the stability of identity anchors during long-horizon video generation.
 - [ ] **Autonomous Lab Maintenance Bot**: A 3D-simulated bot that "performs" system maintenance tasks (defrag, cache purge) on the dashboard when triggered.
