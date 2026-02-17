@@ -733,6 +733,39 @@
                     </div>
                 </div>
 
+                <!-- AUTONOMOUS LAB MAINTENANCE BOT -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden; position: relative;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Autonomous Lab Maintenance Bot
+                        <span id="bot-status-badge" style="font-size: 0.6rem; background: rgba(0,255,100,0.2); color: #00ff64; padding: 2px 6px; border-radius: 99px;">ACTIVE</span>
+                    </h2>
+                    <div id="bot-simulation-floor" style="height: 200px; background: rgba(0,0,0,0.4); border-radius: 4px; position: relative; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+                        <!-- Grid floor -->
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(rgba(209,120,255,0.05) 1px, transparent 1px); background-size: 20px 20px;"></div>
+                        
+                        <!-- The Bot -->
+                        <div id="lab-bot" style="position: absolute; width: 30px; height: 30px; transition: all 1.8s ease-in-out; filter: drop-shadow(0 0 8px var(--accent-glow));">
+                            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent-color)" stroke-width="8" />
+                                <circle cx="50" cy="50" r="15" fill="var(--accent-color)">
+                                    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite" />
+                                </circle>
+                                <path d="M50 10 L50 30 M10 50 L30 50 M50 90 L50 70 M90 50 L70 50" stroke="var(--accent-color)" stroke-width="8" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 100px; gap: 1rem; align-items: center;">
+                        <div id="bot-task-display" style="font-size: 0.7rem; font-family: 'Fira Code', monospace; color: var(--accent-color);">[BOT] TASK: IDLE</div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.5rem; color: #888; margin-bottom: 2px;">
+                                <span>BATTERY</span>
+                                <span id="bot-battery-val">100%</span>
+                            </div>
+                            <div class="progress-bar" style="height: 4px; border-radius: 2px;"><div class="progress-fill" id="bot-battery-fill" style="width: 100%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- MODEL LOADOUT -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color);">
                     <h2>Model Loadout</h2>
@@ -4685,7 +4718,41 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
         requestAnimationFrame(animateKnowledgeGraph);
     }
 
-        const logToggle = document.getElementById('show-system-logs');
+        async function updateMaintenanceBot() {
+        try {
+            const response = await fetch('/api/lab/maintenance-bot');
+            const data = await response.json();
+            
+            const bot = document.getElementById('lab-bot');
+            const floor = document.getElementById('bot-simulation-floor');
+            
+            // Convert bot coordinates (0-100) to pixel positions on the floor
+            const x = (data.x / 100) * (floor.offsetWidth - 30);
+            const y = (data.y / 100) * (floor.offsetHeight - 30);
+            
+            bot.style.left = `${x}px`;
+            bot.style.top = `${y}px`;
+            
+            document.getElementById('bot-task-display').textContent = `[BOT] TASK: ${data.task}`;
+            document.getElementById('bot-battery-val').textContent = `${Math.round(data.battery)}%`;
+            document.getElementById('bot-battery-fill').style.width = `${data.battery}%`;
+            
+            const badge = document.getElementById('bot-status-badge');
+            if (data.task === 'CHARGING') {
+                badge.textContent = 'CHARGING';
+                badge.style.color = 'var(--gold)';
+                badge.style.background = 'rgba(255, 215, 0, 0.2)';
+            } else {
+                badge.textContent = 'ACTIVE';
+                badge.style.color = '#00ff64';
+                badge.style.background = 'rgba(0, 255, 100, 0.2)';
+            }
+        } catch (err) {}
+    }
+
+    setInterval(updateMaintenanceBot, 2000);
+
+    const logToggle = document.getElementById('show-system-logs');
         if (logToggle) {
             logToggle.addEventListener('change', () => {
                 document.getElementById('inf-stream-mode').textContent = logToggle.checked ? 'MODE: RAW' : 'MODE: CLEAN';

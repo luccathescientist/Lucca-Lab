@@ -1419,6 +1419,16 @@ async def get_nas_results():
                     except: pass
     return results[::-1]
 
+@app.get("/api/lab/maintenance-bot")
+async def get_maintenance_bot():
+    def produce():
+        try:
+            result = subprocess.check_output(["/home/rocketegg/workspace/pytorch_cuda/.venv/bin/python3", "/home/rocketegg/clawd/dashboard/bot_logic.py"])
+            return json.loads(result)
+        except Exception as e:
+            return {"error": str(e)}
+    return cached_response("maintenance_bot", 2, produce)
+
 @app.post("/api/macro/run-nas")
 async def run_nas_macro():
     await manager.broadcast({"type": "log", "content": "[NAS] Initiating Hardware-Aware Architecture Search..."})
