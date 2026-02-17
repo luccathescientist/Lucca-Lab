@@ -1,0 +1,2 @@
+Latency: 0.4227 ms
+Speedup: 7.17x
