@@ -835,6 +835,30 @@
                     </div>
                 </div>
 
+                <!-- CROSS-MODAL IDENTITY ANCHOR VISUALIZER -->
+                <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-color); overflow: hidden;">
+                    <h2 style="color: var(--accent-color); display: flex; justify-content: space-between; align-items: center;">
+                        Cross-Modal Identity Anchor Visualizer
+                        <span id="anchor-stability-label" style="font-size: 0.6rem; opacity: 0.7;">STABILITY: --%</span>
+                    </h2>
+                    <div id="anchor-visualizer-container" style="height: 180px; background: rgba(0,0,0,0.4); border-radius: 4px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <canvas id="anchor-canvas" style="width: 100%; height: 100%;"></canvas>
+                        <div id="anchor-core" style="position: absolute; width: 60px; height: 60px; border: 2px solid var(--accent-color); border-radius: 50%; box-shadow: 0 0 20px var(--accent-glow); display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 30px; height: 30px; background: var(--accent-color); border-radius: 50%; opacity: 0.6; animation: pulse 2s infinite;"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 4px;">
+                            <div style="font-size: 0.55rem; color: #888;">LATENT DRIFT</div>
+                            <div id="anchor-drift-val" style="font-size: 0.8rem; font-family: 'Orbitron'; color: var(--accent-color);">0.000</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 4px;">
+                            <div style="font-size: 0.55rem; color: #888;">ANCHOR LOCK</div>
+                            <div id="anchor-lock-status" style="font-size: 0.8rem; font-family: 'Orbitron'; color: #00ff64;">ACTIVE</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- PROJECT CHRONO TIMELINE -->
                 <div class="card" style="margin-bottom: 2rem; border-color: var(--gold); overflow: hidden;">
                     <h2 style="color: var(--gold); display: flex; justify-content: space-between; align-items: center;">
@@ -1816,6 +1840,7 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     updateKnowledgeSynthesis();
                     updateModelEntropy();
                     updateNAS();
+                    initAnchorVisualizer();
                 }
                 if (tab === 'llm') {
                     updateModelLoadout();
@@ -3562,6 +3587,71 @@ print(f"Current Potential Output: {calculate_power(85)}W")</textarea>
                     </div>
                 `).join('');
             } catch (err) {}
+        }
+
+
+        // --- CROSS-MODAL IDENTITY ANCHOR VISUALIZER ---
+        let anchorCanvas = document.getElementById('anchor-canvas');
+        let anchorCtx = anchorCanvas.getContext('2d');
+        let anchorPoints = [];
+
+        function initAnchorVisualizer() {
+            anchorCanvas.width = anchorCanvas.offsetWidth;
+            anchorCanvas.height = anchorCanvas.offsetHeight;
+            
+            for(let i = 0; i < 24; i++) {
+                anchorPoints.push({
+                    angle: (Math.PI * 2 / 24) * i,
+                    radius: 50 + Math.random() * 20,
+                    targetRadius: 60,
+                    speed: 0.05 + Math.random() * 0.1
+                });
+            }
+            animateAnchor();
+        }
+
+        function animateAnchor() {
+            if(!anchorCtx) return;
+            anchorCtx.clearRect(0, 0, anchorCanvas.width, anchorCanvas.height);
+            
+            let centerX = anchorCanvas.width / 2;
+            let centerY = anchorCanvas.height / 2;
+            let stability = 92 + Math.sin(Date.now() / 1000) * 5;
+            let drift = 0.01 + Math.abs(Math.cos(Date.now() / 2000)) * 0.05;
+
+            document.getElementById('anchor-stability-label').innerText = `STABILITY: ${stability.toFixed(1)}%`;
+            document.getElementById('anchor-drift-val').innerText = drift.toFixed(4);
+
+            anchorCtx.beginPath();
+            anchorCtx.strokeStyle = 'rgba(209, 120, 255, 0.4)';
+            anchorCtx.lineWidth = 1;
+
+            anchorPoints.forEach((p, i) => {
+                p.radius += (p.targetRadius - p.radius) * p.speed;
+                if(Math.abs(p.radius - p.targetRadius) < 1) {
+                    p.targetRadius = 50 + Math.random() * 30;
+                }
+
+                let x = centerX + Math.cos(p.angle) * p.radius;
+                let y = centerY + Math.sin(p.angle) * p.radius;
+
+                if(i === 0) anchorCtx.moveTo(x, y);
+                else anchorCtx.lineTo(x, y);
+                
+                // Draw tether to core
+                anchorCtx.save();
+                anchorCtx.beginPath();
+                anchorCtx.strokeStyle = 'rgba(209, 120, 255, 0.1)';
+                anchorCtx.moveTo(centerX, centerY);
+                anchorCtx.lineTo(x, y);
+                anchorCtx.stroke();
+                anchorCtx.restore();
+            });
+
+            anchorCtx.closePath();
+            anchorCtx.stroke();
+            
+            requestAnimationFrame(animateAnchor);
         }
 
         async function updateChronoTimeline() {

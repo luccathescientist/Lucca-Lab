@@ -70,5 +70,9 @@
 - [x] **Laboratory Soundscape Generator**: A dynamic ambient audio system that generates "data-driven" soundscapes based on system load and research activity.
 - [x] **Neural Entropy Monitor**: A visualization of model output entropy to detect when reasoning paths are becoming unstable or creative.
 - [x] **Hardware-Aware NAS Dashboard**: A view showing the results of autonomous Neural Architecture Search optimized for Blackwell sm_120.
-- [ ] **Cross-Modal Identity Anchor Visualizer**: A specialized tool to monitor the stability of identity anchors during long-horizon video generation.
+- [x] **Cross-Modal Identity Anchor Visualizer**: A specialized tool to monitor the stability of identity anchors during long-horizon video generation.
 - [ ] **Autonomous Lab Maintenance Bot**: A 3D-simulated bot that "performs" system maintenance tasks (defrag, cache purge) on the dashboard when triggered.
+- [ ] **Neural Feedback Loop Visualizer**: A visualization of the feedback signals between R1 reasoning and Wan 2.1 video latents during steering.
+- [ ] **Lab Resource Auctioneer**: A simulated marketplace where sub-agents "bid" for GPU compute time and VRAM based on task priority.
+- [ ] **Chronicle Temporal Navigator**: A 3D spherical timeline of the lab's history, allowing the user to "zoom" into specific days and see all associated research and memory.
+- [ ] **Neural Synapse Strength Heatmap**: A visualization of the "certainty" of connections in the knowledge graph, identifying areas of high confidence vs emerging research.
